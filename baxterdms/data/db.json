@@ -1,16 +1,5 @@
 {
   "contacts": [
-    {
-      "firstName": "Bruce",
-      "middleName": "Baxter",
-      "lastName": "Chafe",
-      "id": 1
-    },
-    {
-      "firstName": "Bruce",
-      "middleName": "Baxter",
-      "lastName": "Chafe",
-      "id": 2
-    }
+    
   ]
 }

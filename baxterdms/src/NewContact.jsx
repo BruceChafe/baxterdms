@@ -10,7 +10,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Button from '@mui/material/Button';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 export default function NewContact() {
 const history = useNavigate();
@@ -18,6 +18,22 @@ const history = useNavigate();
 const [firstName, setFirstName] = useState('')
 const [middleName, setMiddleName] = useState('')
 const [lastName, setLastName] = useState('')
+const [gender, setGender] = useState('')
+const [dob, setDOB] = useState('')
+
+const [streetAddress, setStreetAddress] = useState('')
+const [postalCode, setPostalCode] = useState('')
+const [city, setCity] = useState('')
+const [province, setProvince] = useState('')
+const [country, setCountry] = useState('')
+
+const [preferredLanguage, setPreferredLanguage] = useState('')
+const [preferredContact, setPreferredContact] = useState('')
+const [mobilePhone, setMobilePhone] = useState('')
+const [homePhone, setHomePhone] = useState('')
+const [workPhone, setWorkPhone] = useState('')
+const [email, setEmail] = useState('')
+const [notes, setNotes] = useState('')
 
 const [firstNameError, setFirstNameError] = useState(false)
 const [lastNameError, setLastNameError] = useState(false)
@@ -38,8 +54,8 @@ const handleSubmit = (e) => {
         fetch('http://localhost:8000/Contacts', {
             method: 'POST',
             headers: {"Content-type": "application/json"},
-            body: JSON.stringify({ firstName, middleName, lastName })
-        }).then(() => history.push('/'))
+            body: JSON.stringify({ firstName, middleName, lastName, gender, dob, streetAddress, postalCode, city, province, country, preferredLanguage, preferredContact, mobilePhone, homePhone, workPhone, email, notes })
+        })
     }
 }
 
@@ -51,7 +67,7 @@ const handleSubmit = (e) => {
                 }}>
                 New Contact
             </Typography>
-
+ 
             <Paper
                 elevation={12}
                 style={{
@@ -66,9 +82,9 @@ const handleSubmit = (e) => {
                     Identity
                 </Typography>
 
-                <Grid container >
-                    <Grid item md={3}>
-                        <Typography
+                <Grid container>
+                    <Grid item md={3}> 
+                        <Typography 
                             style={{
                                 padding: "5px"
                             }}>
@@ -84,7 +100,7 @@ const handleSubmit = (e) => {
                         />
                     </Grid>
                     <Grid item md={.5} />
-                    <Grid item md={3}>
+                    <Grid item md={3}> 
                         <Typography
                             style={{
                                 padding: "5px"
@@ -99,7 +115,7 @@ const handleSubmit = (e) => {
                         />
                     </Grid>
                     <Grid item md={.5} />
-                    <Grid item md={3}>
+                    <Grid item md={3}> 
                         <Typography
                             style={{
                                 padding: "5px"
@@ -128,6 +144,7 @@ const handleSubmit = (e) => {
                         <FormControl fullWidth>
                             <InputLabel id="contact-country-select">Gender</InputLabel>
                             <Select
+                                onChange={(e) => setGender(e.target.value)}
                                 labelId="contact-gender-select"
                                 id="contact-gender-select"
                                 label="Gender"
@@ -139,9 +156,7 @@ const handleSubmit = (e) => {
                             </Select>
                         </FormControl>
                     </Grid>
-
                     <Grid item md={1} />
-
                     <Grid item md={4}>
                         <Typography
                             style={{
@@ -150,7 +165,10 @@ const handleSubmit = (e) => {
                             Date of Birth
                         </Typography>
 
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <LocalizationProvider 
+                        dateAdapter={AdapterDayjs}
+                        onChange={(e) => setDOB(e.target.value)}                        
+                        >
                             <DatePicker />
                         </LocalizationProvider>
 
@@ -177,26 +195,13 @@ const handleSubmit = (e) => {
                         padding: "5px"
                     }}>
                     Street Address
-                    <br />
-                    Line1
                 </Typography>
                 <TextField
+                    onChange={(e) => setStreetAddress(e.target.value)}
                     fullWidth
-                    label="Line 1"
+                    label="Street Address"
                     variant="outlined"
                     required
-                />
-                <br />
-                <Typography
-                    style={{
-                        padding: "5px"
-                    }}>
-                    Line 2
-                </Typography>
-                <TextField
-                    fullWidth
-                    label="Line 2"
-                    variant="outlined"
                 />
 
                 <Typography
@@ -206,6 +211,7 @@ const handleSubmit = (e) => {
                     Postal Code
                 </Typography>
                 <TextField
+                    onChange={(e) => setPostalCode(e.target.value)}
                     fullWidth
                     label="Postal Code"
                     variant="outlined"
@@ -218,6 +224,7 @@ const handleSubmit = (e) => {
                     City
                 </Typography>
                 <TextField
+                    onChange={(e) => setCity(e.target.value)}
                     fullWidth
                     label="City"
                     variant="outlined"
@@ -233,6 +240,7 @@ const handleSubmit = (e) => {
                 <FormControl fullWidth>
                     <InputLabel id="contact-province-select">Province</InputLabel>
                     <Select
+                        onChange={(e) => setProvince(e.target.value)}
                         labelId="contact-province-select"
                         id="contact-province-Provinceect"
                         label="Province"
@@ -262,6 +270,7 @@ const handleSubmit = (e) => {
                 <FormControl fullWidth>
                     <InputLabel id="contact-country-select">Country</InputLabel>
                     <Select
+                        onChange={(e) => setCountry(e.target.value)}
                         labelId="contact-country-select"
                         id="contact-country-select"
                         label="Country"
@@ -290,18 +299,10 @@ const handleSubmit = (e) => {
                 <Grid container>
                     <Grid item md={3}>
                         <FormControl>
-                            <Typography
-                                style={{
-                                    padding: "5px"
-                                }}>
-                                Preferred Language
-                            </Typography>
-                            <FormLabel id="demo-radio-buttons-group-label"></FormLabel>
-                            <RadioGroup
-                                aria-labelledby="demo-radio-buttons-group-label"
-                                name="radio-buttons-group"
-                                defaultValue="english"
-                            >
+                            <FormLabel>Preferred Language</FormLabel>
+                            <RadioGroup 
+                                onChange={(e) => setPreferredLanguage(e.target.value)}
+                                >                            
                                 <row>
                                     <FormControlLabel value="english" control={<Radio />} label="English" />
                                     <FormControlLabel value="french" control={<Radio />} label="French" />
@@ -312,17 +313,9 @@ const handleSubmit = (e) => {
 
                     <Grid item md={3}>
                         <FormControl>
-                            <Typography
-                                style={{
-                                    padding: "5px"
-                                }}>
-                                Preferred Contact Method
-                            </Typography>
-                            <FormLabel id="demo-radio-buttons-group-label"></FormLabel>
+                            <FormLabel>Preferred Contact Method</FormLabel>
                             <RadioGroup
-                                aria-labelledby="demo-radio-buttons-group-label"
-                                name="radio-buttons-group"
-                                defaultValue="sms"
+                                onChange={(e) => setPreferredContact(e.target.value)}
                             >
                                 <row>
                                     <FormControlLabel value="sms" control={<Radio />} label="SMS" />
@@ -334,76 +327,42 @@ const handleSubmit = (e) => {
                     </Grid>
                 </Grid>
 
-                <Typography
-                    style={{
-                        padding: "5px"
-                    }}>
-                    Home Phone
-                </Typography>
+                <FormLabel>Mobile Phone</FormLabel>
                 <TextField
-                    fullWidth
-                    label="Home Phone"
-                    variant="outlined"
-                    required
-                />
-
-                <Typography
-                    style={{
-                        padding: "5px"
-                    }}>
-                    Mobile Phone
-                </Typography>
-                <TextField
+                    onChange={(e) => setMobilePhone(e.target.value)}
                     fullWidth
                     label="Mobile Phone"
                     variant="outlined"
                 />
-
-                <Typography
-                    style={{
-                        padding: "5px"
-                    }}>
-                    Work Phone
-                </Typography>
+                
+                <FormLabel>Home Phone</FormLabel>
                 <TextField
+                    onChange={(e) => setHomePhone(e.target.value)}
+                    fullWidth
+                    label="Home Phone"
+                    variant="outlined"
+                />
+                
+                <FormLabel>Work Phone</FormLabel>
+                <TextField
+                    onChange={(e) => setWorkPhone(e.target.value)}
                     fullWidth
                     label="Work Phone"
                     variant="outlined"
-                    required
                 />
 
-                <Typography
-                    style={{
-                        padding: "5px"
-                    }}>
-                    Email 1
-                </Typography>
+                <FormLabel>Email Address</FormLabel>
                 <TextField
+                    onChange={(e) => setEmail(e.target.value)}
                     fullWidth
-                    label="Email 1"
+                    label="Email Address"
                     variant="outlined"
                     required
                 />
 
-                <Typography
-                    style={{
-                        padding: "5px"
-                    }}>
-                    Email 2
-                </Typography>
+                <FormLabel>Notes</FormLabel>
                 <TextField
-                    fullWidth
-                    label="Email 2"
-                    variant="outlined"
-                />
-
-                <Typography
-                    style={{
-                        padding: "5px"
-                    }}>
-                    Notes
-                </Typography>
-                <TextField
+                    onChange={(e) => setNotes(e.target.value)}
                     fullWidth
                     label="Notes"
                     variant="outlined"

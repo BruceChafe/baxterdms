@@ -21,11 +21,10 @@ export default function ContactTable() {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell align="right">Calories</TableCell>
-                        <TableCell align="right">Calories</TableCell>
-                        <TableCell align="right">Address</TableCell>
-                        <TableCell align="right">Email</TableCell>
-                        <TableCell align="right">Phone</TableCell>
+                        <TableCell>Customer Name</TableCell>
+                        <TableCell>Address</TableCell>
+                        <TableCell>Email Address</TableCell>
+                        <TableCell>Phone Numbers\</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -34,11 +33,10 @@ export default function ContactTable() {
                             key={contact.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell align="right">{contact.id}</TableCell>
-                            <TableCell align="right">{contact.firstName} {contact.lastName}</TableCell>
-                            <TableCell align="right">{contact.id}</TableCell>
-                            <TableCell align="right">{contact.id}</TableCell>
-                            <TableCell align="right">{contact.id}</TableCell>
+                            <TableCell>{contact.firstName} {contact.lastName}</TableCell>
+                            <TableCell>{contact.streetAddress} <br /> {contact.city}, {contact.province}  {contact.postalCode} </TableCell>
+                            <TableCell>{contact.email}</TableCell>
+                            <TableCell>m: {contact.mobilePhone} <br /> h: {contact.homePhone}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
