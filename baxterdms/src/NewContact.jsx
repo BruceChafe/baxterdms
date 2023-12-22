@@ -38,6 +38,32 @@ const [notes, setNotes] = useState('')
 const [firstNameError, setFirstNameError] = useState(false)
 const [lastNameError, setLastNameError] = useState(false)
 
+const contact = {
+    firstName: firstName,
+    middleName: middleName,
+    lastName: lastName,
+    gender: gender,
+    dob: dob,
+    address: {
+      streetAddress: streetAddress,
+      postalCode: postalCode,
+      city: city,
+      province: province,
+      country: country,
+    },
+    preferences: {
+      preferredLanguage: preferredLanguage,
+      preferredContact: preferredContact,
+    },
+    phoneNumbers: {
+      mobilePhone: mobilePhone,
+      homePhone: homePhone,
+      workPhone: workPhone,
+    },
+    email: email,
+    notes: notes,
+  };
+
 const handleSubmit = (e) => {
     e.preventDefault()
     setFirstNameError(false)
@@ -54,7 +80,7 @@ const handleSubmit = (e) => {
         fetch('http://localhost:8000/Contacts', {
             method: 'POST',
             headers: {"Content-type": "application/json"},
-            body: JSON.stringify({ firstName, middleName, lastName, gender, dob, streetAddress, postalCode, city, province, country, preferredLanguage, preferredContact, mobilePhone, homePhone, workPhone, email, notes })
+            body: JSON.stringify(contact)
         })
     }
 }

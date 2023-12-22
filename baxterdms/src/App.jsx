@@ -1,6 +1,4 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -24,7 +22,9 @@ function App() {
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
         <Grid container >
-          <Grid item>
+          <Grid 
+         
+          item>
             <SidebarMenu />
           </Grid>
           <Grid item lg>

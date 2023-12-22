@@ -6,6 +6,7 @@ body {
 
 .sidebar-container {
     background-color: #000000;
+    z-index: -1;
 }
 
 .sidebar-item {
