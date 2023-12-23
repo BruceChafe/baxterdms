@@ -1,8 +1,9 @@
-import { Typography } from "@mui/material";
+import { Typography, List, ListItem, ListItemText, Divider, Grid } from "@mui/material";
 
-function ContactDetails({ contact }) {
-    return <div>Identity Details Content for {contact.firstName}</div>;
+export default function ContactDetails({ contact }) {
+    return (         
+                    <Typography variant="h6" gutterBottom>
+                        {contact.firstName} {contact.lastName}
+                    </Typography>
 
-}
- 
-export default ContactDetails;
+)}

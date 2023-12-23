@@ -2,254 +2,15 @@
   "contacts": [
     {
       "firstName": "Bruce",
-      "middleName": "Baxter",
-      "lastName": "Chafe",
-      "id": 1
-    },
-    {
-      "firstName": "Bruce",
-      "middleName": "Baxter",
-      "lastName": "Chafe",
-      "id": 2
-    },
-    {
-      "firstName": "Bruce",
-      "middleName": "Baxter",
-      "lastName": "Chafe",
-      "id": 3
-    },
-    {
-      "firstName": "Bruce",
-      "middleName": "Baxter",
-      "lastName": "Chafe",
-      "gender": "female",
-      "id": 4
-    },
-    {
-      "firstName": "Billy",
-      "middleName": "Baxter",
-      "lastName": "Small",
-      "gender": "male",
-      "dob": "",
-      "id": 5
-    },
-    {
-      "firstName": "Billy",
-      "middleName": "Baxter",
-      "lastName": "Small",
-      "gender": "male",
-      "dob": "",
-      "id": 6
-    },
-    {
-      "firstName": "Billy",
-      "middleName": "Baxter",
-      "lastName": "Small",
-      "gender": "male",
-      "dob": "",
-      "id": 7
-    },
-    {
-      "firstName": "Bruce",
-      "middleName": "Baxter",
-      "lastName": "Chafe",
-      "gender": "female",
-      "dob": "",
-      "streetAddress": "18 Colonial Street",
-      "postalCode": "A1B 3MC",
-      "city": "St. John's",
-      "province": "NL",
-      "country": "CA",
-      "id": 8
-    },
-    {
-      "firstName": "Dana",
-      "middleName": "Doreen",
-      "lastName": "Hawco",
-      "gender": "female",
-      "dob": "",
-      "streetAddress": "18 Colonial Street",
-      "postalCode": "A1M 3M8",
-      "city": "St. John's",
-      "province": "NL",
-      "country": "CA",
-      "preferredLanguage": "",
-      "preferredContact": "",
-      "mobilePhone": "7097585125",
-      "homePhone": "",
-      "workPhone": "danahawco@gmail.com",
-      "notes": "Notesy notes.",
-      "id": 9
-    },
-    {
-      "firstName": "Dana",
-      "middleName": "Doreen",
-      "lastName": "Hawco",
-      "gender": "female",
-      "dob": "",
-      "streetAddress": "18 Colonial Street",
-      "postalCode": "A1M 3M8",
-      "city": "St. John's",
-      "province": "NL",
-      "country": "CA",
-      "preferredLanguage": "english",
-      "preferredContact": "phone",
-      "mobilePhone": "7097585125",
-      "homePhone": "",
-      "workPhone": "danahawco@gmail.com",
-      "email": "danahawco@gmail.com",
-      "notes": "Notesy notes.",
-      "id": 10
-    },
-    {
-      "contact": {
-        "firstName": "",
-        "middleName": "",
-        "lastName": "",
-        "gender": "",
-        "dob": "",
-        "phonePhoneNumber": "",
-        "mobilePhoneNumber": "",
-        "businessPhoneNumber": "",
-        "email1": "",
-        "email2": "",
-        "streetAddress": "",
-        "postalCode": "",
-        "city": "",
-        "province": "",
-        "country": ""
-      },
-      "id": 11
-    },
-    {
-      "contact": {
-        "firstName": "",
-        "middleName": "",
-        "lastName": "",
-        "gender": "",
-        "dob": "",
-        "phonePhoneNumber": "",
-        "mobilePhoneNumber": "",
-        "businessPhoneNumber": "",
-        "email1": "",
-        "email2": "",
-        "streetAddress": "",
-        "postalCode": "",
-        "city": "",
-        "province": "",
-        "country": ""
-      },
-      "id": 12
-    },
-    {
-      "firstName": "",
-      "middleName": "",
-      "lastName": "",
-      "gender": "",
-      "dob": "",
-      "phonePhoneNumber": "",
-      "mobilePhoneNumber": "",
-      "businessPhoneNumber": "",
-      "email1": "",
-      "email2": "",
-      "streetAddress": "",
-      "postalCode": "",
-      "city": "",
-      "province": "",
-      "country": "",
-      "id": 13
-    },
-    {
-      "firstName": "",
-      "middleName": "",
-      "lastName": "",
-      "gender": "",
-      "dob": "",
-      "phonePhoneNumber": "",
-      "mobilePhoneNumber": "",
-      "businessPhoneNumber": "",
-      "email1": "",
-      "email2": "",
-      "streetAddress": "",
-      "postalCode": "",
-      "city": "",
-      "province": "",
-      "country": "",
-      "id": 14
-    },
-    {
-      "firstName": "",
-      "middleName": "",
-      "lastName": "",
-      "gender": "",
-      "dob": "",
-      "phonePhoneNumber": "",
-      "mobilePhoneNumber": "",
-      "businessPhoneNumber": "",
-      "email1": "",
-      "email2": "",
-      "streetAddress": "",
-      "postalCode": "",
-      "city": "",
-      "province": "",
-      "country": "",
-      "id": 15
-    },
-    {
-      "firstName": "Bruce",
-      "middleName": "",
-      "lastName": "",
-      "gender": "",
-      "dob": "",
-      "phonePhoneNumber": "",
-      "mobilePhoneNumber": "",
-      "businessPhoneNumber": "",
-      "email1": "",
-      "email2": "",
-      "streetAddress": "",
-      "postalCode": "",
-      "city": "",
-      "province": "",
-      "country": "",
-      "id": 16
-    },
-    {
-      "firstName": "Bruce",
       "middleName": "Baxter ",
-      "lastName": "Cgafe",
+      "lastName": "Chafe",
       "gender": "",
       "dob": "",
       "address": {
         "streetAddress": "",
         "postalCode": "",
         "city": "",
-        "province": "",
-        "country": ""
-      },
-      "preferences": {
-        "preferredLanguage": "",
-        "preferredContact": ""
-      },
-      "phoneNumbers": {
-        "mobilePhone": "",
-        "homePhone": "",
-        "workPhone": ""
-      },
-      "email": "",
-      "notes": "",
-      "id": 17
-    },
-    {
-      "firstName": "Bruce",
-      "middleName": "Baxter ",
-      "lastName": "Cgafe",
-      "gender": "",
-      "dob": "",
-      "address": {
-        "streetAddress": "",
-        "postalCode": "",
-        "city": "",
-        "province": "",
+        "province": "NL",
         "country": ""
       },
       "preferences": {
@@ -257,13 +18,39 @@
         "preferredContact": "email"
       },
       "phoneNumbers": {
-        "mobilePhone": "",
-        "homePhone": "",
-        "workPhone": ""
+        "mobilePhone": "7097706182",
+        "homePhone": "7097706183",
+        "workPhone": "7097706184"
       },
-      "email": "",
-      "notes": "",
-      "id": 18
+      "emailAddress": "brucechafe@gmail.com",
+      "notes": "hehe",
+      "id": 1
+    },
+    {
+      "firstName": "Bruce",
+      "middleName": "Baxter ",
+      "lastName": "Small",
+      "gender": "",
+      "dob": "",
+      "address": {
+        "streetAddress": "",
+        "postalCode": "",
+        "city": "",
+        "province": "NL",
+        "country": ""
+      },
+      "preferences": {
+        "preferredLanguage": "",
+        "preferredContact": "email"
+      },
+      "phoneNumbers": {
+        "mobilePhone": "7097706182",
+        "homePhone": "7097706183",
+        "workPhone": "7097706184"
+      },
+      "emailAddress": "brucechafe@gmail.com",
+      "notes": "hehe",
+      "id": 1
     }
   ]
 }
