@@ -2,7 +2,7 @@ import { Paper, IconButton, Box, Tab, Typography, Grid, Divider } from '@mui/mat
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState } from 'react';
-import ContactDetails from './ContactDetails';
+import ContactRecentActivity from './ContactRecentActivity';
 import ContactSidebarMenu from './ContactSidePanel';
 
 
@@ -44,23 +44,23 @@ function Contact({ contact, showPanel, onClose }) {
                     >
                         <CloseIcon />
                     </IconButton>
-                    <Grid container>
-                        <Grid item md={3}>
-                            <ContactSidebarMenu contact={contact}/>
 
+                    <Grid container>
+                        <Grid item>
+                            <ContactSidebarMenu contact={contact}/>
                         </Grid>
-                        <Grid item md={3}>
+                        <Grid item>
                             <Box sx={{ width: '100%' }}>
                                 <TabContext value={value}>
                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                         <TabList onChange={handleChange}>
-                                            <Tab label="Details" value="1" />
+                                            <Tab label="Recent Activity" value="1" />
                                             <Tab label="Item Two" value="2" />
                                             <Tab label="Item Three" value="3" />
                                         </TabList>
                                     </Box>
 
-                                    <TabPanel value="1"><ContactDetails contact={contact} /></TabPanel>
+                                    <TabPanel value="1"><ContactRecentActivity contact={contact} /></TabPanel>
                                     <TabPanel value="2"><Typography>
                                         {contact && contact.firstName}
                                     </Typography></TabPanel>

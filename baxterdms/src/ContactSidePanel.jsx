@@ -27,13 +27,10 @@ export default function ContactSidebarMenu({ contact }) {
 
     return (
         <>
-            <Typography variant="h6">
+            <List sx={{ width: '80%' }}>
+            <Typography variant="h6" align='center' gutterBottom='true'>
                 {contact.firstName} {contact.lastName}
             </Typography>
-
-            <List sx={{ width: '80%' }}>
-                <Divider />
-
                 <ListItemButton onClick={handleClick1} selected>
                     <ListItemText primary="Contact Details" />
                     {open1 ? <ExpandLess /> : <ExpandMore />}
