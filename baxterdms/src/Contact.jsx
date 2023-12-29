@@ -1,10 +1,9 @@
-import { Paper, IconButton, Box, Tab, Typography, Grid, Divider } from '@mui/material';
+import { Paper, IconButton, Box, Tab, Typography, Grid, TextField, MenuItem, Divider, BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState } from 'react';
 import ContactRecentActivity from './ContactRecentActivity';
 import ContactSidebarMenu from './ContactSidePanel';
-
 
 function Contact({ contact, showPanel, onClose }) {
     const [value, setValue] = React.useState('1');
@@ -46,13 +45,14 @@ function Contact({ contact, showPanel, onClose }) {
                     </IconButton>
 
                     <Grid container>
-                        <Grid item>
-                            <ContactSidebarMenu contact={contact}/>
+                        <Grid item md="3">
+                            <ContactSidebarMenu contact={contact} style={{ height: '50%'}} />
+                            
                         </Grid>
-                        <Grid item>
+                        <Grid item md="6">
                             <Box sx={{ width: '100%' }}>
                                 <TabContext value={value}>
-                                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                    <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '75%' }}>
                                         <TabList onChange={handleChange}>
                                             <Tab label="Recent Activity" value="1" />
                                             <Tab label="Item Two" value="2" />
@@ -62,7 +62,7 @@ function Contact({ contact, showPanel, onClose }) {
 
                                     <TabPanel value="1"><ContactRecentActivity contact={contact} /></TabPanel>
                                     <TabPanel value="2"><Typography>
-                                        {contact && contact.firstName}
+                                        
                                     </Typography></TabPanel>
                                     <TabPanel value="3">Item Three</TabPanel>
 
@@ -70,8 +70,6 @@ function Contact({ contact, showPanel, onClose }) {
                             </Box>
                         </Grid>
                     </Grid>
-
-
                 </Paper>
             )}
         </>

@@ -14,13 +14,11 @@ function ContactTable() {
 
   const handleEditClick = (contact) => {
     setSelectedContact(contact);
-    // Freeze the background content
     document.body.style.overflow = 'hidden';
   };
 
   const handleCloseEditPanel = () => {
     setSelectedContact(null);
-    // Unfreeze the background content
     document.body.style.overflow = 'auto';
   };
 

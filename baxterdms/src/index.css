@@ -13,3 +13,7 @@ body {
     background-color: #FFFFFF29;
 }
 
+.small-list-item {
+    padding: 0px; /* Adjust the padding as needed */
+    margin: 0px;
+  }
