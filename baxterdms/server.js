@@ -20,7 +20,7 @@ app.post('/send-email', async (req, res) => {
         secure: false,
         auth: {
             user: 'skeezer-web@outlook.com',
-            pass: 'Diet1989Coke!',
+            pass: '',
         },
   });
 
