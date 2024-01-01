@@ -1,31 +1,57 @@
-import { Paper, IconButton, Box, TextField, Button } from '@mui/material';
+import { Paper, IconButton, Box, TextField, Button, Snackbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState } from 'react';
 
 function EmailContact({ contact, showPanel, onClose }) {
+    const [contactEmail, setContactEmail] = useState(contact.emailAddress);
+    const [from, setFrom] = useState('');
+    const [subject, setSubject] = useState('');
+    const [body, setBody] = useState('');
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const apiUrl = 'http://localhost:3001/send-email';
 
-    const outlook_smtp_config = {
-        host: 'smtp.office365.com',
-        port: 587,
-        secure: false,
-        auth: {
-            user: 'your_outlook_email@example.com',
-            pass: 'your_outlook_password',
-        },
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
-    
-    const [contactEmail, setContactEmail] = contact.emailAddress
 
-    const handleSubmit = (e) => {
-        console.log('contactEmail:', contactEmail);
+    const [panelVisible, setPanelVisible] = useState(showPanel);
+
+    const handleClosePanel = () => {
+        setPanelVisible(false);
+        onClose();
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-    }
 
-    const mailOptions = {
-        from: 'your_outlook_email@example.com',
-        to: contactEmail,
-        subject: 'Your Subject',
-        text: 'Your email body goes here.',
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: contactEmail,
+                    from,
+                    subject,
+                    body,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setSnackbarMessage('Email sent successfully!');
+            } else {
+                setSnackbarMessage(`Error: ${data.error}`);
+            }
+            setSnackbarOpen(true);
+            setPanelVisible(false);
+        } catch (error) {
+            setSnackbarMessage(`Error: ${error.message}`);
+            setSnackbarOpen(true);
+        }
     };
 
     return (
@@ -63,27 +89,26 @@ function EmailContact({ contact, showPanel, onClose }) {
 
                         <TextField
                             onChange={(e) => setContactEmail(e.target.value)}
+                            id="to"
                             label="to:"
                             defaultValue={contact.emailAddress}
                         />
                         <br />
                         <TextField
-                            id="outlined-disabled"
+                            onChange={(e) => setFrom(e.target.value)}
+                            id="from"
                             label="from:"
                         />
                         <br />
                         <TextField
-                            id="outlined-disabled"
-                            label="ccc:"
+                            onChange={(e) => setSubject(e.target.value)}
+                            id="subject"
+                            label="subject:"
                         />
                         <br />
                         <TextField
-                            id="outlined-disabled"
-                            label="bcc:"
-                        />
-                        <br />
-                        <TextField
-                            id="outlined-disabled"
+                            onChange={(e) => setBody(e.target.value)}
+                            id="body"
                             label="body:"
                             multiline
                             rows={12}
@@ -96,7 +121,18 @@ function EmailContact({ contact, showPanel, onClose }) {
                         >
                             Submit
                         </Button>
+
                     </Box>
+                    <Snackbar
+                        open={snackbarOpen}
+                        autoHideDuration={3000}
+                        onClose={() => {
+                            handleSnackbarClose();
+                            handleClosePanel();
+                        }}
+                        message={snackbarMessage}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    />
                 </Paper>
             )}
         </>

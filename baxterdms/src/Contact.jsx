@@ -3,7 +3,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState } from 'react';
 import ContactRecentActivity from './ContactRecentActivity';
-import ContactSidebarMenu from './ContactSidePanel';
+import ContactSidebarMenu from './ContactSidebarMenu';
 
 function Contact({ contact, showPanel, onClose }) {
     const [value, setValue] = React.useState('1');
@@ -21,7 +21,6 @@ function Contact({ contact, showPanel, onClose }) {
             {/* Contact Panel */}
             {showPanel && (
                 <Paper
-                    key={contact.id}
                     elevation={3}
                     style={{
                         position: 'fixed',
@@ -34,6 +33,9 @@ function Contact({ contact, showPanel, onClose }) {
                         zIndex: 9999,
                     }}
                 >
+                    {/* Log contact.id for debugging */}
+                {console.log("Contact ID:", contact.id)}
+
                     {/* Close button */}
                     <IconButton
                         aria-label="close"
@@ -45,11 +47,10 @@ function Contact({ contact, showPanel, onClose }) {
                     </IconButton>
 
                     <Grid container>
-                        <Grid item md="3">
-                            <ContactSidebarMenu contact={contact} style={{ height: '50%'}} />
-                            
+                        <Grid>
+                            <ContactSidebarMenu contact={contact} />
                         </Grid>
-                        <Grid item md="6">
+                        <Grid>
                             <Box sx={{ width: '100%' }}>
                                 <TabContext value={value}>
                                     <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '75%' }}>
@@ -60,7 +61,7 @@ function Contact({ contact, showPanel, onClose }) {
                                         </TabList>
                                     </Box>
 
-                                    <TabPanel value="1"><ContactRecentActivity contact={contact} /></TabPanel>
+                                    <TabPanel value="1"><ContactRecentActivity /></TabPanel>
                                     <TabPanel value="2"><Typography>
                                         
                                     </Typography></TabPanel>

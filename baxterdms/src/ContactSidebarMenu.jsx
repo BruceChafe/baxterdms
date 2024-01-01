@@ -42,7 +42,7 @@ export default function ContactSidebarMenu({ contact }) {
                     </Toolbar>
                     <Divider />
                     <List>
-                        {[contact.emailAddress, contact.phoneNumbers.mobilePhone, contact.phoneNumbers.mobilePhone].map((text, index) => (
+                        {[contact.emailAddress, contact.phoneNumbers.mobilePhone].map((text, index) => (
                             <ListItem key={text} disablePadding className="small-list-item">
                                 <ListItemButton onClick={handleEmailClick}>
                                     <ListItemIcon>

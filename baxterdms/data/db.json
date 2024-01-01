@@ -27,9 +27,9 @@
       "id": 1
     },
     {
-      "firstName": "Bruce",
-      "middleName": "Baxter ",
-      "lastName": "Small",
+      "firstName": "Dana",
+      "middleName": "Doreen",
+      "lastName": "Hawco",
       "gender": "",
       "dob": "",
       "address": {
@@ -48,9 +48,35 @@
         "homePhone": "7097706183",
         "workPhone": "7097706184"
       },
-      "emailAddress": "brucechafe@gmail.com",
+      "emailAddress": "wankergirl@gmail.com",
       "notes": "hehe",
-      "id": 1
+      "id": 2
+    },
+    {
+      "firstName": "Billy",
+      "middleName": "Bob",
+      "lastName": "Jpe",
+      "gender": "female",
+      "dob": "",
+      "address": {
+        "streetAddress": "18 Colonial",
+        "postalCode": "A1C 3M8",
+        "city": "St. John's",
+        "province": "NL",
+        "country": "CA"
+      },
+      "preferences": {
+        "preferredLanguage": "english",
+        "preferredContact": "sms"
+      },
+      "phoneNumbers": {
+        "mobilePhone": "7097706182",
+        "homePhone": "",
+        "workPhone": ""
+      },
+      "email": "billybob@gmail.com",
+      "notes": "Notes ",
+      "id": 3
     }
   ]
 }
