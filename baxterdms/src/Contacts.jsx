@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Backdrop } from '@mui/material';
 import Contact from './Contact';
+import UploadContacts from './UploadContacts';
 
 function ContactTable() {
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
+  const [uploadPanelOpen, setUploadPanelOpen] = useState(null);
 
   useEffect(() => {
     fetch('http://localhost:8000/Contacts')
       .then((res) => res.json())
       .then((data) => setContacts(data));
   }, []);
+
+  const handleImportClick = () => {
+    setUploadPanelOpen(true);
+    // document.body.style.overflow = 'hidden';
+  };
 
   const handleEditClick = (contact) => {
     setSelectedContact(contact);
@@ -22,8 +29,14 @@ function ContactTable() {
     document.body.style.overflow = 'auto';
   };
 
+  const handleCloseUploadPanel = () => {
+    setUploadPanelOpen(false);
+    document.body.style.overflow = 'auto';
+  };
+
   return (
     <div>
+      <Button color="secondary" onClick={handleImportClick}>Import</Button>
       <TableContainer>
         <Table sx={{ minWidth: 650 }}>
           <TableHead>
@@ -59,8 +72,11 @@ function ContactTable() {
       {/* Contact Panel */}
       <Contact contact={selectedContact} showPanel={!!selectedContact} onClose={handleCloseEditPanel} />
 
+      {/* UploadContacts Panel */}
+      <UploadContacts showPanel={uploadPanelOpen} onClose={handleCloseUploadPanel} />
+
       {/* Backdrop/Overlay */}
-      <Backdrop open={!!selectedContact} onClick={handleCloseEditPanel} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Backdrop open={!!selectedContact || uploadPanelOpen} onClick={handleCloseEditPanel} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       </Backdrop>
     </div>
   );

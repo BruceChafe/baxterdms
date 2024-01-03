@@ -33,9 +33,6 @@ function Contact({ contact, showPanel, onClose }) {
                         zIndex: 9999,
                     }}
                 >
-                    {/* Log contact.id for debugging */}
-                {console.log("Contact ID:", contact.id)}
-
                     {/* Close button */}
                     <IconButton
                         aria-label="close"
