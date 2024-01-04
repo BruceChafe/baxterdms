@@ -38,7 +38,6 @@ function Contact({ contact, showPanel, onClose }) {
                         aria-label="close"
                         style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 9999 }}
                         onClick={onClose}
-
                     >
                         <CloseIcon />
                     </IconButton>
