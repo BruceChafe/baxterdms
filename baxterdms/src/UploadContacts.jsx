@@ -46,7 +46,11 @@ function UploadContacts({ showPanel, onClose }) {
                     }}
                 >
                     {/* Close button */}
-                    <Toolbar />
+                    <Toolbar>
+                        <Typography>
+                            import
+                        </Typography>
+                    </Toolbar>
                     <IconButton
                         aria-label="close"
                         style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 9999 }}
