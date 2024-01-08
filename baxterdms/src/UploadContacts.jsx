@@ -1,4 +1,7 @@
-// Importing necessary components and icons from Material-UI
+// UploadContact Component
+// This component provides a multi-step process for uploading contact, matching columns, and validating data.
+
+// Importing necessary components and icons
 import { Paper, IconButton, Box, Stepper, Step, StepLabel, Typography, Button, Toolbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState } from 'react';
@@ -45,12 +48,12 @@ function UploadContacts({ showPanel, onClose }) {
                         zIndex: 9999,
                     }}
                 >
-                    {/* Close button */}
                     <Toolbar>
                         <Typography>
                             import
                         </Typography>
                     </Toolbar>
+                    {/* Close button */}
                     <IconButton
                         aria-label="close"
                         style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 9999 }}
@@ -58,7 +61,7 @@ function UploadContacts({ showPanel, onClose }) {
                     >
                         <CloseIcon />
                     </IconButton>
-                    
+
                     {/* Stepper component to display steps */}
                     <Stepper activeStep={activeStep}>
                         {steps.map((label, index) => (
@@ -77,7 +80,7 @@ function UploadContacts({ showPanel, onClose }) {
                             <Typography sx={{ mt: 2, mb: 1 }}>
                                 All steps completed - you&apos;re finished
                             </Typography>
-                            
+
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 {/* Empty space to align the "Reset" button to the right */}
                                 <Box sx={{ flex: '1 1 auto' }} />

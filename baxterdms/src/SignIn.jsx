@@ -1,17 +1,14 @@
+// SignIn Component
+// This component handles user authentication, allowing users to sign in using their email and password.
+
+// Importing necessary components and icons
 import React, { useState } from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import { Link, useNavigate } from 'react-router-dom';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Paper, Box, Grid, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
 
+// Copyright component for displaying copyright information
 function Copyright() {
   return (
     <Typography align="center">
@@ -22,34 +19,38 @@ function Copyright() {
   );
 }
 
+// Functional component for handling user sign-in
 function SignInSide({ setIsUserSignedIn }) {
+
+  // State variables for user credentials
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Use lowercase 'navigate' instead of 'Navigate'
 
+  // Hook for navigation in React Router
+  const navigate = useNavigate();
+
+  // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      console.log("Email:", email);
-      console.log("Password:", password);
-
-      // Use the 'auth' object from the firebase.js file
+      // Use Firebase Auth API to sign in with email and password
       await signInWithEmailAndPassword(auth, email, password);
 
-      // Update the authentication state
+      // Update the authentication state in the parent component
       setIsUserSignedIn(true);
 
       // Redirect to the desired page
-      navigate('/contacts'); // Use lowercase 'navigate' instead of 'Navigate'
+      navigate('/contacts');
+
     } catch (error) {
+      // Log authentication error details
       console.error('Authentication error:', error.message);
-      // Log the entire error object for more details
       console.error('Full error details:', error);
-      // Handle authentication error, e.g., show an error message to the user
     }
   };
 
+  // JSX structure for rendering the sign-in form
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
       <CssBaseline />
@@ -77,7 +78,10 @@ function SignInSide({ setIsUserSignedIn }) {
             alignItems: 'center',
           }}
         >
+          {/* Branding */}
           <Typography variant="h6">baxter.</Typography>
+
+          {/* Sign-in form */}
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
@@ -90,6 +94,7 @@ function SignInSide({ setIsUserSignedIn }) {
               autoFocus
               onChange={(e) => setEmail(e.target.value)}
             />
+
             <TextField
               margin="normal"
               required
@@ -101,13 +106,18 @@ function SignInSide({ setIsUserSignedIn }) {
               autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
             />
+
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+
+            {/* Sign-in button */}
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Sign In
             </Button>
+
+            {/* Forgot password link */}
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2" style={{ color: 'white' }}>
@@ -115,6 +125,8 @@ function SignInSide({ setIsUserSignedIn }) {
                 </Link>
               </Grid>
             </Grid>
+
+            {/* Copyright information */}
             <Copyright sx={{ mt: 5 }} />
           </Box>
         </Box>

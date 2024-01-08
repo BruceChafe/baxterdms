@@ -1,3 +1,4 @@
+// Import necessary components and styles from Material-UI and react-router-dom
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Container from '@mui/material/Container';
@@ -12,15 +13,19 @@ import NewContact from './NewContact';
 import ContactTable from './Contacts';
 import SignIn from './SignIn';
 
+// Create a dark theme using Material-UI's createTheme
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
   },
 });
 
+// Main App component
 function App() {
+  // State to track user authentication status
   const [isUserSignedIn, setIsUserSignedIn] = useState(false);
 
+  // useEffect to check user authentication status on mount
   useEffect(() => {
     // Check user authentication status on mount
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -35,15 +40,21 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  // JSX for rendering the App component
   return (
     <Router>
+      {/* ThemeProvider for applying the dark theme */}
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
+        {/* react-router-dom Routes for handling navigation */}
         <Routes>
+          {/* Route for sign-in page */}
           <Route path='/signin' element={<SignIn setIsUserSignedIn={setIsUserSignedIn} />} />
+          {/* Conditional route based on user authentication status */}
           {isUserSignedIn ? (
             <Route
               path='*'
+              // Layout for authenticated users with SidebarMenu and main content
               element={
                 <Grid container>
                   <Grid item>
@@ -57,6 +68,7 @@ function App() {
                           padding: '1px',
                         }}
                       >
+                        {/* Nested react-router-dom Routes for handling different views */}
                         <Routes>
                           <Route path='/contacts' element={<ContactTable />} />
                           <Route path='/newcontact' element={<NewContact />} />
@@ -77,4 +89,5 @@ function App() {
   );
 }
 
+// Export the App component as the default export
 export default App;

@@ -1,9 +1,12 @@
+// Import necessary components and icons from Material-UI
 import { Paper, IconButton, Box, TextField, Button, Snackbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState } from 'react';
 
+// Functional component for the EmailContact panel
 function EmailContact({ contact, showPanel, onClose }) {
-    const [contactEmail, setContactEmail] = useState(contact.emailAddress);
+    // State variables to manage form inputs and panel visibility
+    const [contactEmail, setContactEmail] = useState(contact.email);
     const [from, setFrom] = useState('');
     const [subject, setSubject] = useState('');
     const [body, setBody] = useState('');
@@ -11,21 +14,26 @@ function EmailContact({ contact, showPanel, onClose }) {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const apiUrl = 'http://localhost:3001/send-email';
 
+    // Function to handle Snackbar close
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
     };
 
+    // State variable to manage the visibility of the panel
     const [panelVisible, setPanelVisible] = useState(showPanel);
 
+    // Function to close the panel
     const handleClosePanel = () => {
         setPanelVisible(false);
         onClose();
     };
 
+    // Function to handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
+            // Send email data to the server using fetch
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -39,23 +47,31 @@ function EmailContact({ contact, showPanel, onClose }) {
                 }),
             });
 
+            // Parse the response data
             const data = await response.json();
 
+            // Update Snackbar message based on the server response
             if (data.success) {
                 setSnackbarMessage('Email sent successfully!');
             } else {
                 setSnackbarMessage(`Error: ${data.error}`);
             }
+
+            // Open Snackbar and close the panel
             setSnackbarOpen(true);
             setPanelVisible(false);
+
         } catch (error) {
+            // Handle any errors that occur during the fetch operation
             setSnackbarMessage(`Error: ${error.message}`);
             setSnackbarOpen(true);
         }
     };
 
+    // JSX for rendering the EmailContact panel
     return (
         <>
+            {/* Render the panel only if the showPanel prop is true */}
             {showPanel && (
                 <Paper
                     elevation={3}
@@ -87,11 +103,12 @@ function EmailContact({ contact, showPanel, onClose }) {
                             <CloseIcon />
                         </IconButton>
 
+                        {/* Form inputs */}
                         <TextField
                             onChange={(e) => setContactEmail(e.target.value)}
                             id="to"
                             label="to:"
-                            defaultValue={contact.emailAddress}
+                            defaultValue={contact.email}
                         />
                         <br />
                         <TextField
@@ -114,6 +131,8 @@ function EmailContact({ contact, showPanel, onClose }) {
                             rows={12}
                         />
                         <br />
+
+                        {/* Submit button */}
                         <Button
                             type="submit"
                             color='secondary'
@@ -123,6 +142,8 @@ function EmailContact({ contact, showPanel, onClose }) {
                         </Button>
 
                     </Box>
+                    
+                    {/* Snackbar for displaying success/error messages */}
                     <Snackbar
                         open={snackbarOpen}
                         autoHideDuration={3000}
@@ -139,4 +160,5 @@ function EmailContact({ contact, showPanel, onClose }) {
     );
 }
 
+// Export the EmailContact component
 export default EmailContact;

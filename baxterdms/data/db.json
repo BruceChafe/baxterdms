@@ -77,6 +77,32 @@
       "email": "billybob@gmail.com",
       "notes": "Notes ",
       "id": 3
+    },
+    {
+      "firstName": "firstTest",
+      "middleName": "middleTest",
+      "lastName": "lastTest",
+      "gender": "male",
+      "dob": "",
+      "address": {
+        "streetAddress": "streetTest",
+        "postalCode": "postalTest",
+        "city": "cityTest",
+        "province": "NL",
+        "country": "CA"
+      },
+      "preferences": {
+        "preferredLanguage": "english",
+        "preferredContact": "sms"
+      },
+      "phoneNumbers": {
+        "mobilePhone": "mobileTest",
+        "homePhone": "homeTest",
+        "workPhone": "workTest"
+      },
+      "email": "emailTest",
+      "notes": "notesTest",
+      "id": 4
     }
   ]
 }
