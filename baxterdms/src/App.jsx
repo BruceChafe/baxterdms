@@ -11,7 +11,7 @@ import { auth } from './firebase'; // Import the auth object from firebase.js
 import SidebarMenu from './Sidebar';
 import NewContact from './NewContact';
 import ContactTable from './Contacts';
-import SignIn from './SignIn';
+import SignInSide from './components/signin/SignIn';
 
 // Create a dark theme using Material-UI's createTheme
 const darkTheme = createTheme({
@@ -49,7 +49,7 @@ function App() {
         {/* react-router-dom Routes for handling navigation */}
         <Routes>
           {/* Route for sign-in page */}
-          <Route path='/signin' element={<SignIn setIsUserSignedIn={setIsUserSignedIn} />} />
+          <Route path='/signin' element={<SignInSide setIsUserSignedIn={setIsUserSignedIn} />} />
           {/* Conditional route based on user authentication status */}
           {isUserSignedIn ? (
             <Route

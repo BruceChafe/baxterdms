@@ -19,8 +19,8 @@ app.post('/send-email', async (req, res) => {
         port: 587,
         secure: false,
         auth: {
-            user: 'skeezer-web@outlook.com',
-            pass: '',
+            user: 'baxterdms@outlook.com',
+            pass: 'Diet1989Coke!',
         },
   });
 

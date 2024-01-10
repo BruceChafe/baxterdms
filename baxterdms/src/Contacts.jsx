@@ -21,7 +21,7 @@ function ContactTable() {
   // Function to handle the click event for the "Import" button
   const handleImportClick = () => {
     setUploadPanelOpen(true);
-    // document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
   };
 
   // Function to handle the click event for editing a contact
@@ -105,3 +105,4 @@ function ContactTable() {
 }
 
 export default ContactTable;
+
