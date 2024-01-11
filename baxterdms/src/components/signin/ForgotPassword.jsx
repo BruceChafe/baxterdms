@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { IconButton, Button, TextField, Box, Modal, styled } from '@mui/material';
+import { IconButton, Button, TextField, Box, Modal, styled, Typography } from '@mui/material';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../firebase';
 
@@ -71,12 +71,9 @@ const ForgotPassword = () => {
           >
             <CloseIcon />
           </IconButton>
-          <h2 id="unstyled-modal-title" className="modal-title">
-            Text in a modal
-          </h2>
-          <p id="unstyled-modal-description" className="modal-description">
-            Aliquid amet deserunt earum!
-          </p>
+          <Typography>
+            reset
+          </Typography>
         </ModalContent>
       </Modal>
     </Box>
