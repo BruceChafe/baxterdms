@@ -5,7 +5,7 @@ import Contact from './Contact';
 import UploadContacts from './UploadContacts';
 
 // Functional component for ContactTable
-function ContactTable() {
+const ContactTable = () => {
   // State variables for managing contacts, selected contact, and upload panel visibility
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
@@ -105,4 +105,3 @@ function ContactTable() {
 }
 
 export default ContactTable;
-

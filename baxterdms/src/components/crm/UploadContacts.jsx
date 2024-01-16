@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 const steps = ['Upload file', 'Select header row', 'Match Columns', 'Validate data'];
 
 // Functional component for the UploadContacts panel
-function UploadContacts({ showPanel, onClose }) {
+const UploadContacts = ({ showPanel, onClose }) => {
 
     // State for tracking the active step
     const [activeStep, setActiveStep] = React.useState(0);

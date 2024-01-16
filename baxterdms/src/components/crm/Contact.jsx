@@ -7,7 +7,7 @@ import ContactRecentActivity from './ContactRecentActivity';
 import ContactSidebarMenu from './ContactSidebarMenu';
 
 // Functional component for displaying contact details and recent activities
-function Contact({ contact, showPanel, onClose }) {
+const Contact = ({ contact, showPanel, onClose }) => {
     // State for managing the active tab value
     const [value, setValue] = React.useState('1');
 

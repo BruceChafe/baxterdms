@@ -4,10 +4,9 @@ import { Grid, Paper, Typography, TextField, FormControl, FormControlLabel, Form
 import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useNavigate } from 'react-router-dom';
 
 // Functional component for creating a new contact
-export default function NewContact() {
+const NewContact = () => {
   // State variables for storing contact information
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
@@ -340,3 +339,5 @@ export default function NewContact() {
     </form>
   );
 }
+
+export default  NewContact;

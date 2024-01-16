@@ -2,7 +2,7 @@
 import { Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 // Functional component for displaying recent activities of a contact
-export default function ContactRecentActivity({ contact }) {
+const ContactRecentActivity = ({ contact }) => {
     // JSX for rendering the ContactRecentActivity component
     return (
         <Table sx={{ minWidth: 650 }} size="large">
@@ -23,3 +23,5 @@ export default function ContactRecentActivity({ contact }) {
         </Table>
     );
 }
+
+export default ContactRecentActivity;

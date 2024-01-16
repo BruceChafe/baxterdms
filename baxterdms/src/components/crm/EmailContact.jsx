@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useState } from 'react';
 
 // Functional component for the EmailContact panel
-function EmailContact({ contact, showPanel, onClose }) {
+const EmailContact = ({ contact, showPanel, onClose }) => {
     // State variables to manage form inputs and panel visibility
     const [contactEmail, setContactEmail] = useState(contact.email);
     const [from, setFrom] = useState('');

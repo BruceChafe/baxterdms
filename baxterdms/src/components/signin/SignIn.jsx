@@ -18,19 +18,17 @@ import BackgroundImage from './BackgroundImage';
 import ForgotPassword from './ForgotPassword';
 import Copyright from '../copyright/Copyright';
 
-function SignInSide({ setIsUserSignedIn }) {
+const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-
   const navigate = useNavigate();
 
-  const handleSubmit = async (event) => {
+  const handleSignIn = async (event) => {
     event.preventDefault();
-
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      setIsUserSignedIn(true);
+      const user = await signInWithEmailAndPassword(auth, email, password)   
+      console.log(user)
       navigate('/contacts');
     } catch (error) {
       console.error('Authentication error:', error.message);
@@ -62,7 +60,7 @@ function SignInSide({ setIsUserSignedIn }) {
           {showForgotPassword ? (
             <ForgotPassword />
           ) : (
-            <Box component="form" noValidate onSubmit={handleSubmit} style={{ width: '80%' }}>
+            <Box component="form" noValidate onSubmit={handleSignIn} style={{ width: '80%' }}>
               <TextField
                 margin="normal"
                 required
@@ -113,6 +111,6 @@ function SignInSide({ setIsUserSignedIn }) {
       </Grid>
     </Grid>
   );
-}
+};
 
-export default SignInSide;
+export default SignIn;

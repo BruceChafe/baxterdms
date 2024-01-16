@@ -9,7 +9,7 @@ import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
 import EmailContact from './EmailContact';
 
 // Functional component for the ContactSidebarMenu
-export default function ContactSidebarMenu({ contact }) {
+const ContactSidebarMenu = ({ contact }) => {
     // Set the width of the drawer
     const drawerWidth = 300;
 
@@ -100,3 +100,5 @@ export default function ContactSidebarMenu({ contact }) {
         </div>
     );
 }
+
+export default ContactSidebarMenu;

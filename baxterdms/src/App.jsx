@@ -1,87 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {
-  createTheme,
-  ThemeProvider,
   Grid,
-  Paper,
   CssBaseline,
   Container,
 } from '@mui/material';
 
-import DarkModeToggle from './components/themetoggle/DarkModeToggle';
-import { auth } from './firebase';
-import SidebarMenu from './Sidebar';
-import NewContact from './NewContact';
-import ContactTable from './Contacts';
-import SignInSide from './components/signin/SignIn';
+import SignIn from './components/signin/SignIn';
+
+import NewContact from './components/crm/NewContact';
+import ContactTable from './components/crm/Contacts';
+
+import AuthContext from './context/AuthContent';
+import { ThemeProvider } from './context/ThemeContext';
+import ThemeSelection from './components/account/Theme';
+import AccountOverview from './components/account/Overview';
+
+import NavigationSidebar from './components/sidebar/NavigationSidebar';
+import AccountSideBar from './components/sidebar/AccountSidebar';
+import CRMSidebar from './components/sidebar/CRMSidebar';
 
 const App = () => {
-  const [isUserSignedIn, setIsUserSignedIn] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setIsUserSignedIn(true);
-      } else {
-        setIsUserSignedIn(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
-
-  const theme = createTheme({
-    palette: {
-      mode: darkMode ? 'dark' : 'light', // Use dark or light mode based on the state
-    },
-  });
-
   return (
-    <Router>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Routes>
-          <Route path='/signin' element={<SignInSide setIsUserSignedIn={setIsUserSignedIn} />} />
-          {isUserSignedIn ? (
+    <AuthContext>
+      <ThemeProvider>
+        <Router>
+          <CssBaseline />
+          <Routes>
+            <Route path="/signin" element={<SignIn />} />
             <Route
               path='*'
               element={
                 <Grid container>
                   <Grid item>
-                    <SidebarMenu />
+                    <CRMSidebar />
                   </Grid>
                   <Grid item lg>
                     <Container maxWidth="false">
-                      <Paper
-                        style={{
-                          margin: '10px',
-                          padding: '1px',
-                        }}
-                      >
-                        <Routes>
-                          <Route path='/contacts' element={<ContactTable />} />
-                          <Route path='/newcontact' element={<NewContact />} />
-                        </Routes>
-                      </Paper>
+                      <Routes>
+                        <Route path='/crm/contacts' element={<ContactTable />} />
+                        <Route path='/crm/newcontact' element={<NewContact />} />
+                        <Route path='/account/overview' element={<AccountOverview />} />
+                        <Route path='/account/theme' element={<ThemeSelection />} />
+                      </Routes>
                     </Container>
                   </Grid>
                 </Grid>
               }
             />
-          ) : (
-            <Route path='*' element={<Navigate to='/signin' />} />
-          )}
-        </Routes>
-        {/* Toggle dark/light mode button */}
-        <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+          </Routes>
+
+        </Router>
       </ThemeProvider>
-    </Router>
+    </AuthContext>
   );
 };
 
