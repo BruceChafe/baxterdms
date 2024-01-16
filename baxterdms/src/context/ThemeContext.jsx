@@ -34,6 +34,7 @@ export const ThemeProvider = ({ children }) => {
             typography: {
                 
                 h1: {
+                    fontFamily: 'cursive',
                     fontSize: '3rem',
                     fontWeight: 700,
                     letterSpacing: '0.1em',
@@ -323,6 +324,7 @@ export const ThemeProvider = ({ children }) => {
                 },
             },
             typography: {
+                fontFamily: 'Arial, sans-serif',
                 h1: {
                     fontSize: '3rem',
                     fontWeight: 700,
@@ -330,6 +332,7 @@ export const ThemeProvider = ({ children }) => {
                     color: '#c2185b', // Dark pink color for headings
                 },
                 h2: {
+                    fontFamily: 'cursive',
                     fontSize: '2.5rem',
                     fontWeight: 600,
                     letterSpacing: '0.1em',
@@ -357,6 +360,8 @@ export const ThemeProvider = ({ children }) => {
     );
 };
 
+
+// Custom hook to consume the theme context
 export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (!context) {

@@ -1,7 +1,3 @@
-// UploadContact Component
-// This component provides a multi-step process for uploading contact, matching columns, and validating data.
-
-// Importing necessary components and icons
 import { Paper, IconButton, Box, Stepper, Step, StepLabel, Typography, Button, Toolbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState } from 'react';

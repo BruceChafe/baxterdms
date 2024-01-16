@@ -29,7 +29,7 @@ const SignIn = () => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password)   
       console.log(user)
-      navigate('/contacts');
+      navigate('/home');
     } catch (error) {
       console.error('Authentication error:', error.message);
       console.error('Full error details:', error);

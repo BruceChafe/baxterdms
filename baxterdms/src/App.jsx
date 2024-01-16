@@ -6,6 +6,8 @@ import {
   Container,
 } from '@mui/material';
 
+import Home from './components/main/Home';
+
 import SignIn from './components/signin/SignIn';
 
 import NewContact from './components/crm/NewContact';
@@ -16,9 +18,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import ThemeSelection from './components/account/Theme';
 import AccountOverview from './components/account/Overview';
 
-import NavigationSidebar from './components/sidebar/NavigationSidebar';
-import AccountSideBar from './components/sidebar/AccountSidebar';
-import CRMSidebar from './components/sidebar/CRMSidebar';
+import SidebarSwitcher from './components/sidebar/SidebarSwitcher';
 
 const App = () => {
   return (
@@ -33,13 +33,16 @@ const App = () => {
               element={
                 <Grid container>
                   <Grid item>
-                    <CRMSidebar />
+                    <SidebarSwitcher />
                   </Grid>
                   <Grid item lg>
                     <Container maxWidth="false">
                       <Routes>
+                        <Route path='/home' element={<Home />} />
+
                         <Route path='/crm/contacts' element={<ContactTable />} />
                         <Route path='/crm/newcontact' element={<NewContact />} />
+                        
                         <Route path='/account/overview' element={<AccountOverview />} />
                         <Route path='/account/theme' element={<ThemeSelection />} />
                       </Routes>

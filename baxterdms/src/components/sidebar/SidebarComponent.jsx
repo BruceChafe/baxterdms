@@ -2,17 +2,14 @@
 import React from 'react';
 import { Box, Drawer, CssBaseline, Toolbar, List, Typography, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
-import ContactsIcon from '@mui/icons-material/Contacts';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase';
 
-// Array of objects representing navigation links
-const navigationLinks = [
-  { text: 'Profile', to: '../account/overview', color: 'white', icon: <ContactsIcon /> },
-  { text: 'Theme', to: '/../account/theme', color: 'white' },
-];
+const home = [
+  { text: 'baxter. ', to: '/home', color: 'white' }
+]
 
-const AccountSidebar = () => {
+const SidebarComponent = ({ pageName, navigationLinks }) => {
   const drawerWidth = 300;
   const navigate = useNavigate();
   const handleLogout = async () => {
@@ -23,6 +20,7 @@ const AccountSidebar = () => {
       console.error('Logout error:', error.message);
     }
   };
+
 
   return (
     <React.Fragment>
@@ -42,7 +40,10 @@ const AccountSidebar = () => {
         >
           <Toolbar>
             <Typography variant="h6">
-              baxter. account
+              {home.map((item) => (
+                <Link to={item.to} style={{ color: item.color, textDecoration: 'none' }}>{item.text}</Link>
+              ))}
+              {pageName}
             </Typography>
           </Toolbar>
           <Divider />
@@ -73,5 +74,5 @@ const AccountSidebar = () => {
   );
 };
 
-export default AccountSidebar;
+export default SidebarComponent;
 
