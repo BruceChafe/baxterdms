@@ -1,13 +1,24 @@
 // Import necessary components and libraries
-import React from 'react';
-import { Box, Drawer, CssBaseline, Toolbar, List, Typography, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Button } from '@mui/material';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../../firebase';
+import React from "react";
+import {
+  Box,
+  Drawer,
+  CssBaseline,
+  Toolbar,
+  List,
+  Typography,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Button,
+} from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../../firebase";
 
-const home = [
-  { text: 'baxter. ', to: '/home', color: 'white' }
-]
+const home = [{ text: "baxter.", to: "/home", color: "white" }];
 
 const SidebarComponent = ({ pageName, navigationLinks }) => {
   const drawerWidth = 300;
@@ -15,24 +26,23 @@ const SidebarComponent = ({ pageName, navigationLinks }) => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      navigate('/signin');
+      navigate("/signin");
     } catch (error) {
-      console.error('Logout error:', error.message);
+      console.error("Logout error:", error.message);
     }
   };
 
-
   return (
     <React.Fragment>
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <Drawer
           sx={{
             width: drawerWidth,
             flexShrink: 0,
-            '& .MuiDrawer-paper': {
+            "& .MuiDrawer-paper": {
               width: drawerWidth,
-              boxSizing: 'border-box',
+              boxSizing: "border-box",
             },
           }}
           variant="permanent"
@@ -41,21 +51,36 @@ const SidebarComponent = ({ pageName, navigationLinks }) => {
           <Toolbar>
             <Typography variant="h6">
               {home.map((item) => (
-                <Link to={item.to} style={{ color: item.color, textDecoration: 'none' }}>{item.text}</Link>
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  style={{ color: item.color, textDecoration: "none" }}
+                >
+                  {item.text}
+                </Link>
               ))}
-              {pageName}
             </Typography>
           </Toolbar>
           <Divider />
           <List>
-            {navigationLinks.map((link, index) => (
-              <ListItem key={index} disablePadding component={Link} to={link.to}>
-                <ListItemButton>
-                  <ListItemText primary={link.text} style={{ color: link.color }} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+            {navigationLinks &&
+              navigationLinks.map((link, index) => (
+                <ListItem
+                  key={index}
+                  disablePadding
+                  component={Link}
+                  to={link.to}
+                >
+                  <ListItemButton>
+                    <ListItemText
+                      primary={link.text}
+                      style={{ color: link.color }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
           </List>
+
           <Divider />
           <Box sx={{ flexGrow: 1 }} />
           <List>
@@ -75,4 +100,3 @@ const SidebarComponent = ({ pageName, navigationLinks }) => {
 };
 
 export default SidebarComponent;
-
