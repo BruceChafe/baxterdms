@@ -6,15 +6,16 @@ import Home from "./components/main/Home";
 import SignIn from "./components/signin/SignIn";
 import NewContact from "./components/crm/NewContact";
 import ContactTable from "./components/crm/Contacts";
-import AuthContext from "./context/AuthContent";
+import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import ThemeSelection from "./components/account/Theme";
 import { AccountOverview, AccountTiles } from "./components/account/Overview";
 import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
+import UserProfile from "./components/account/PersonalInfo";
 
 const App = () => {
   return (
-    <AuthContext>
+    <AuthProvider>
       <ThemeProvider>
         <Router>
           <CssBaseline />
@@ -53,6 +54,10 @@ const App = () => {
                           path="/account/theme"
                           element={<ThemeSelection />}
                         />
+                        <Route
+                          path="/account/userprofile"
+                          element={<UserProfile />}
+                        />
                       </Routes>
                     </Container>
                   </Grid>
@@ -62,7 +67,7 @@ const App = () => {
           </Routes>
         </Router>
       </ThemeProvider>
-    </AuthContext>
+    </AuthProvider>
   );
 };
 

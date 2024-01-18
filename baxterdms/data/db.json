@@ -1,4 +1,18 @@
 {
+  "users": [
+    {
+      "UID": "yfFNxM3XMfhw1UutXqOHTIG6EYa2",
+      "firstName": "Bruce",
+      "middleName": "Baxter ",
+      "lastName": "Chafe"
+    },
+    {
+      "UID": "cay7knM7AsVkg7VvpGXS1t31rDa2",
+      "firstName": "Dana",
+      "middleName": "Doreen ",
+      "lastName": "Hawco"
+    }
+  ],
   "contacts": [
     {
       "firstName": "Bruce",
