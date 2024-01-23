@@ -22,6 +22,7 @@ const SidebarItems = {
       { text: "Overview", to: "/account/overview", color: "white" },
       { text: "Personal Info", to: "/account/userprofile", color: "white" },
       { text: "Theme", to: "/account/theme", color: "white" },
+      { text: "Update Password", to: "/account/updatepassword" },
     ],
   },
 };

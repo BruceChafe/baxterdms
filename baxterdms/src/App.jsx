@@ -12,6 +12,7 @@ import ThemeSelection from "./components/account/Theme";
 import { AccountOverview, AccountTiles } from "./components/account/Overview";
 import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
 import UserProfile from "./components/account/PersonalInfo";
+import UpdatePassword from "./components/account/UpdatePassword";
 
 const App = () => {
   return (
@@ -57,6 +58,10 @@ const App = () => {
                         <Route
                           path="/account/userprofile"
                           element={<UserProfile />}
+                        />
+                        <Route
+                          path="/account/updatepassword"
+                          element={<UpdatePassword />}
                         />
                       </Routes>
                     </Container>

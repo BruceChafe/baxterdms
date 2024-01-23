@@ -1,371 +1,284 @@
-import React, { createContext, useContext, useState } from 'react';
-import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { ThemeProvider as MuiThemeProvider, createTheme } from "@mui/material";
+import { AuthContext } from "./AuthContext";
+import UserData from "../components/account/UserData";
 
 const ThemeContext = createContext();
 
-export const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useState('dark');
+const ThemeProvider = ({ children }) => {
+  const themes = {
+    slateTheme: createTheme({
+      palette: {
+        mode: "dark",
+        background: {
+          default: "#263238", // Deep blue-gray background
+          paper: "#37474F", // Slightly lighter panel background
+        },
+        primary: {
+          main: "#8BC34A", // Fresh green for primary elements
+        },
+        secondary: {
+          main: "#FFC107", // Vivid yellow for secondary elements
+        },
+        text: {
+          primary: "#FFFFFF", // White text for high contrast
+          secondary: "#B0BEC5", // Subdued light blue-gray for secondary text
+        },
+      },
+      typography: {
+        fontFamily: "Roboto, sans-serif",
+        h1: {
+          fontSize: "3rem", // Larger font size for emphasis
+          fontWeight: 700, // Bolder font weight for heading
+          color: "#FFFFFF", // White color for headings
+          marginBottom: "1rem", // Improved spacing below headings
+        },
+        h2: {
+          fontSize: "2.5rem", // Slightly smaller font size for subheadings
+          fontWeight: 600, // Slightly bolder font weight
+          color: "#FFFFFF",
+          marginBottom: "1rem",
+        },
+        body1: {
+          fontSize: "1rem", // Standard font size for body text
+          lineHeight: 1.6, // Improved line height for readability
+          color: "#B0BEC5",
+          marginBottom: "0.5rem",
+        },
+        // Add more typography styles as needed
+      },
+      shape: {
+        borderRadius: 8,
+      },
+      spacing: 8, // Use a consistent spacing scale for better alignment
+      shadows: [
+        "0px 4px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+        "0px 8px 16px rgba(0, 0, 0, 0.1)", // Slightly stronger shadow for modals or elevated elements
+      ],
+      // Add more styling properties as needed
+    }),
+    royalBlueDarkTheme: createTheme({
+      palette: {
+        mode: "dark",
+        background: {
+          default: "#1A237E", // Royal blue background
+          paper: "#283593", // Slightly darker panel background
+        },
+        primary: {
+          main: "#2196F3", // Royal blue for primary elements
+        },
+        secondary: {
+          main: "#FFC107", // Vivid yellow for secondary elements
+        },
+        text: {
+          primary: "#FFFFFF",
+          secondary: "#B0BEC5",
+        },
+      },
+      typography: {
+        fontFamily: "Roboto, sans-serif",
+        h1: {
+          fontSize: "3rem", // Larger font size for emphasis
+          fontWeight: 700, // Bolder font weight for heading
+          color: "#FFFFFF", // White color for headings
+          marginBottom: "1rem", // Improved spacing below headings
+        },
+        h2: {
+          fontSize: "2.5rem", // Slightly smaller font size for subheadings
+          fontWeight: 600, // Slightly bolder font weight
+          color: "#FFFFFF",
+          marginBottom: "1rem",
+        },
+        body1: {
+          fontSize: "1rem", // Standard font size for body text
+          lineHeight: 1.6, // Improved line height for readability
+          color: "#B0BEC5",
+          marginBottom: "0.5rem",
+        },
+        // Add more typography styles as needed
+      },
+      shape: {
+        borderRadius: 8,
+      },
+      spacing: 8, // Use a consistent spacing scale for better alignment
+      shadows: [
+        "0px 4px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+        "0px 8px 16px rgba(0, 0, 0, 0.1)", // Slightly stronger shadow for modals or elevated elements
+      ],
+      // Add more styling properties as needed
+    }),
+    deepGreenDarkTheme: createTheme({
+        palette: {
+            mode: 'dark',
+            background: {
+                default: '#004D40', // Deep green background
+                paper: '#00695C',   // Slightly darker panel background
+            },
+            primary: {
+                main: '#8BC34A',     // Fresh green for primary elements
+            },
+            secondary: {
+                main: '#FFC107',     // Vivid yellow for secondary elements
+            },
+            text: {
+                primary: '#FFFFFF',
+                secondary: '#B0BEC5',
+            },
+      },
+      typography: {
+        fontFamily: "Roboto, sans-serif",
+        h1: {
+          fontSize: "3rem", // Larger font size for emphasis
+          fontWeight: 700, // Bolder font weight for heading
+          color: "#FFFFFF", // White color for headings
+          marginBottom: "1rem", // Improved spacing below headings
+        },
+        h2: {
+          fontSize: "2.5rem", // Slightly smaller font size for subheadings
+          fontWeight: 600, // Slightly bolder font weight
+          color: "#FFFFFF",
+          marginBottom: "1rem",
+        },
+        body1: {
+          fontSize: "1rem", // Standard font size for body text
+          lineHeight: 1.6, // Improved line height for readability
+          color: "#B0BEC5",
+          marginBottom: "0.5rem",
+        },
+        // Add more typography styles as needed
+      },
+      shape: {
+        borderRadius: 8,
+      },
+      spacing: 8, // Use a consistent spacing scale for better alignment
+      shadows: [
+        "0px 4px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+        "0px 8px 16px rgba(0, 0, 0, 0.1)", // Slightly stronger shadow for modals or elevated elements
+      ],
+      // Add more styling properties as needed
+    }),
+    crispWhiteTheme: createTheme({
+      palette: {
+        mode: "light",
+        background: {
+          default: "#FFFFFF", // Pure white background
+          paper: "#FAFAFA", // Slightly off-white panel background
+        },
+        primary: {
+          main: "#2196F3", // Royal blue for primary elements
+        },
+        secondary: {
+          main: "#FFC107", // Vivid yellow for secondary elements
+        },
+        text: {
+          primary: "#212121", // Dark gray text for high contrast
+          secondary: "#757575", // Medium gray for secondary text
+        },
+      },
+      typography: {
+        fontFamily: "Roboto, sans-serif",
+        h1: {
+          fontSize: "3rem", // Larger font size for emphasis
+          fontWeight: 700, // Bolder font weight for heading
+          color: "#FFFFFF", // White color for headings
+          marginBottom: "1rem", // Improved spacing below headings
+        },
+        h2: {
+          fontSize: "2.5rem", // Slightly smaller font size for subheadings
+          fontWeight: 600, // Slightly bolder font weight
+          color: "#FFFFFF",
+          marginBottom: "1rem",
+        },
+        body1: {
+          fontSize: "1rem", // Standard font size for body text
+          lineHeight: 1.6, // Improved line height for readability
+          color: "#B0BEC5",
+          marginBottom: "0.5rem",
+        },
+        // Add more typography styles as needed
+      },
+      shape: {
+        borderRadius: 8,
+      },
+      spacing: 8, // Use a consistent spacing scale for better alignment
+      shadows: [
+        "0px 4px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+        "0px 8px 16px rgba(0, 0, 0, 0.1)", // Slightly stronger shadow for modals or elevated elements
+      ],
+      // Add more styling properties as needed
+    })
+  };
 
-    const themes = {
-        // Dark Modes
-        dark: createTheme({
-            palette: {
-                mode: 'dark',
-            },
-        }),
-        vaporWaveTheme: createTheme({
-            palette: {
-                mode: 'light',
-                background: {
-                    default: '#f3e8fd',
-                    paper: '#d1d1ff',
-                },
-                primary: {
-                    main: '#a64dff',
-                },
-                secondary: {
-                    main: '#ff66ff',
-                },
-                text: {
-                    primary: '#2c2c54',
-                    secondary: '#7f8c8d',
-                },
-            },
-            typography: {
-                
-                h1: {
-                    fontFamily: 'cursive',
-                    fontSize: '3rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#ff66ff',
-                },
-                h2: {
-                
-                    fontSize: '2.5rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    color: '#a64dff',
-                },
-                body1: {
-                    fontSize: '1.1rem',
-                    lineHeight: 1.6,
-                },
-            },
-            shape: {
-                borderRadius: 8,
-            },
-        }),
+  const { user } = useContext(AuthContext);
+  const [theme, setTheme] = useState("deepGreenDarkTheme");
 
-        // Additional Lighter Themes
-        luminousMorningTheme: createTheme({
-            palette: {
-                mode: 'light',
-                background: {
-                    default: '#f5f5f5', // Light gray background color
-                    paper: '#ffffff',   // White paper color
-                },
-                primary: {
-                    main: '#64b5f6',     // Sky blue color
-                },
-                secondary: {
-                    main: '#ff8a65',     // Deep orange accent color
-                },
-                text: {
-                    primary: '#333333',  // Dark gray text color
-                    secondary: '#666666', // Medium gray secondary text color
-                },
-            },
-            typography: {
-                h1: {
-                    fontSize: '3rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#ff8a65', // Deep orange color for headings
-                },
-                h2: {
-                    fontSize: '2.5rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    color: '#64b5f6', // Sky blue color for subheadings
-                },
-                body1: {
-                    fontSize: '1.1rem',
-                    lineHeight: 1.6,
-                },
-            },
-            shape: {
-                borderRadius: 8,
-            },
-        }),
-
-        whimsicalMeadowTheme: createTheme({
-            palette: {
-                mode: 'light',
-                background: {
-                    default: '#e6f7ec',
-                    paper: '#d1f0ff',
-                },
-                primary: {
-                    main: '#4caf50',
-                },
-                secondary: {
-                    main: '#2196f3',
-                },
-                text: {
-                    primary: '#37474f',
-                    secondary: '#546e7a',
-                },
-            },
-            typography: {
-                h1: {
-                    fontSize: '3rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#2196f3',
-                },
-                h2: {
-                    fontSize: '2.5rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    color: '#4caf50',
-                },
-                body1: {
-                    fontSize: '1.1rem',
-                    lineHeight: 1.6,
-                },
-            },
-            shape: {
-                borderRadius: 8,
-            },
-        }),
-
-        cottonCandyDreamTheme: createTheme({
-            palette: {
-                mode: 'light',
-                background: {
-                    default: '#fff5e1',
-                    paper: '#ffe0b2',
-                },
-                primary: {
-                    main: '#ff9800',
-                },
-                secondary: {
-                    main: '#9c27b0',
-                },
-                text: {
-                    primary: '#333333',
-                    secondary: '#616161',
-                },
-            },
-            typography: {
-                h1: {
-                    fontSize: '3rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#9c27b0',
-                },
-                h2: {
-                    fontSize: '2.5rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    color: '#ff9800',
-                },
-                body1: {
-                    fontSize: '1.1rem',
-                    lineHeight: 1.6,
-                },
-            },
-            shape: {
-                borderRadius: 8,
-            },
-        }),
-
-        // Dark Mode Themes
-        midnightMystiqueTheme: createTheme({
-            palette: {
-                mode: 'dark',
-                background: {
-                    default: '#121212',
-                    paper: '#1e1e1e',
-                },
-                primary: {
-                    main: '#64ffda',
-                },
-                secondary: {
-                    main: '#ff4081',
-                },
-                text: {
-                    primary: '#ffffff',
-                    secondary: '#9e9e9e',
-                },
-            },
-            typography: {
-                h1: {
-                    fontSize: '3rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#ff4081',
-                },
-                h2: {
-                    fontSize: '2.5rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    color: '#64ffda',
-                },
-                body1: {
-                    fontSize: '1.1rem',
-                    lineHeight: 1.6,
-                },
-            },
-            shape: {
-                borderRadius: 8,
-            },
-        }),
-
-        shadowyForestTheme: createTheme({
-            palette: {
-                mode: 'dark',
-                background: {
-                    default: '#263238',
-                    paper: '#37474f',
-                },
-                primary: {
-                    main: '#ffeb3b',
-                },
-                secondary: {
-                    main: '#e91e63',
-                },
-                text: {
-                    primary: '#ffffff',
-                    secondary: '#bdbdbd',
-                },
-            },
-            typography: {
-                h1: {
-                    fontSize: '3rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#e91e63',
-                },
-                h2: {
-                    fontSize: '2.5rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    color: '#ffeb3b',
-                },
-                body1: {
-                    fontSize: '1.1rem',
-                    lineHeight: 1.6,
-                },
-            },
-            shape: {
-                borderRadius: 8,
-            },
-        }),
-
-        cosmicNebulaTheme: createTheme({
-            palette: {
-                mode: 'dark',
-                background: {
-                    default: '#1a1a1a',
-                    paper: '#222222',
-                },
-                primary: {
-                    main: '#ff6f61',
-                },
-                secondary: {
-                    main: '#76c7c0',
-                },
-                text: {
-                    primary: '#ffffff',
-                    secondary: '#b0b0b0',
-                },
-            },
-            typography: {
-                h1: {
-                    fontSize: '3rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#76c7c0',
-                },
-                h2: {
-                    fontSize: '2.5rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    color: '#ff6f61',
-                },
-                body1: {
-                    fontSize: '1.1rem',
-                    lineHeight: 1.6,
-                },
-            },
-            shape: {
-                borderRadius: 8,
-            },
-        }),
-
-        obsidianDreamTheme: createTheme({
-            palette: {
-                mode: 'dark',
-                background: {
-                    default: '#121212', // Dark background color
-                    paper: '#1e1e1e',   // Dark paper color
-                },
-                primary: {
-                    main: '#607d8b',     // Blue-gray color
-                },
-                secondary: {
-                    main: '#c2185b',     // Dark pink accent color
-                },
-                text: {
-                    primary: '#ffffff',  // White text color
-                    secondary: '#bdbdbd', // Gray secondary text color
-                },
-            },
-            typography: {
-                fontFamily: 'Arial, sans-serif',
-                h1: {
-                    fontSize: '3rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#c2185b', // Dark pink color for headings
-                },
-                h2: {
-                    fontFamily: 'cursive',
-                    fontSize: '2.5rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    color: '#607d8b', // Blue-gray color for subheadings
-                },
-                body1: {
-                    fontSize: '1.1rem',
-                    lineHeight: 1.6,
-                },
-            },
-            shape: {
-                borderRadius: 8,
-            },
-        }),
+  useEffect(() => {
+    const fetchUserTheme = async () => {
+      try {
+        if (user && user.uid) {
+          const response = await fetch(`http://localhost:8000/users/${user.uid}`);
+          const userData = await response.json();
+  
+          if (userData.theme && themes[userData.theme]) {
+            setTheme(userData.theme);
+          } else {
+            setTheme("deepGreenDarkTheme");
+          }
+        } else {
+          setTheme("deepGreenDarkTheme");
+        }
+      } catch (error) {
+        console.error('Error fetching user theme:', error);
+      }
     };
 
-    const toggleTheme = (selectedTheme) => {
-        setTheme(selectedTheme);
-    };
+    fetchUserTheme();
 
-    return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            <MuiThemeProvider theme={themes[theme]}>{children}</MuiThemeProvider>
+    return () => {
+        setTheme("deepGreenDarkTheme");
+      };
+    }, [user]);
+
+  const toggleTheme = async (selectedTheme) => {
+    if (!user || !user.uid) {
+      console.error('User information not available.');
+      return;
+    }
+  
+    setTheme(selectedTheme);
+  
+    const updatedUser = {
+      theme: selectedTheme,
+    };
+  
+    try {
+      await fetch(`http://localhost:8000/users/${user.uid}`, {
+        method: 'PATCH', // Use PATCH method for partial updates
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify(updatedUser),
+      });
+    } catch (error) {
+      console.error('Error updating user theme:', error);
+    }
+  };
+  return (
+    <UserData>
+      {(userDetails) => (
+        <ThemeContext.Provider value={{ theme, toggleTheme, themes }}>
+          <MuiThemeProvider theme={themes[theme]}>{children}</MuiThemeProvider>
         </ThemeContext.Provider>
-    );
+      )}
+    </UserData>
+  );
 };
-
 
 // Custom hook to consume the theme context
-export const useTheme = () => {
-    const context = useContext(ThemeContext);
-    if (!context) {
-        throw new Error('useTheme must be used within a ThemeProvider');
-    }
-    return context;
+const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
+  return context;
 };
+
+export { useTheme, ThemeProvider, ThemeContext };
