@@ -62,32 +62,41 @@ const ContactTable = () => {
             </TableRow>
           </TableHead>
           {/* Table body */}
-          <TableBody>
-            {contacts.map((contact) => (
-              <TableRow
-                key={contact.id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                {/* Edit button for each contact */}
-                <TableCell>
-                  <Button onClick={() => handleEditClick(contact)}>Edit</Button>
-                </TableCell>
-                {/* Display contact information */}
-                <TableCell>{contact.firstName} {contact.lastName}</TableCell>
-                <TableCell>
-                  {contact.address.streetAddress} <br /> {contact.address.city}, {contact.address.province}  {contact.address.postalCode}
-                </TableCell>
-                <TableCell>{contact.email}</TableCell>
-                <TableCell>
-                  m: <a href={`tel:${contact.phoneNumbers.mobilePhone}`} style={{ color: 'white', textDecoration: 'none' }}>{contact.phoneNumbers.mobilePhone}</a>
-                  <br />
-                  h: <a href={`tel:${contact.phoneNumbers.homePhone}`} style={{ color: 'white', textDecoration: 'none' }}>{contact.phoneNumbers.homePhone}</a>
-                </TableCell>
+          {/* Table body */}
+<TableBody>
+  {contacts.map((contact) => (
+    <TableRow
+      key={contact.id}
+      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+    >
+      {/* Edit button for each contact */}
+      <TableCell>
+        <Button onClick={() => handleEditClick(contact)}>Edit</Button>
+      </TableCell>
+      {/* Display contact information */}
+      <TableCell>{contact.firstName} {contact.lastName}</TableCell>
+      <TableCell>
+        {contact.address && contact.address.streetAddress} <br />
+        {contact.address && contact.address.city}, {contact.address && contact.address.province}  {contact.address && contact.address.postalCode}
+      </TableCell>
+      <TableCell>{contact.email}</TableCell>
+      <TableCell>
+        {contact.phoneNumbers && contact.phoneNumbers.mobilePhone &&
+          <>
+            m: <a href={`tel:${contact.phoneNumbers.mobilePhone}`} style={{ color: 'white', textDecoration: 'none' }}>{contact.phoneNumbers.mobilePhone}</a>
+            <br />
+          </>
+        }
+        {contact.phoneNumbers && contact.phoneNumbers.homePhone &&
+          <>
+            h: <a href={`tel:${contact.phoneNumbers.homePhone}`} style={{ color: 'white', textDecoration: 'none' }}>{contact.phoneNumbers.homePhone}</a>
+          </>
+        }
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
 
-
-              </TableRow>
-            ))}
-          </TableBody>
         </Table>
       </TableContainer>
 
@@ -98,8 +107,8 @@ const ContactTable = () => {
       <UploadContacts showPanel={uploadPanelOpen} onClose={handleCloseUploadPanel} />
 
       {/* Backdrop/Overlay */}
-      <Backdrop open={!!selectedContact || uploadPanelOpen} onClick={handleCloseEditPanel} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      </Backdrop>
+      {/* <Backdrop open={!!selectedContact || uploadPanelOpen} onClick={handleCloseEditPanel} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      </Backdrop> */}
     </div>
   );
 }
