@@ -10,7 +10,7 @@
       "companyName": "Skeezer Motors",
       "primaryEmail": "brucechafe@skeezermotors.ca",
       "companyNumber": "709.700.6182",
-      "theme": "royalBlueDarkTheme"
+      "theme": "slateTheme"
     },
     {
       "UID": "cay7knM7AsVkg7VvpGXS1t31rDa2",
@@ -22,35 +22,33 @@
       "companyName": "Skeezer Motors",
       "primaryEmail": "danahawco@skeezermotors.ca",
       "companyNumber": "709.700.6182",
-      "theme": "royalBlueDarkTheme"
+      "theme": "deepGreenDarkTheme"
     }
   ],
   "contacts": [
     {
       "firstName": "Bruce",
-      "middleName": "Baxter ",
+      "middleName": "",
       "lastName": "Chafe",
-      "gender": "",
+      "gender": "Male",
       "dob": "",
-      "address": {
-        "streetAddress": "",
-        "postalCode": "",
-        "city": "",
-        "province": "NL",
-        "country": ""
-      },
-      "preferences": {
-        "preferredLanguage": "",
-        "preferredContact": "email"
-      },
-      "phoneNumbers": {
-        "mobilePhone": "7097706182",
-        "homePhone": "7097706183",
-        "workPhone": "7097706184"
-      },
-      "emailAddress": "brucechafe@gmail.com",
+      "streetAddress": "18 Colonial Strteet",
+      "city": "St. John's",
+      "province": "NL",
+      "postalCode": "A1CDFD",
+      "country": "CA",
+      "preferredLanguage": "english",
+      "preferredContact": "email",
+      "mobilePhone": "7097706182",
+      "homePhone": "7097706183",
+      "workPhone": "7097706",
+      "emailAddress1": "brucechafe@gmail.com",
+      "emailAddress2": "bchafe@gmail.com",
       "notes": "hehe",
-      "id": 1
+      "id": 1,
+      "workEmail": "brucechafe@gmail.com",
+      "email": "bchafe@gmail.com",
+      "dmsID": "55799"
     },
     {
       "firstName": "Dana",
@@ -58,113 +56,73 @@
       "lastName": "Hawco",
       "gender": "",
       "dob": "",
-      "address": {
-        "streetAddress": "",
-        "postalCode": "",
-        "city": "",
-        "province": "NL",
-        "country": ""
-      },
-      "preferences": {
-        "preferredLanguage": "",
-        "preferredContact": "email"
-      },
-      "phoneNumbers": {
-        "mobilePhone": "7097706182",
-        "homePhone": "7097706183",
-        "workPhone": "7097706184"
-      },
+      "streetAddress": "",
+      "postalCode": "",
+      "city": "",
+      "province": "NL",
+      "country": "",
+      "preferredLanguage": "",
+      "preferredContact": "email",
+      "mobilePhone": "7097706182",
+      "homePhone": "7097706183",
+      "workPhone": "7097706184",
       "emailAddress": "wankergirl@gmail.com",
       "notes": "hehe",
-      "id": 2
-    },
-    {
-      "firstName": "Billy",
-      "middleName": "Bob",
-      "lastName": "Jpe",
-      "gender": "female",
-      "dob": "",
-      "address": {
-        "streetAddress": "18 Colonial",
-        "postalCode": "A1C 3M8",
-        "city": "St. John's",
-        "province": "NL",
-        "country": "CA"
-      },
-      "preferences": {
-        "preferredLanguage": "english",
-        "preferredContact": "sms"
-      },
-      "phoneNumbers": {
-        "mobilePhone": "7097706182",
-        "homePhone": "",
-        "workPhone": ""
-      },
-      "email": "billybob@gmail.com",
-      "notes": "Notes ",
-      "id": 3
-    },
-    {
-      "firstName": "firstTest",
-      "middleName": "middleTest",
-      "lastName": "lastTest",
-      "gender": "male",
-      "dob": "",
-      "address": {
-        "streetAddress": "streetTest",
-        "postalCode": "postalTest",
-        "city": "cityTest",
-        "province": "NL",
-        "country": "CA"
-      },
-      "preferences": {
-        "preferredLanguage": "english",
-        "preferredContact": "sms"
-      },
-      "phoneNumbers": {
-        "mobilePhone": "mobileTest",
-        "homePhone": "homeTest",
-        "workPhone": "workTest"
-      },
-      "email": "emailTest",
-      "notes": "notesTest",
-      "id": 4
+      "id": 2,
+      "dmsID": "55131"
     },
     {
       "firstName": "Billy",
       "middleName": "Joe",
       "lastName": "Osmond",
-      "id": 5
-    },
-    {
-      "firstName": "Ray",
-      "middleName": "Mond",
-      "lastName": "Holt",
-      "id": 6
+      "id": 3
     },
     {
       "firstName": "Fred",
       "middleName": "Felix",
       "lastName": "Flintstone",
-      "id": 7
+      "id": 4
     },
     {
-      "firstName": "Fella",
-      "middleName": "Smiles",
-      "lastName": "Wee",
-      "id": 8
+      "firstName": "Ray",
+      "middleName": "Mond",
+      "lastName": "Holt",
+      "id": 5
+    }
+  ],
+  "vehicles": [
+    {
+      "id": 1,
+      "vin": "KM8K2CAA4MU734615",
+      "dmsID": "55131",
+      "modelYear": "2021",
+      "modelMake": "Hyundai",
+      "modelModel": "Elantra",
+      "plate": "",
+      "modelColor": "Red",
+      "kms": "48000"
     },
     {
-      "firstName": "Fella",
-      "middleName": "Smiles",
-      "lastName": "Wee",
-      "id": 9
+      "id": 2,
+      "vin": "KM8K2CAA4MU734615",
+      "dmsID": "55131",
+      "modelYear": "2021",
+      "modelMake": "Hyundai",
+      "modelModel": "Kona",
+      "plate": "",
+      "modelColor": "Red",
+      "kms": "48000"
     },
     {
-      "firstName": "Fella",
-      "middleName": "Smiles",
-      "lastName": "Wee",
-      "id": 10
+      "id": 3,
+      "vin": "KM8K2CAA4MU734615",
+      "dmsID": "55799",
+      "modelYear": "2021",
+      "modelMake": "Hyundai",
+      "modelModel": "Kona",
+      "plate": "",
+      "modelColor": "Red",
+      "kms": "48000"
     }
   ]
 }

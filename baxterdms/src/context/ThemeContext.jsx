@@ -253,7 +253,7 @@ const ThemeProvider = ({ children }) => {
   
     try {
       await fetch(`http://localhost:8000/users/${user.uid}`, {
-        method: 'PATCH', // Use PATCH method for partial updates
+        method: 'PATCH',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify(updatedUser),
       });

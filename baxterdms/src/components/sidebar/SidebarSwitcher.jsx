@@ -5,24 +5,32 @@ import SidebarComponent from "./SidebarComponent";
 const SidebarItems = {
   home: {
     navigationLinks: [
-      { text: "CRM", to: "/crm/newcontact", color: "white" },
-      { text: "Account Overview", to: "/account/overview", color: "white" },
-    ],
-  },
-  crm: {
-    pageName: "CRM",
-    navigationLinks: [
-      { text: "Contacts", to: "/crm/contacts", color: "white" },
-      { text: "New Contact", to: "/crm/newcontact", color: "white" },
+      { text: "Contacts", to: "/contacts"},
+      { text: 'Vehicles', to: "/vehicles"},
+      { text: "Account Overview", to: "/account/overview"},
     ],
   },
   account: {
     pageName: "Account",
     navigationLinks: [
       { text: "Overview", to: "/account/overview", color: "white" },
-      { text: "Personal Info", to: "/account/userprofile", color: "white" },
-      { text: "Theme", to: "/account/theme", color: "white" },
+      { text: "Personal Info", to: "/account/userprofile"},
+      { text: "Theme", to: "/account/theme"},
       { text: "Update Password", to: "/account/updatepassword" },
+    ],
+  },
+  contacts: {
+    pageName: "Contacts",
+    navigationLinks: [
+      { text: "Contacts", to: "/contacts" },
+      { text: "New Contact", to: "/contacts/newcontact" },
+    ],
+  },
+  vehicles: {
+    pageName: "Contacts",
+    navigationLinks: [
+      { text: "Vehicles", to: "/vehicles" },
+      { text: "Add Vehicle", to: "/vehicles/add"},
     ],
   },
 };

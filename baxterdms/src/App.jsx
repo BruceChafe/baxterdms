@@ -1,11 +1,17 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Grid, CssBaseline, Container } from "@mui/material";
-
-import Home from "./components/main/Home";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import {
+  Grid,
+  CssBaseline,
+  Container,
+  Paper,
+  IconButton,
+  Box,
+} from "@mui/material";
+import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
 import NewContact from "./components/crm/NewContact";
-import ContactTable from "./components/crm/Contacts";
+import ContactTable from "./components/contacts/Contacts";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import ThemeSelection from "./components/account/Theme";
@@ -13,6 +19,8 @@ import { AccountOverview, AccountTiles } from "./components/account/Overview";
 import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
 import UserProfile from "./components/account/PersonalInfo";
 import UpdatePassword from "./components/account/UpdatePassword";
+import Vehicles from "./components/vehicles/Vehicles";
+import AddVehicle from "./components/vehicles/AddVehicle";
 
 const App = () => {
   return (
@@ -32,13 +40,24 @@ const App = () => {
                   <Grid item lg>
                     <Container maxWidth="false">
                       <Routes>
-                        <Route path="/home" element={<Home />} />
+                        {/* <Route path="/home" element={<Home />} /> */}
                         <Route
-                          path="/crm/contacts"
+                          path="/contacts/:contactId/*"
+                          element={
+                            <Contact
+                              contact
+                              showPanel
+                              onClose={onclick}
+                              navigationLinks
+                            />
+                          }
+                        />
+                        <Route
+                          path="/contacts/*"
                           element={<ContactTable />}
                         />
                         <Route
-                          path="/crm/newcontact"
+                          path="/contacts/newcontact"
                           element={<NewContact />}
                         />
                         <Route
@@ -62,6 +81,14 @@ const App = () => {
                         <Route
                           path="/account/updatepassword"
                           element={<UpdatePassword />}
+                        />
+                        <Route
+                          path="/vehicles/*"
+                          element={<Vehicles />}
+                        />
+                        <Route
+                          path="/vehicles/add"
+                          element={<AddVehicle />}
                         />
                       </Routes>
                     </Container>

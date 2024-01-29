@@ -23,7 +23,7 @@ const ThemeSelection = () => {
               onClick={() => toggleTheme(themeName)}
               variant={theme === themeName ? "contained" : "outlined"}
               color="primary"
-              style={{
+              sx={{
                 marginRight: "10px",
                 borderRadius: "4px",
                 padding: "10px 15px",

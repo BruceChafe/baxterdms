@@ -89,7 +89,7 @@ const AccountOverview = ({ navigationLinks }) => {
     firstName: "",
     lastName: "",
   });
-
+  
   const handleEditClick = () => {
     setIsModalOpen(true);
     setEditedProfile({
