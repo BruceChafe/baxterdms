@@ -1,19 +1,15 @@
 import React, { useState } from "react";
 import { Paper, IconButton, Box, Grid, Tab, Tabs } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import ContactSidebarComponent from "./ContactSidebarMenu";
-import ContactInfo from "./ContactInfo";
-import ContactLeads from "./ContactLeads";
-import ContactVehicles from "./ContactVehicles";
 
-const Contact = ({ contact, showPanel, onClose, navigationLinks }) => {
-  const [value, setValue] = useState("Basic Information");
+const Vehicle = ({ vehicle, showPanel, onClose, navigationLinks }) => {
+  const [value, setValue] = useState();
 
   const handleNavigationLinkClick = (selectedTab) => {
     setValue(selectedTab);
   };
 
-  if (!contact) {
+  if (!vehicle) {
     return null;
   }
 
@@ -47,25 +43,13 @@ const Contact = ({ contact, showPanel, onClose, navigationLinks }) => {
 
           <Grid container>
             <Grid item xs={2}>
-              <ContactSidebarComponent
-                contact={contact}
-                navigationLinks={navigationLinks}
-                onNavigationLinkClick={handleNavigationLinkClick}
-              />
             </Grid>
 
             <Grid item xs={10}>
               <Box sx={{ marginLeft: "10px" }}>
-                {value === "Basic Information" && (
-                  <ContactInfo contact={contact} />
-                )}
-                {value === "Leads" && <ContactLeads />}
-                {value === "Vehicles" && contact.dmsID && (
-                  <ContactVehicles dmsID={contact.dmsID} />
-                )}
-                {value === "Sales"}
-                {value === "Finance"}
-                {value === "Privacy" && <ContactPrivacy />}
+                <p>{`Vehicle: ${vehicle.modelModel}`}</p>
+                <p>{`Vehicle: ${vehicle.vin}`}</p>
+
               </Box>
             </Grid>
           </Grid>
@@ -75,4 +59,4 @@ const Contact = ({ contact, showPanel, onClose, navigationLinks }) => {
   );
 };
 
-export default Contact;
+export default Vehicle;

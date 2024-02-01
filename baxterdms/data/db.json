@@ -10,7 +10,7 @@
       "companyName": "Skeezer Motors",
       "primaryEmail": "brucechafe@skeezermotors.ca",
       "companyNumber": "709.700.6182",
-      "theme": "slateTheme"
+      "theme": "royalBlueDarkTheme"
     },
     {
       "UID": "cay7knM7AsVkg7VvpGXS1t31rDa2",
@@ -22,18 +22,18 @@
       "companyName": "Skeezer Motors",
       "primaryEmail": "danahawco@skeezermotors.ca",
       "companyNumber": "709.700.6182",
-      "theme": "deepGreenDarkTheme"
+      "theme": "royalBlueDarkTheme"
     }
   ],
   "contacts": [
     {
       "firstName": "Bruce",
-      "middleName": "",
+      "middleName": "Baxter",
       "lastName": "Chafe",
       "gender": "Male",
       "dob": "",
       "streetAddress": "18 Colonial Strteet",
-      "city": "St. John's",
+      "city": "Paradise",
       "province": "NL",
       "postalCode": "A1CDFD",
       "country": "CA",
@@ -72,7 +72,7 @@
       "dmsID": "55131"
     },
     {
-      "firstName": "Billy",
+      "firstName": "Bruce",
       "middleName": "Joe",
       "lastName": "Osmond",
       "id": 3
@@ -88,6 +88,30 @@
       "middleName": "Mond",
       "lastName": "Holt",
       "id": 5
+    },
+    {
+      "firstName": "Fred",
+      "middleName": "Felix",
+      "lastName": "Flintstone",
+      "id": 6
+    },
+    {
+      "firstName": "Ray",
+      "middleName": "Mond",
+      "lastName": "Holt",
+      "id": 7
+    },
+    {
+      "firstName": "Billy",
+      "middleName": "Joe",
+      "lastName": "Osmond",
+      "id": 8
+    },
+    {
+      "firstName": "Fella",
+      "middleName": "Smiles",
+      "lastName": "Wee",
+      "id": 9
     }
   ],
   "vehicles": [

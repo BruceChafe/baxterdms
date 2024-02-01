@@ -44,7 +44,6 @@ const ContactInfo = ({ contact, onUpdateContact }) => {
   };
 
   const handleSave = () => {
-    // Make PATCH request here
     fetch(`http://localhost:8000/contacts/${contact.id}`, {
       method: "PATCH",
       headers: {

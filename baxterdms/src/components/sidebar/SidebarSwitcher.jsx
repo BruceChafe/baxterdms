@@ -7,6 +7,7 @@ const SidebarItems = {
     navigationLinks: [
       { text: "Contacts", to: "/contacts"},
       { text: 'Vehicles', to: "/vehicles"},
+      { text: 'Leads', to: "/leads"},
       { text: "Account Overview", to: "/account/overview"},
     ],
   },
@@ -24,6 +25,13 @@ const SidebarItems = {
     navigationLinks: [
       { text: "Contacts", to: "/contacts" },
       { text: "New Contact", to: "/contacts/newcontact" },
+    ],
+  },
+  leads: {
+    pageName: "Leads",
+    navigationLinks: [
+      { text: "Leads", to: "/leads" },
+      { text: "New Lead", to: "/leads/newlead" },
     ],
   },
   vehicles: {

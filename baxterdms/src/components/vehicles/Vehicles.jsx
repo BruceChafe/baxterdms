@@ -10,7 +10,7 @@ import {
   TablePagination,
 } from '@mui/material';
 import UploadVehicles from './UploadVehicles';
-import Contact from '../contacts/Contact';
+import Vehicle from './Vehicle';
 
 const VehiclesTable = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -117,7 +117,7 @@ const VehiclesTable = () => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <Contact contact={selectedVehicle} showPanel={!!selectedVehicle} onClose={handleCloseEditPanel} />
+      <Vehicle vehicle={selectedVehicle} showPanel={!!selectedVehicle} onClose={handleCloseEditPanel} />
       <UploadVehicles showPanel={uploadPanelOpen} onClose={handleCloseUploadPanel} />
     </div>
   );

@@ -8,9 +8,11 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  TextField,
 } from '@mui/material';
 import Contact from './Contact';
 import UploadContacts from './UploadContacts';
+
 const ContactTable = () => {
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
@@ -18,14 +20,21 @@ const ContactTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
+  const [searchCriteria, setSearchCriteria] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+  });
 
   useEffect(() => {
     fetchContacts();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, searchCriteria]);
 
   const fetchContacts = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
+        const searchParams = new URLSearchParams(searchCriteria);
+
 
     fetch(`http://localhost:8000/Contacts?_start=${startIndex}&_end=${endIndex}`)
       .then((res) => {

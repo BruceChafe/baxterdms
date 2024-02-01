@@ -24,13 +24,8 @@ const AuthProvider = ({ children }) => {
     const updateUserPassword = async (newPassword) => {
         if (user) {
             try {
-                // Get the current user's email
                 const userEmail = user.email;
-    
-                // Prompt the user to enter their password for reauthentication
                 const passwordPrompt = prompt('Please enter your current password:');
-                
-                // Create a credential using the entered email and password
                 const credentials = EmailAuthProvider.credential(userEmail, passwordPrompt);
     
                 // Reauthenticate the user with the provided credentials

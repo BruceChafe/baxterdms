@@ -62,14 +62,12 @@ const NewContact = () => {
   };
 
   return (
-    <Paper sx={{ mt: 2, mr: 2, p: 1 }}>
       <form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <Typography variant="h4" sx={{ m: 2 }}>
           New Contact
         </Typography>
 
         {/* Identity Section */}
-        <Paper elevation={12} style={{ margin: "20px", padding: "15px" }}>
           <Typography style={{ padding: "5px" }}>Identity</Typography>
 
           <Grid container>
@@ -134,10 +132,8 @@ const NewContact = () => {
               </LocalizationProvider>
             </Grid>
           </Grid>
-        </Paper>
 
         {/* Location Section */}
-        <Paper elevation={12} style={{ margin: "20px", padding: "15px" }}>
           <Typography style={{ padding: "5px" }}>Location</Typography>
 
           <Typography style={{ padding: "5px" }}>Street Address</Typography>
@@ -205,10 +201,8 @@ const NewContact = () => {
               <MenuItem value="US">United States of America</MenuItem>
             </Select>
           </FormControl>
-        </Paper>
 
         {/* Contact Information Section */}
-        <Paper elevation={12} style={{ margin: "20px", padding: "15px" }}>
           <Typography style={{ padding: "5px" }}>
             Contact Information
           </Typography>
@@ -310,9 +304,7 @@ const NewContact = () => {
           >
             Submit
           </Button>
-        </Paper>
       </form>
-    </Paper>
   );
 };
 

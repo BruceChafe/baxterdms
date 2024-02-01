@@ -1,189 +1,170 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import {
-  Typography,
-  TextField,
-  Divider,
-  Box,
   Button,
-} from "@mui/material";
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+  TextField,
+} from '@mui/material';
+import Contact from './Contact';
+import UploadContacts from './UploadContacts';
 
-const ContactInfo = ({ contact }) => {
-  const [isEditMode, setIsEditMode] = useState(false);
+const ContactTable = () => {
+  const [contacts, setContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+  const [searchCriteria, setSearchCriteria] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+  });
 
-  const handleEditToggle = () => {
-    setIsEditMode((prevMode) => !prevMode);
+  useEffect(() => {
+    fetchContacts();
+  }, [page, rowsPerPage, searchCriteria]);
+
+  const fetchContacts = () => {
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    const searchParams = new URLSearchParams(searchCriteria);
+
+    fetch(
+      `http://localhost:8000/Contacts?_start=${startIndex}&_end=${endIndex}&${searchParams}`
+    )
+      .then((res) => {
+        const totalCountHeader = res.headers.get('X-Total-Count');
+        setTotalCount(parseInt(totalCountHeader, 10) || 0);
+
+        return res.json();
+      })
+      .then((data) => {
+        setContacts(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching contacts:', error);
+      });
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleImportClick = () => {
+    setUploadPanelOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleEditClick = (contact) => {
+    setSelectedContact(contact);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleCloseEditPanel = () => {
+    setSelectedContact(null);
+    document.body.style.overflow = 'auto';
+  };
+
+  const handleCloseUploadPanel = () => {
+    setUploadPanelOpen(false);
+    document.body.style.overflow = 'auto';
+  };
+
+  const handleSearchInputChange = (key, value) => {
+    setSearchCriteria({
+      ...searchCriteria,
+      [key]: value,
+    });
   };
 
   return (
-    <Box sx={{ width: "100%", mr: 2 }}>
-      <Button onClick={handleEditToggle} variant="outlined">
-        {isEditMode ? "Save" : "Edit"}
+    <div>
+      <TextField
+        label="Search by First Name"
+        value={searchCriteria.firstName}
+        onChange={(e) => handleSearchInputChange('firstName', e.target.value)}
+      />
+      <TextField
+        label="Search by Last Name"
+        value={searchCriteria.lastName}
+        onChange={(e) => handleSearchInputChange('lastName', e.target.value)}
+      />
+      <TextField
+        label="Search by Email"
+        value={searchCriteria.email}
+        onChange={(e) => handleSearchInputChange('email', e.target.value)}
+      />
+      <Button color="secondary" onClick={handleImportClick}>
+        Import
       </Button>
 
-      <Box label="basicInformation" sx={{ width: "100%", mr: 2 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Basic Information
-        </Typography>
+      <TableContainer>
+        <Table sx={{ minWidth: 650 }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Actions</TableCell>
+              <TableCell>Customer Name</TableCell>
+              <TableCell>Address</TableCell>
+              <TableCell>Email Address</TableCell>
+              <TableCell>Phone Numbers</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {contacts.map((contact) => (
+              <TableRow key={contact.id}>
+                <TableCell>
+                  <Button onClick={() => handleEditClick(contact)}>Edit</Button>
+                </TableCell>
+                <TableCell>{contact.firstName} {contact.lastName}</TableCell>
+                <TableCell>
+                  {contact.address && contact.address.streetAddress} <br />
+                  {contact.address && contact.address.city}, {contact.address && contact.address.province}  {contact.address && contact.address.postalCode}
+                </TableCell>
+                <TableCell>{contact.email}</TableCell>
+                <TableCell>
+                  {contact.phoneNumbers && contact.phoneNumbers.mobilePhone &&
+                    <>
+                      m: <a href={`tel:${contact.phoneNumbers.mobilePhone}`} style={{ color: 'white', textDecoration: 'none' }}>{contact.phoneNumbers.mobilePhone}</a>
+                      <br />
+                    </>
+                  }
+                  {contact.phoneNumbers && contact.phoneNumbers.homePhone &&
+                    <>
+                      h: <a href={`tel:${contact.phoneNumbers.homePhone}`} style={{ color: 'white', textDecoration: 'none' }}>{contact.phoneNumbers.homePhone}</a>
+                    </>
+                  }
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-       <TextField
-          variant="standard"
-          label="First Name"
-          defaultValue={contact.firstName}
-          InputProps={{
-            readOnly: !isEditMode,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled={!isEditMode}
-        />
-        <TextField
-          variant="standard"
-          label="Middle Name"
-          defaultValue={contact.middleName}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-        <TextField
-          label="Last Name"
-          variant="standard"
-          defaultValue={contact.lastName}
-          InputProps={{
-            readOnly: true,
-          }}
-          disabled
-        />
-        <Typography display="block" sx={{ mb: 2 }} />
-        <TextField
-          label="Gender"
-          variant="standard"
-          defaultValue={contact.gender}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-        <TextField
-          label="Date of Birth"
-          variant="standard"
-          defaultValue={contact.dob}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-      </Box>
-      <Divider sx={{ mt: 1, mb: 1, width: 1 / 2 }} />
-      <Box label="location">
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Location
-        </Typography>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50, 100]}
+        component="div"
+        count={totalCount}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
 
-        <TextField
-          variant="standard"
-          label="Street Address"
-          defaultValue={contact.address.streetAddress}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-        <Typography display="block" sx={{ mb: 2 }} />
-        <TextField
-          variant="standard"
-          label="City"
-          defaultValue={contact.address.city}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-        <TextField
-          variant="standard"
-          label="Province"
-          defaultValue={contact.address.province}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-        <TextField
-          variant="standard"
-          label="Postal Code"
-          defaultValue={contact.address.postalCode}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-      </Box>
-      <Divider sx={{ mt: 1, mb: 1, width: 1 / 2 }} />
-      <Box label="contactInformation">
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Contact Information
-        </Typography>
-
-        <TextField
-          variant="standard"
-          label="Mobile Phone"
-          defaultValue={contact.phoneNumbers.mobilePhone}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-        <TextField
-          variant="standard"
-          label="Home Phone"
-          defaultValue={contact.phoneNumbers.homePhone}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-        <TextField
-          variant="standard"
-          label="Work Phone"
-          defaultValue={contact.phoneNumbers.workPhone}
-          InputProps={{
-            readOnly: true,
-          }}
-          disabled
-        />
-        <Typography display="block" sx={{ mb: 2 }} />
-        <TextField
-          label="Primary Email"
-          variant="standard"
-          defaultValue={contact.emailAddress1}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-        <TextField
-          label="Work Email"
-          variant="standard"
-          defaultValue={contact.emailAddress2}
-          InputProps={{
-            readOnly: true,
-          }}
-          sx={{ mr: 2, width: "15%" }}
-          disabled
-        />
-      </Box>
-      <Divider sx={{ mt: 1, mb: 1, width: 1 / 2 }} />
-    </Box>
+      <Contact contact={selectedContact} showPanel={!!selectedContact} onClose={handleCloseEditPanel} />
+      <UploadContacts showPanel={uploadPanelOpen} onClose={handleCloseUploadPanel} />
+    </div>
   );
 };
 
-export default ContactInfo;
+export default ContactTable
