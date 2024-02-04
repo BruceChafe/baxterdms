@@ -1,33 +1,34 @@
-import React from 'react';
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Divider } from "@mui/material";
 
-const ContactLeads = () => {
-  const [value, setValue] = React.useState('1');
+const ContactLead = ({ dmsID }) => {
+  const [leads, setLeads] = useState([]);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  useEffect(() => {
+    fetch(`http://localhost:8000/leads?dmsID=${dmsID}`)
+      .then((response) => response.json())
+      .then((data) => setLeads(data || []))
+      .catch((error) => console.error("Error fetching leads:", error));
+  }, [dmsID]); 
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1' }}>
-      <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabList onChange={handleChange} aria-label="lab API tabs example">
-            <Tab label="Item One" value="1" />
-            <Tab label="Item Two" value="2" />
-            <Tab label="Item Three" value="3" />
-          </TabList>
-        </Box>
-        <TabPanel value="1">Item One</TabPanel>
-        <TabPanel value="2">Item Two</TabPanel>
-        <TabPanel value="3">Item Three</TabPanel>
-      </TabContext>
+    <Box sx={{ width: "100%", mr: 2 }}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        Leads
+      </Typography>
+
+      {leads.length > 0 ? (
+        leads.map((lead) => (
+          <React.Fragment key={lead.id}>
+            <Typography>{`Leads: ${lead.leadNumber}`}</Typography>
+            <Divider sx={{ mt: 1, mb: 1, width: 1 / 2 }} />
+          </React.Fragment>
+        ))
+      ) : (
+        <Typography>No leads found for the specified DMS ID.</Typography>
+      )}
     </Box>
   );
-}
+};
 
-export default ContactLeads;
+export default ContactLead;

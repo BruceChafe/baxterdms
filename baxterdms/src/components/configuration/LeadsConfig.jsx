@@ -8,7 +8,7 @@ import {
   Grid,
   MenuItem
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from 'react-router-dom'
 
 const NewLeadFields = [
   { label: "Dealership", key: "leadDealership" },
@@ -97,17 +97,19 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
           setMessage("Lead created successfully!");
           setFormData({});
           setFilledFields([]);
-      
+  
           console.log("New Lead:", newLead);
+  
+          return <Navigate to={`/leads/lead/${newLead.id}`} />;
         })
         .catch((error) => {
           console.error("Error creating lead:", error);
           setMessage("Error creating lead.");
         });
-    } else {
-      setMessage("Please fill out all mandatory fields.");
-    }
-  };
+      } else {
+        setMessage("Please fill out all mandatory fields.");
+      }
+    };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {

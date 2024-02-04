@@ -59,7 +59,9 @@ const Contact = ({ contact, showPanel, onClose, navigationLinks }) => {
                 {value === "Basic Information" && (
                   <ContactInfo contact={contact} />
                 )}
-                {value === "Leads" && <ContactLeads />}
+                {value === "Leads" && contact.dmsID && (
+                  <ContactLeads dmsID={contact.dmsID} />
+                )}
                 {value === "Vehicles" && contact.dmsID && (
                   <ContactVehicles dmsID={contact.dmsID} />
                 )}

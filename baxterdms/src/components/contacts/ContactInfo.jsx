@@ -63,7 +63,7 @@ const ContactInfo = ({ contact, onUpdateContact }) => {
 
   const renderTextField = (label, key, value, isReadonly = true) => (
     <TextField
-      variant="standard"
+      variant="outlined"
       label={label}
       value={value}
       onChange={(e) => handleFieldChange(key, e.target.value)}

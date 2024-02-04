@@ -9,6 +9,7 @@ const SidebarItems = {
       { text: 'Vehicles', to: "/vehicles"},
       { text: 'Leads', to: "/leads"},
       { text: "Account Overview", to: "/account/overview"},
+      { text: "Configuration", to: "/configuration"},
     ],
   },
   account: {
@@ -39,6 +40,15 @@ const SidebarItems = {
     navigationLinks: [
       { text: "Vehicles", to: "/vehicles" },
       { text: "Add Vehicle", to: "/vehicles/add"},
+    ],
+  },
+  configuration: {
+    pageName: "Configuration",
+    navigationLinks: [
+      { text: "Leads", to: "/configuration/leads"},
+      { text: "Personal Info", to: "/account/userprofile"},
+      { text: "Theme", to: "/account/theme"},
+      { text: "Update Password", to: "/account/updatepassword" },
     ],
   },
 };

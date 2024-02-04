@@ -8,7 +8,6 @@ import {
   TableHead,
   TableRow,
   TablePagination,
-  TextField,
 } from '@mui/material';
 import Contact from './Contact';
 import UploadContacts from './UploadContacts';

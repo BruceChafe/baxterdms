@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import { Grid, CssBaseline, Container } from "@mui/material";
 import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
@@ -14,8 +19,11 @@ import UpdatePassword from "./components/account/UpdatePassword";
 import Vehicles from "./components/vehicles/Vehicles";
 import AddVehicle from "./components/vehicles/AddVehicle";
 import LeadsPage from "./components/leads/Leads";
+import LeadComponent from "./components/leads/Lead";
 import NewLeadComponent from "./components/leads/NewLead";
 import { ThemeProvider } from "./context/ThemeContext";
+import ConfigLanding from "./components/configuration/ConfigLanding";
+import LeadsConfig from "./components/configuration/LeadsConfig";
 
 const App = () => {
   return (
@@ -72,6 +80,19 @@ const App = () => {
                         <Route
                           path="/leads/newlead"
                           element={<NewLeadComponent />}
+                        />
+                        <Route
+                          path="/leads/lead/:leadId"
+                          element={<LeadComponent />}
+                        />
+
+                        <Route
+                          path="/configuration"
+                          element={<ConfigLanding />}
+                        />
+                        <Route
+                          path="/configuration/leads"
+                          element={<LeadsConfig />}
                         />
                       </Routes>
                     </Container>
