@@ -173,104 +173,24 @@
   ],
   "leads": [
     {
-      "leadNumber": 1542,
-      "dmsID": "55799",
-      "id": 4
-    },
-    {
-      "leadNumber": 1155,
-      "dmsID": "55131",
-      "id": 5
-    },
-    {
       "leadNumber": 1889,
       "dmsID": "55799",
       "leadDealership": "Skeezer Motors LTD.",
-      "leadSource": "g",
-      "leadType": "g",
-      "leadSalesConsultant": "g",
-      "leadStatus": "g",
-      "id": 6
-    },
-    {
-      "leadNumber": 1703,
-      "dmsID": "55799",
-      "leadDealership": "Skeezer",
       "leadSalesConsultant": "Dana Hawco",
       "leadSource": "Phone Call",
       "leadType": "Website",
       "leadStatus": "Active",
-      "id": 7
+      "id": 1
     },
     {
-      "leadNumber": 1757,
-      "dmsID": "55799",
-      "leadDealership": "g",
-      "leadSalesConsultant": "G",
-      "leadSource": "Phone Call",
-      "leadType": "Facebook",
-      "leadStatus": "G",
-      "id": 8
-    },
-    {
-      "leadNumber": 1077,
-      "dmsID": "55799",
-      "leadDealership": "G",
-      "leadSalesConsultant": "G",
-      "leadSource": "Facebook",
-      "leadType": "Facebook",
-      "leadStatus": "G",
-      "id": 9
-    },
-    {
-      "leadNumber": 1842,
-      "dmsID": "55799",
-      "leadDealership": "G",
-      "leadSalesConsultant": "G",
-      "leadSource": "Facebook",
-      "leadType": "Facebook",
-      "leadStatus": "gg",
-      "id": 10
-    },
-    {
-      "leadNumber": 1892,
-      "dmsID": "55799",
-      "leadDealership": "g",
-      "leadSalesConsultant": "g",
-      "leadSource": "Facebook",
-      "leadType": "Facebook",
-      "leadStatus": "k",
-      "id": 11
-    },
-    {
-      "leadNumber": 1027,
-      "dmsID": "55799",
-      "leadDealership": "Test",
-      "leadSalesConsultant": "Test",
-      "leadSource": "Facebook",
-      "leadType": "Facebook",
-      "leadStatus": "Test",
-      "id": 12
-    },
-    {
-      "leadNumber": 1378,
-      "dmsID": "55799",
-      "leadDealership": "g",
-      "leadSalesConsultant": "Test2",
-      "leadSource": "Facebook",
-      "leadType": "Facebook",
-      "leadStatus": "Test2",
-      "id": 13
-    },
-    {
-      "leadNumber": 1863,
+      "leadNumber": 1703,
       "dmsID": "55799",
       "leadDealership": "Skeezer Motors LTD.",
-      "leadSalesConsultant": "G",
-      "leadType": "Facebook",
-      "leadSource": "Facebook",
-      "leadStatus": "G",
-      "id": 14
+      "leadSalesConsultant": "Dana Hawco",
+      "leadSource": "Phone Call",
+      "leadType": "Website",
+      "leadStatus": "Active",
+      "id": 2
     }
   ],
   "configLeads": [
