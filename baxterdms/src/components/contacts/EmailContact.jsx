@@ -4,9 +4,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import React, { useState } from 'react';
 
 // Functional component for the EmailContact panel
-const EmailContact = ({ contact, showPanel, onClose }) => {
+const EmailContact = ({ lead, showPanel, onClose }) => {
     // State variables to manage form inputs and panel visibility
-    const [contactEmail, setContactEmail] = useState(contact.email);
+    const [contactEmail, setContactEmail] = useState(lead.emailAddress1);
     const [from, setFrom] = useState('');
     const [subject, setSubject] = useState('');
     const [body, setBody] = useState('');
@@ -40,7 +40,7 @@ const EmailContact = ({ contact, showPanel, onClose }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    to: contactEmail,
+                    to: "bchafe@capitalautogroup.ca",
                     from,
                     subject,
                     body,
@@ -74,7 +74,6 @@ const EmailContact = ({ contact, showPanel, onClose }) => {
             {/* Render the panel only if the showPanel prop is true */}
             {showPanel && (
                 <Paper
-                    elevation={3}
                     style={{
                         position: 'fixed',
                         top: '50%',
@@ -108,13 +107,14 @@ const EmailContact = ({ contact, showPanel, onClose }) => {
                             onChange={(e) => setContactEmail(e.target.value)}
                             id="to"
                             label="to:"
-                            defaultValue={contact.email}
+                            defaultValue={lead.emailAddress1}
                         />
                         <br />
                         <TextField
                             onChange={(e) => setFrom(e.target.value)}
                             id="from"
                             label="from:"
+                            value={"baxterdms@outlook.com"}
                         />
                         <br />
                         <TextField

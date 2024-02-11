@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Paper, IconButton, Box, Grid, Tab, Tabs } from "@mui/material";
+import { useState } from "react";
+import { Paper, IconButton, Box, Grid} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ContactSidebarComponent from "./ContactSidebarMenu";
 import ContactInfo from "./ContactInfo";

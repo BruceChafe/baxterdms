@@ -107,7 +107,11 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
     } else {
       setMessage("Please fill out all mandatory fields.");
     }
+    setSelectedLead(newLead);
+    document.body.style.overflow = "hidden";
   };
+
+  
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {

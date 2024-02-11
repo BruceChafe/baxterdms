@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Table,
@@ -8,9 +8,9 @@ import {
   TableHead,
   TableRow,
   TablePagination,
-} from '@mui/material';
-import Contact from './Contact';
-import UploadContacts from './UploadContacts';
+} from "@mui/material";
+import Contact from "./Contact";
+import UploadContacts from "./UploadContacts";
 
 const ContactTable = () => {
   const [contacts, setContacts] = useState([]);
@@ -19,25 +19,20 @@ const ContactTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchCriteria, setSearchCriteria] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-  });
 
   useEffect(() => {
     fetchContacts();
-  }, [page, rowsPerPage, searchCriteria]);
+  }, [page, rowsPerPage]);
 
   const fetchContacts = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
-        const searchParams = new URLSearchParams(searchCriteria);
 
-
-    fetch(`http://localhost:8000/Contacts?_start=${startIndex}&_end=${endIndex}`)
+    fetch(
+      `http://localhost:8000/Contacts?_start=${startIndex}&_end=${endIndex}`
+    )
       .then((res) => {
-        const totalCountHeader = res.headers.get('X-Total-Count');
+        const totalCountHeader = res.headers.get("X-Total-Count");
         setTotalCount(parseInt(totalCountHeader, 10) || 0);
 
         return res.json();
@@ -46,7 +41,7 @@ const ContactTable = () => {
         setContacts(data);
       })
       .catch((error) => {
-        console.error('Error fetching contacts:', error);
+        console.error("Error fetching contacts:", error);
       });
   };
 
@@ -61,26 +56,26 @@ const ContactTable = () => {
 
   const handleImportClick = () => {
     setUploadPanelOpen(true);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
   };
 
   const handleEditClick = (contact) => {
     setSelectedContact(contact);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
   };
 
   const handleCloseEditPanel = () => {
     setSelectedContact(null);
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = "auto";
   };
 
   const handleCloseUploadPanel = () => {
     setUploadPanelOpen(false);
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = "auto";
   };
 
   return (
-    <div>
+    <>
       <Button color="secondary" onClick={handleImportClick}>
         Import
       </Button>
@@ -102,24 +97,40 @@ const ContactTable = () => {
                 <TableCell>
                   <Button onClick={() => handleEditClick(contact)}>Edit</Button>
                 </TableCell>
-                <TableCell>{contact.firstName} {contact.lastName}</TableCell>
+                <TableCell>
+                  {contact.firstName} {contact.lastName}
+                </TableCell>
                 <TableCell>
                   {contact.address && contact.address.streetAddress} <br />
-                  {contact.address && contact.address.city}, {contact.address && contact.address.province}  {contact.address && contact.address.postalCode}
+                  {contact.address && contact.address.city},{" "}
+                  {contact.address && contact.address.province}{" "}
+                  {contact.address && contact.address.postalCode}
                 </TableCell>
                 <TableCell>{contact.email}</TableCell>
                 <TableCell>
-                  {contact.phoneNumbers && contact.phoneNumbers.mobilePhone &&
+                  {contact.phoneNumbers && contact.phoneNumbers.mobilePhone && (
                     <>
-                      m: <a href={`tel:${contact.phoneNumbers.mobilePhone}`} style={{ color: 'white', textDecoration: 'none' }}>{contact.phoneNumbers.mobilePhone}</a>
+                      m:{" "}
+                      <a
+                        href={`tel:${contact.phoneNumbers.mobilePhone}`}
+                        style={{ color: "white", textDecoration: "none" }}
+                      >
+                        {contact.phoneNumbers.mobilePhone}
+                      </a>
                       <br />
                     </>
-                  }
-                  {contact.phoneNumbers && contact.phoneNumbers.homePhone &&
+                  )}
+                  {contact.phoneNumbers && contact.phoneNumbers.homePhone && (
                     <>
-                      h: <a href={`tel:${contact.phoneNumbers.homePhone}`} style={{ color: 'white', textDecoration: 'none' }}>{contact.phoneNumbers.homePhone}</a>
+                      h:{" "}
+                      <a
+                        href={`tel:${contact.phoneNumbers.homePhone}`}
+                        style={{ color: "white", textDecoration: "none" }}
+                      >
+                        {contact.phoneNumbers.homePhone}
+                      </a>
                     </>
-                  }
+                  )}
                 </TableCell>
               </TableRow>
             ))}
@@ -137,10 +148,17 @@ const ContactTable = () => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <Contact contact={selectedContact} showPanel={!!selectedContact} onClose={handleCloseEditPanel} />
-      <UploadContacts showPanel={uploadPanelOpen} onClose={handleCloseUploadPanel} />
-    </div>
+      <Contact
+        contact={selectedContact}
+        showPanel={!!selectedContact}
+        onClose={handleCloseEditPanel}
+      />
+      <UploadContacts
+        showPanel={uploadPanelOpen}
+        onClose={handleCloseUploadPanel}
+      />
+    </>
   );
 };
 
-export default ContactTable
+export default ContactTable;
