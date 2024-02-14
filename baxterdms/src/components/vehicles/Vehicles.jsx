@@ -1,16 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-} from '@mui/material';
-import UploadVehicles from './UploadVehicles';
-import Vehicle from './Vehicle';
+import React, { useState, useEffect } from "react";
+import { Button, TablePagination } from "@mui/material";
+import UploadData from "../upload/Upload";
+import Vehicle from "./Vehicle";
+import TableComponent from "../tables/DataTable";
 
 const VehiclesTable = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -28,9 +20,11 @@ const VehiclesTable = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
-    fetch(`http://localhost:8000/vehicles?_start=${startIndex}&_end=${endIndex}`)
+    fetch(
+      `http://localhost:8000/vehicles?_start=${startIndex}&_end=${endIndex}`
+    )
       .then((res) => {
-        const totalCountHeader = res.headers.get('X-Total-Count');
+        const totalCountHeader = res.headers.get("X-Total-Count");
         setTotalCount(parseInt(totalCountHeader, 10) || 0);
 
         return res.json();
@@ -39,7 +33,7 @@ const VehiclesTable = () => {
         setVehicles(data);
       })
       .catch((error) => {
-        console.error('Error fetching vehicles:', error);
+        console.error("Error fetching vehicles:", error);
       });
   };
 
@@ -54,22 +48,22 @@ const VehiclesTable = () => {
 
   const handleImportClick = () => {
     setUploadPanelOpen(true);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
   };
 
   const handleEditClick = (vehicle) => {
     setSelectedVehicle(vehicle);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
   };
 
   const handleCloseEditPanel = () => {
     setSelectedVehicle(null);
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = "auto";
   };
 
   const handleCloseUploadPanel = () => {
     setUploadPanelOpen(false);
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = "auto";
   };
 
   return (
@@ -78,34 +72,18 @@ const VehiclesTable = () => {
         Import
       </Button>
 
-      <TableContainer>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>EDIT</TableCell>
-              <TableCell>Make</TableCell>
-              <TableCell>Model</TableCell>
-              <TableCell>VIN</TableCell>
-              <TableCell>KMs</TableCell>
-              <TableCell>Current Owner</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {vehicles.map((vehicle) => (
-              <TableRow key={vehicle.id}>
-                <TableCell>
-                  <Button onClick={() => handleEditClick(vehicle)}>Edit</Button>
-                </TableCell>
-                <TableCell>{vehicle.modelMake}</TableCell>
-                <TableCell>{vehicle.modelModel}</TableCell>
-                <TableCell>{vehicle.vin}</TableCell>
-                <TableCell>{vehicle.kms}</TableCell>
-                <TableCell>{vehicle.dmsID}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <TableComponent
+        data={vehicles}
+        columns={[
+          { field: "modelMake", header: "Make" },
+          { field: "modelModel", header: "Model" },
+          { field: "vin", header: "VIN" },
+          { field: "kms", header: "KMs" },
+          { field: "dmsID", header: "Current Owner" },
+        ]}
+        totalCount={totalCount}
+        onRowClick={handleEditClick}
+      />
 
       <TablePagination
         rowsPerPageOptions={[5, 10, 25, 50, 100]}
@@ -117,8 +95,19 @@ const VehiclesTable = () => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      <Vehicle vehicle={selectedVehicle} showPanel={!!selectedVehicle} onClose={handleCloseEditPanel} />
-      <UploadVehicles showPanel={uploadPanelOpen} onClose={handleCloseUploadPanel} />
+      <Vehicle
+        vehicle={selectedVehicle}
+        showPanel={!!selectedVehicle}
+        onClose={handleCloseEditPanel}
+      />
+      <UploadData
+        showPanel={uploadPanelOpen}
+        onClose={handleCloseUploadPanel}
+        updateData={fetchVehicles}
+        uploadUrl="http://localhost:8000/vehicles"
+        uploadMethod="POST"
+        stepLabels={["Upload Vehicles"]}
+      />
     </div>
   );
 };

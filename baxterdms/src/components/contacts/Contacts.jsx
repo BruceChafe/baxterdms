@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-} from "@mui/material";
+import { Button, TablePagination } from "@mui/material";
 import Contact from "./Contact";
-import UploadContacts from "./UploadContacts";
+import UploadData from "../upload/Upload";
+import TableComponent from "../tables/DataTable";
 
 const ContactTable = () => {
   const [contacts, setContacts] = useState([]);
@@ -79,65 +71,16 @@ const ContactTable = () => {
       <Button color="secondary" onClick={handleImportClick}>
         Import
       </Button>
+      <TableComponent
+        data={contacts}
+        columns={[
+          { field: "firstName", header: "First Name" },
+          { field: "lastName", header: "Last Name" },
+          { field: "email", header: "Email" },
+        ]}
+        onRowClick={handleEditClick}
 
-      <TableContainer>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Actions</TableCell>
-              <TableCell>Customer Name</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Email Address</TableCell>
-              <TableCell>Phone Numbers</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {contacts.map((contact) => (
-              <TableRow key={contact.id}>
-                <TableCell>
-                  <Button onClick={() => handleEditClick(contact)}>Edit</Button>
-                </TableCell>
-                <TableCell>
-                  {contact.firstName} {contact.lastName}
-                </TableCell>
-                <TableCell>
-                  {contact.address && contact.address.streetAddress} <br />
-                  {contact.address && contact.address.city},{" "}
-                  {contact.address && contact.address.province}{" "}
-                  {contact.address && contact.address.postalCode}
-                </TableCell>
-                <TableCell>{contact.email}</TableCell>
-                <TableCell>
-                  {contact.phoneNumbers && contact.phoneNumbers.mobilePhone && (
-                    <>
-                      m:{" "}
-                      <a
-                        href={`tel:${contact.phoneNumbers.mobilePhone}`}
-                        style={{ color: "white", textDecoration: "none" }}
-                      >
-                        {contact.phoneNumbers.mobilePhone}
-                      </a>
-                      <br />
-                    </>
-                  )}
-                  {contact.phoneNumbers && contact.phoneNumbers.homePhone && (
-                    <>
-                      h:{" "}
-                      <a
-                        href={`tel:${contact.phoneNumbers.homePhone}`}
-                        style={{ color: "white", textDecoration: "none" }}
-                      >
-                        {contact.phoneNumbers.homePhone}
-                      </a>
-                    </>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
+      />
       <TablePagination
         rowsPerPageOptions={[5, 10, 25, 50, 100]}
         component="div"
@@ -147,16 +90,19 @@ const ContactTable = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
       <Contact
         contact={selectedContact}
         showPanel={!!selectedContact}
         onClose={handleCloseEditPanel}
       />
-      <UploadContacts
+      <UploadData
         showPanel={uploadPanelOpen}
         onClose={handleCloseUploadPanel}
-      />
+        updateData={fetchContacts}
+        uploadUrl="http://localhost:8000/contacts"
+        uploadMethod="POST"
+        stepLabels={["Upload Contacts"]}
+      />{" "}
     </>
   );
 };

@@ -10,6 +10,7 @@ const SidebarItems = {
       { text: 'Leads', to: "/leads"},
       { text: "Account Overview", to: "/account/overview"},
       { text: "Configuration", to: "/configuration"},
+      { text: "Inventory", to: "/vehicleinventory"},
     ],
   },
   account: {
@@ -49,6 +50,13 @@ const SidebarItems = {
       { text: "Personal Info", to: "/account/userprofile"},
       { text: "Theme", to: "/account/theme"},
       { text: "Update Password", to: "/account/updatepassword" },
+    ],
+  },
+  inventory: {
+    pageName: "Inventory",
+    navigationLinks: [
+      { text: "Vehicles", to: "/vehicleinventory" },
+      { text: "Add Vehicle", to: "/vehicleinventory/add"},
     ],
   },
 };

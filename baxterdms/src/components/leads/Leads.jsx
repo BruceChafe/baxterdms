@@ -1,25 +1,14 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  CircularProgress,
-} from "@mui/material";
+import { TablePagination } from "@mui/material";
 import Lead from "./Lead";
+import TableComponent from "../tables/DataTable";
 
 const LeadsTable = () => {
   const [leads, setLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
-  const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchLeads();
@@ -79,42 +68,18 @@ const LeadsTable = () => {
 
   return (
     <>
-      <TableContainer>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Actions</TableCell>
-              <TableCell>Customer Name</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Email Address</TableCell>
-              <TableCell>Phone Numbers</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  <CircularProgress />
-                </TableCell>
-              </TableRow>
-            ) : (
-              leads.map((lead) => (
-                <TableRow key={lead.id}>
-                  <TableCell>
-                    <Button onClick={() => handleEditClick(lead)}>Edit</Button>
-                  </TableCell>
-                  <TableCell>
-                    {lead.firstName} {lead.lastName}
-                  </TableCell>
-                  <TableCell>{lead.leadDealership}</TableCell>
-                  <TableCell>{lead.emailAddress1}</TableCell>
-                  <TableCell>{lead.leadDealership}</TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <TableComponent
+        data={leads}
+        columns={[
+          { field: "firstName", header: "First Name" },
+          { field: "lastName", header: "Last Name" },
+          { field: "leadDealership", header: "Address" },
+          { field: "emailAddress1", header: "Email Address" },
+          { field: "leadDealership", header: "Phone Numbers" },
+        ]}
+        totalCount={totalCount}
+        onRowClick={handleEditClick} // Pass the handleEditClick function
+      />
 
       <TablePagination
         rowsPerPageOptions={[5, 10, 25, 50, 100]}
