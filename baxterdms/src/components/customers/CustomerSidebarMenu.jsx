@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
-import EmailContact from "./EmailContact";
+import EmailContact from "./EmailCustomer";
 
 const ContactSidebarComponent = ({
   contact,

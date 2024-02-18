@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import EmailContact from "../contacts/EmailContact";
+import EmailContact from "../customers/EmailCustomer";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
 const Lead = ({ lead, showPanel, onClose }) => {

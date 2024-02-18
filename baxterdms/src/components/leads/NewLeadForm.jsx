@@ -6,7 +6,7 @@ import {
   Box,
   Button,
   Grid,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -35,7 +35,6 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
 
         setSourceOptions(sourceOptions);
         setTypeOptions(typeOptions);
-
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -97,7 +96,7 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
           setMessage("Lead created successfully!");
           setFormData({});
           setFilledFields([]);
-      
+
           console.log("New Lead:", newLead);
         })
         .catch((error) => {
@@ -111,8 +110,6 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
     document.body.style.overflow = "hidden";
   };
 
-  
-
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleCreate();
@@ -123,7 +120,7 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
     const isMandatory = NewLeadFields.find((field) => field.key === key);
     const isFilled = filledFields[key];
     const showError = formSubmitted && isMandatory && !isFilled;
-  
+
     if (key === "leadSource") {
       return (
         <TextField
@@ -146,7 +143,7 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
         </TextField>
       );
     }
-  
+
     if (key === "leadType") {
       return (
         <TextField
@@ -170,7 +167,7 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
         </TextField>
       );
     }
-  
+
     return (
       <TextField
         variant="outlined"
@@ -185,7 +182,6 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
       />
     );
   };
-  
 
   const renderSection = (sectionLabel, fields) => (
     <Box sx={{ mb: 3 }}>

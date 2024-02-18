@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Paper, IconButton, Box, Grid} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import ContactSidebarComponent from "./ContactSidebarMenu";
-import ContactInfo from "./ContactInfo";
-import ContactLeads from "./ContactLeads";
-import ContactVehicles from "./ContactVehicles";
+import ContactSidebarComponent from "./CustomerSidebarMenu";
+import ContactInfo from "./CustomerInfo";
+import ContactLeads from "./CustomerLeads";
+import ContactVehicles from "./CustomerVehicles";
 
 const Contact = ({ contact, showPanel, onClose, navigationLinks }) => {
   const [value, setValue] = useState("Basic Information");

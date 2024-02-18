@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, TablePagination } from "@mui/material";
-import Contact from "./Contact";
+import Contact from "./Customer";
 import UploadData from "../upload/Upload";
 import TableComponent from "../tables/DataTable";
 
