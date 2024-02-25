@@ -66,6 +66,7 @@ const NewContact = ({ onCloseForm, onNewContactCreated }) => {
         console.error("Error creating new contact:", error);
       });
   };
+ 
 
   return (
     <Box>

@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { TablePagination, Typography } from "@mui/material";
+import {
+  TablePagination,
+  Typography,
+  Box,
+  Paper,
+  Divider,
+} from "@mui/material";
 import Lead from "./Lead";
 import TableComponent from "../tables/DataTable";
 
@@ -7,7 +13,7 @@ const LeadsTable = () => {
   const [leads, setLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
@@ -30,15 +36,17 @@ const LeadsTable = () => {
   
       for (const lead of leadsData) {
         const contactResponse = await fetch(
-          `http://localhost:8000/contacts?dmsid=${lead.dmsID}`
+          `http://localhost:8000/contacts?leadNumbers_like=${lead.leadNumber}`
         );
         const contactData = await contactResponse.json();
   
-        const contact = contactData.find(contact => contact.dmsID === lead.dmsID);
-  
-        if (contact) {
-          const fullName = `${contact.firstName} ${contact.lastName}`;
-          updatedLeads.push({ ...lead, ...contact, fullName });
+        if (contactData.length > 0) {
+          for (const contact of contactData) {
+            const fullName = `${contact.firstName} ${contact.lastName}`;
+            updatedLeads.push({ ...lead, ...contact, fullName });
+          }
+        } else {
+          updatedLeads.push(lead);
         }
       }
   
@@ -47,8 +55,7 @@ const LeadsTable = () => {
       console.error("Error fetching leads:", error);
     }
   };
- 
-
+  
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -69,37 +76,44 @@ const LeadsTable = () => {
   };
 
   return (
-    <>
-    <Typography variant="h4" sx={{m: 2 }}>Leads</Typography>
-      <TableComponent
-        data={leads}
-        columns={[
-          { field: "leadStatus", header: "Status" },
-          { field: "firstName", header: "Lead Type" },
-          { field: "fullName", header: "Full Name" },
-          { field: "emailAddress1", header: "Email Address" },
-          { field: "leadDealership", header: "Phone Numbers" },
-        ]}
-        totalCount={totalCount}
-        onRowClick={handleEditClick}
-      />
+    <Box m={3}>
+      <Typography variant="h4" sx={{ m: 2 }}>
+        Leads
+      </Typography>
+      <Divider />
+      <Paper sx={{ pt: 1, pl: 1, pr: 1, mt: 2, mb: 2 }}>
+        <Box mb={1} mt={1} p={1}>
+          <TableComponent
+            data={leads}
+            columns={[
+              { field: "leadStatus", header: "Status" },
+              { field: "firstName", header: "Lead Type" },
+              { field: "fullName", header: "Full Name" },
+              { field: "email", header: "Email Address" },
+              { field: "leadDealership", header: "Phone Numbers" },
+            ]}
+            onRowClick={handleEditClick}
+            action={"View Lead"}
+          />
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50, 100]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            component="div"
+            count={totalCount}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Box>
+      </Paper>
 
       <Lead
         lead={selectedLead}
         showPanel={!!selectedLead}
         onClose={handleCloseEditPanel}
       />
-    </>
+    </Box>
   );
 };
 

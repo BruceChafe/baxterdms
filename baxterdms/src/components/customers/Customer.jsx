@@ -1,79 +1,39 @@
-import { useState } from "react";
-import { Paper, IconButton, Box, Grid} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import ContactSidebarComponent from "./CustomerSidebarMenu";
-import ContactInfo from "./CustomerInfo";
-import ContactLeads from "./CustomerLeads";
-import ContactVehicles from "./CustomerVehicles";
+import React, { useState, useEffect } from "react";
+import { Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
 
-const Contact = ({ contact, showPanel, onClose, navigationLinks }) => {
-  const [value, setValue] = useState("Basic Information");
+const Contact = () => {
+  const { contactId } = useParams(); // Extract id from the URL
+  const [contactData, setContactData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleNavigationLinkClick = (selectedTab) => {
-    setValue(selectedTab);
-  };
+  useEffect(() => {
+    const fetchContactData = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/Contacts/${contactId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch contact data');
+        }
+        const data = await response.json();
+        if (data) {
+          setContactData(data);
+        } else {
+          throw new Error('Contact not found');
+        }
+      } catch (error) {
+        console.error('Error fetching contact data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!contact) {
-    return null;
-  }
+    fetchContactData();
+  }, [contactId]);
 
   return (
-    <>
-      {showPanel && (
-        <Paper
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            padding: "20px",
-            width: "90%",
-            height: "90vh",
-            zIndex: 9999,
-          }}
-        >
-          <IconButton
-            aria-label="close"
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              zIndex: 9999,
-            }}
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </IconButton>
-
-          <Grid container>
-            <Grid item xs={2}>
-              <ContactSidebarComponent
-                contact={contact}
-                navigationLinks={navigationLinks}
-                onNavigationLinkClick={handleNavigationLinkClick}
-              />
-            </Grid>
-
-            <Grid item xs={10}>
-              <Box sx={{ marginLeft: "10px" }}>
-                {value === "Basic Information" && (
-                  <ContactInfo contact={contact} />
-                )}
-                {value === "Leads" && contact.dmsID && (
-                  <ContactLeads dmsID={contact.dmsID} />
-                )}
-                {value === "Vehicles" && contact.dmsID && (
-                  <ContactVehicles dmsID={contact.dmsID} />
-                )}
-                {value === "Sales"}
-                {value === "Finance"}
-                {value === "Privacy" && <ContactPrivacy />}
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
-      )}
-    </>
+    <Typography>
+      {loading ? "Loading..." : (contactData ? `Contact Name: ${contactData.firstName}` : "Contact not found")}
+    </Typography>
   );
 };
 

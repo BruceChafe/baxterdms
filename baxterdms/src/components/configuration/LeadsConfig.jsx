@@ -1,215 +1,167 @@
 import React, { useState, useEffect } from "react";
-import {
-  Grid,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Checkbox,
-  Button,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Paper, Typography, Divider } from "@mui/material";
 import { Box } from "@mui/system";
+import TransferList from "../transferList/TransferList";
 
-function not(a, b) {
-  return a.filter((value) => b.indexOf(value) === -1);
-}
+const LeadsSection = ({
+  label,
+  unactiveData,
+  activeData,
+  setUnactiveData,
+  setActiveData,
+}) => {
+  const [saveStatus, setSaveStatus] = useState(null);
+
+  const handleSave = (field) => {
+    const dataToSend = {
+      [`lead${field}Unactive`]: unactiveData,
+      [`lead${field}Active`]: activeData,
+    };
+
+    fetch(`http://localhost:8000/configLeads/1/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataToSend),
+    })
+      .then((response) => {
+        if (response.ok) {
+          setSaveStatus("success");
+        } else {
+          setSaveStatus("error");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Update successful:", data);
+      })
+      .catch((error) => {
+        console.error("Error updating configuration:", error);
+        setSaveStatus("error");
+      });
+  };
+
+  return (
+    <Box mb={4} sx={{ maxWidth: 600 }}>
+      <Typography variant="h5" mb={2}>
+        {label}
+      </Typography>
+      <TransferList
+        leftItems={unactiveData}
+        rightItems={activeData}
+        setLeftItems={setUnactiveData}
+        setRightItems={setActiveData}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => handleSave(label.split(" ")[1])} // Pass the second word of the label
+        disabled={saveStatus === "pending"}
+        sx={{ mt: 2 }}
+      >
+        {saveStatus === "pending" ? "Saving..." : "Save"}
+      </Button>
+
+      {saveStatus && (
+        <Typography
+          variant="body2"
+          color={saveStatus === "success" ? "success.main" : "error.main"}
+          sx={{ mt: 2 }}
+        >
+          {saveStatus === "success"
+            ? "Changes saved successfully."
+            : "Failed to save changes. Please try again."}
+        </Typography>
+      )}
+    </Box>
+  );
+};
 
 const LeadsConfig = () => {
-  const [checked, setChecked] = useState([]);
-  const [left, setLeft] = useState([]);
-  const [right, setRight] = useState([]);
-  const [newItem, setNewItem] = useState("");
+  const [leadSourceUnactive, setLeadSourceUnactive] = useState([]);
+  const [leadSourceActive, setLeadSourceActive] = useState([]);
+  const [leadTypeUnactive, setLeadTypeUnactive] = useState([]);
+  const [leadTypeActive, setLeadTypeActive] = useState([]);
+  const [leadDealershipUnactive, setLeadDealershipUnactive] = useState([]); // New state
+  const [leadDealershipActive, setLeadDealershipActive] = useState([]); // New state
+  const [leadSalesConsultantUnactive, setLeadSalesConsultantUnactive] =
+    useState([]);
+  const [leadSalesConsultantActive, setLeadSalesConsultantActive] = useState(
+    []
+  );
+  const [leadStatusUnactive, setLeadStatusUnactive] = useState([]); // New state
+  const [leadStatusActive, setLeadStatusActive] = useState([]); // New state
+
+  const configFields = [
+    {
+      label: "Lead Source Management",
+      unactiveData: leadSourceUnactive,
+      activeData: leadSourceActive,
+      setUnactiveData: setLeadSourceUnactive,
+      setActiveData: setLeadSourceActive,
+    },
+    {
+      label: "Lead Type Management",
+      unactiveData: leadTypeUnactive,
+      activeData: leadTypeActive,
+      setUnactiveData: setLeadTypeUnactive,
+      setActiveData: setLeadTypeActive,
+    },
+    {
+      label: "Lead Dealership Management",
+      unactiveData: leadDealershipUnactive,
+      activeData: leadDealershipActive,
+      setUnactiveData: setLeadDealershipUnactive,
+      setActiveData: setLeadDealershipActive,
+    },
+    {
+      label: "Lead SalesConsultant Management",
+      unactiveData: leadSalesConsultantUnactive,
+      activeData: leadSalesConsultantActive,
+      setUnactiveData: setLeadSalesConsultantUnactive,
+      setActiveData: setLeadSalesConsultantActive,
+    },
+    {
+      label: "Lead Status Management",
+      unactiveData: leadStatusUnactive,
+      activeData: leadStatusActive,
+      setUnactiveData: setLeadStatusUnactive,
+      setActiveData: setLeadStatusActive,
+    },
+  ];
 
   useEffect(() => {
     fetch("http://localhost:8000/configLeads/1")
       .then((response) => response.json())
       .then((data) => {
-        setLeft(data.leadSourceUnactive || []);
-        setRight(data.leadSourceActive || []);
+        setLeadSourceUnactive(data.leadSourceUnactive || []);
+        setLeadSourceActive(data.leadSourceActive || []);
+        setLeadTypeUnactive(data.leadTypeUnactive || []);
+        setLeadTypeActive(data.leadTypeActive || []);
+        setLeadDealershipUnactive(data.leadDealershipUnactive || []); // Set new state
+        setLeadDealershipActive(data.leadDealershipActive || []); // Set new state
+        setLeadSalesConsultantUnactive(data.leadSalesConsultantUnactive || []); // Set new state
+        setLeadSalesConsultantActive(data.leadSalesConsultantActive || []); // Set new state
+        setLeadStatusUnactive(data.leadStatusUnactive || []); // Set new state
+        setLeadStatusActive(data.leadStatusActive || []); // Set new state
       })
       .catch((error) => {
         console.error("Error fetching configuration:", error);
       });
   }, []);
 
-  const leftChecked = not(checked, right);
-  const rightChecked = not(checked, left);
-
-  const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  };
-
-  const handleAllRight = () => {
-    setRight(right.concat(left));
-    setLeft([]);
-  };
-
-  const handleCheckedRight = () => {
-    setRight(right.concat(leftChecked));
-    setLeft(not(left, leftChecked));
-    setChecked(not(checked, leftChecked));
-  };
-
-  const handleCheckedLeft = () => {
-    setLeft(left.concat(rightChecked));
-    setRight(not(right, rightChecked));
-    setChecked(not(checked, rightChecked));
-  };
-
-  const handleAllLeft = () => {
-    setLeft(left.concat(right));
-    setRight([]);
-  };
-
-  const handleAddNewItem = () => {
-    setLeft([...left, newItem]);
-    setNewItem("");
-  };
-
-  const handleSave = () => {
-    fetch("http://localhost:8000/configLeads/1", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        leadSourceUnactive: left,
-        leadSourceActive: right,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Update successful:", data);
-      })
-      .catch((error) => {
-        console.error("Error updating configuration:", error);
-      });
-  };
-
-  const customList = (items) => (
-    <List dense component="div" role="list">
-      {items.map((value) => {
-        const labelId = `transfer-list-item-${value}-label`;
-        return (
-          <ListItemButton
-            key={value}
-            role="listitem"
-            onClick={handleToggle(value)}
-          >
-            <ListItemIcon>
-              <Checkbox
-                checked={checked.indexOf(value) !== -1}
-                tabIndex={-1}
-                disableRipple
-                inputProps={{
-                  "aria-labelledby": labelId,
-                }}
-              />
-            </ListItemIcon>
-            <ListItemText id={labelId} primary={value} />
-          </ListItemButton>
-        );
-      })}
-    </List>
-  );
-
   return (
-    <Box sx={{ p: 3, maxWidth: 600 }}>
-      <Typography variant="h5" sx={{ mb: 3 }}>
-        New Lead Configuration
+    <Box m={3}>
+      <Typography variant="h4" mb={2}>
+        Lead Configuration
       </Typography>
-      <Typography variant="h6" sx={{ mb: 3 }}>
-        Source
-      </Typography>
-      <TextField
-          label="New Item"
-          value={newItem}
-          onChange={(e) => setNewItem(e.target.value)}
-          variant="outlined"
-          sx={{ mb: 2 }}
-        />
-        <Button
-          sx={{ my: 0.5 }}
-          variant="outlined"
-          size="small"
-          onClick={handleAddNewItem}
-          disabled={!newItem}
-          aria-label="add new item"
-        >
-          Add
-        </Button>
-      <Grid container justifyContent="space-between">
-        <Grid item>
-          <Paper variant="outlined" sx={{ height: "100%", minWidth: '200px'}}>
-            {customList(left)}
-          </Paper>
-        </Grid>
-        <Grid item sx={{ pt: 3 }}>
-          <Grid container direction="column">
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleAllRight}
-              disabled={left.length === 0}
-              aria-label="move all right"
-            >
-              ≫
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleCheckedRight}
-              disabled={leftChecked.length === 0}
-              aria-label="move selected right"
-            >
-              &gt;
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleCheckedLeft}
-              disabled={rightChecked.length === 0}
-              aria-label="move selected left"
-            >
-              &lt;
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleAllLeft}
-              disabled={right.length === 0}
-              aria-label="move all left"
-            >
-              ≪
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleSave}
-              aria-label="save"
-            >
-              Save
-            </Button>
-          </Grid>
-        </Grid>
-        <Grid item>
-        <Paper variant="outlined" sx={{ height: "100%", minWidth: '200px'}}>
-          <Grid item>{customList(right)}</Grid>
+      <Divider />
+      {configFields.map((configField, index) => (
+        <Paper sx={{ p: 3, mt: 3 }} key={index}>
+          <LeadsSection {...configField} />
         </Paper>
-        </Grid>
-      </Grid>
+      ))}
     </Box>
   );
 };

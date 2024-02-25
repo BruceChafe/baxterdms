@@ -27,106 +27,9 @@
   ],
   "contacts": [
     {
-      "firstName": "Bruce",
-      "middleName": "Baxter",
-      "lastName": "Chafe",
-      "gender": "Male",
-      "dob": "",
-      "streetAddress": "18 Colonial Strteet",
-      "city": "Paradise",
-      "province": "NL",
-      "postalCode": "A1CDFD",
-      "country": "CA",
-      "preferredLanguage": "english",
-      "preferredContact": "email",
-      "mobilePhone": "7097706182",
-      "homePhone": "7097706183",
-      "workPhone": "7097706",
-      "primaryEmail": "brucechafe@gmail.com",
-      "secondaryEmail": "bchafe@gmail.com",
-      "notes": "hehe",
-      "id": 1,
-      "dmsID": "55799",
-      "leadNumbers": [
-        1889,
-        1703,
-        1247,
-        1085,
-        1502,
-        1894,
-        1412,
-        1524
-      ]
-    },
-    {
-      "firstName": "Dana",
-      "middleName": "Doreen",
-      "lastName": "Hawco",
-      "gender": "",
-      "dob": "",
-      "streetAddress": "",
-      "postalCode": "",
-      "city": "",
-      "province": "NL",
-      "country": "",
-      "preferredLanguage": "",
-      "preferredContact": "email",
-      "mobilePhone": "7097706182",
-      "homePhone": "7097706183",
-      "workPhone": "7097706184",
-      "primaryEmail": "wankergirl@gmail.com",
-      "notes": "hehe",
-      "id": 2,
-      "dmsID": "55131",
-      "leadNumbers": [
-        1155
-      ]
-    },
-    {
-      "firstName": "Bruce",
+      "firstName": "Jane",
       "middleName": "",
-      "lastName": "Test",
-      "gender": "male",
-      "dob": "1989-09-19T02:30:00.000Z",
-      "streetAddress": "18 Colonial",
-      "postalCode": "A1C 3M8",
-      "city": "St. John's",
-      "province": "AB",
-      "country": "CA",
-      "preferredLanguage": "english",
-      "preferredContact": "email",
-      "mobilePhone": "7097706182",
-      "homePhone": "",
-      "workPhone": "",
-      "primaryEmail": "brucechafe@gmail.com",
-      "notes": "",
-      "id": 11
-    },
-    {
-      "firstName": "Dana",
-      "middleName": "",
-      "lastName": "Hawco",
-      "gender": "",
-      "dob": null,
-      "streetAddress": "18 Colonial Street",
-      "postalCode": "A1C 3M8",
-      "city": "St. John's",
-      "province": "",
-      "country": "",
-      "preferredLanguage": "",
-      "preferredContact": "",
-      "mobilePhone": "7097706182",
-      "homePhone": "",
-      "workPhone": "",
-      "email": "",
-      "notes": "",
-      "dmsID": "5440",
-      "id": 17
-    },
-    {
-      "firstName": "",
-      "middleName": "",
-      "lastName": "",
+      "lastName": "Doe",
       "gender": "",
       "dob": null,
       "streetAddress": "",
@@ -141,253 +44,57 @@
       "workPhone": "",
       "email": "",
       "notes": "",
-      "id": 18
-    },
-    {
-      "firstName": "Fill",
-      "middleName": "Baxter",
-      "lastName": "Chafe",
-      "gender": "Male",
-      "dob": "",
-      "streetAddress": "18 Colonial Strteet",
-      "city": "Paradise",
-      "province": "NL",
-      "postalCode": "A1CDFD",
-      "country": "CA",
-      "preferredLanguage": "english",
-      "preferredContact": "email",
-      "mobilePhone": "7097706182",
-      "homePhone": "7097706183",
-      "workPhone": "7097706",
-      "primaryEmail": "brucechafe@gmail.com",
-      "secondaryEmail": "bchafe@gmail.com",
-      "notes": "hehe",
-      "id": 1,
-      "dmsID": "51252",
-      "leadNumbers": [
-        1889,
-        1703,
-        1247,
-        1085,
-        1502,
-        1894,
-        1412,
-        1524
-      ]
-    },
-    {
-      "firstName": "",
-      "middleName": "",
-      "lastName": "",
-      "gender": "",
-      "dob": null,
-      "streetAddress": "",
-      "postalCode": "",
-      "city": "",
-      "province": "",
-      "country": "",
-      "preferredLanguage": "",
-      "preferredContact": "",
-      "mobilePhone": "",
-      "homePhone": "",
-      "workPhone": "",
-      "email": "",
-      "notes": "",
-      "id": 19
-    }
-  ],
-  "vehicles": [
-    {
-      "id": 1,
-      "vin": "KM8K2CAA4MU734615",
-      "dmsID": "55131",
-      "modelYear": "2021",
-      "modelMake": "Hyundai",
-      "modelModel": "Elantra",
-      "plate": "",
-      "modelColor": "Red",
-      "kms": "48000"
-    },
-    {
-      "id": 2,
-      "vin": "KM8K2CAA4MU734615",
-      "dmsID": "55131",
-      "modelYear": "2021",
-      "modelMake": "Hyundai",
-      "modelModel": "Kona",
-      "plate": "",
-      "modelColor": "Red",
-      "kms": "48000"
-    },
-    {
-      "id": 3,
-      "vin": "KM8K2CAA4MU734615",
-      "modelYear": "2021",
-      "modelMake": "Hyundai",
-      "modelModel": "Kona",
-      "plate": "",
-      "modelColor": "Red",
-      "kms": "48000"
-    },
-    {
-      "firstName": "Billy",
-      "middleName": "Joe",
-      "lastName": "Osmond",
-      "id": 4
-    },
-    {
-      "firstName": "Fred",
-      "middleName": "Felix",
-      "lastName": "Flintstone",
-      "id": 5
-    },
-    {
-      "firstName": "Ray",
-      "middleName": "Mond",
-      "lastName": "Holt",
-      "id": 6
-    },
-    {
-      "firstName": "Fella",
-      "middleName": "Smiles",
-      "lastName": "Wee",
-      "id": 7
-    }
-  ],
-  "leads": [
-    {
-      "leadNumber": 1889,
-      "dmsID": "55799",
-      "leadDealership": "Skeezer Motors LTD.",
-      "leadSalesConsultant": "Dana Hawco",
-      "leadSource": "Phone Call",
-      "leadType": "Website",
-      "leadStatus": "Active",
       "id": 1
     },
     {
-      "leadNumber": 1703,
-      "dmsID": "55799",
-      "leadDealership": "Skeezer Motors LTD.",
-      "leadSalesConsultant": "Dana Hawco",
-      "leadSource": "Phone Call",
-      "leadType": "Website",
-      "leadStatus": "Active",
+      "firstName": "John",
+      "middleName": "",
+      "lastName": "Doe",
+      "gender": "",
+      "dob": null,
+      "streetAddress": "",
+      "postalCode": "",
+      "city": "",
+      "province": "",
+      "country": "",
+      "preferredLanguage": "",
+      "preferredContact": "",
+      "mobilePhone": "",
+      "homePhone": "",
+      "workPhone": "",
+      "email": "",
+      "notes": "",
       "id": 2
-    },
-    {
-      "leadNumber": 1247,
-      "dmsID": "55799",
-      "leadDealership": "Skeexer",
-      "leadSalesConsultant": "Dana",
-      "leadSource": "Phone Call",
-      "leadType": "Website",
-      "leadStatus": "Active",
-      "id": 3
-    },
-    {
-      "leadNumber": 1085,
-      "dmsID": "55799",
-      "leadDealership": "Skeezer Motors",
-      "leadSalesConsultant": "Joel",
-      "leadSource": "Phone Call",
-      "leadType": "Website",
-      "leadStatus": "Active",
-      "id": 4
-    },
-    {
-      "leadNumber": 1155,
-      "dmsID": "55131",
-      "leadDealership": "Skeezer Motors",
-      "leadSalesConsultant": "Joel",
-      "leadSource": "Phone Call",
-      "leadType": "Website",
-      "leadStatus": "Active",
-      "id": 5
-    },
-    {
-      "leadNumber": 1502,
-      "dmsID": "55799",
-      "leadDealership": "Test",
-      "leadSalesConsultant": "Test",
-      "leadSource": "Website",
-      "leadType": "Website",
-      "leadStatus": "Test",
-      "id": 6
-    },
-    {
-      "leadNumber": 1894,
-      "dmsID": "55799",
-      "leadDealership": "Test",
-      "leadSalesConsultant": "Test",
-      "leadSource": "Facebook",
-      "leadType": "Facebook",
-      "leadStatus": "Test",
-      "id": 7
-    },
-    {
-      "leadNumber": 1412,
-      "dmsID": "55799",
-      "leadDealership": "Test",
-      "leadSalesConsultant": "Test",
-      "leadSource": "Facebook",
-      "leadType": "Phone Call",
-      "leadStatus": "Test",
-      "id": 8
-    },
-    {
-      "leadNumber": 1074,
-      "leadDealership": "Test",
-      "leadSalesConsultant": "Test",
-      "leadSource": "Website",
-      "leadType": "Website",
-      "leadStatus": "Test",
-      "id": 9
-    },
-    {
-      "leadNumber": 1524,
-      "dmsID": "55799",
-      "leadDealership": "Capital Auto",
-      "leadSalesConsultant": "Capital Auto",
-      "leadSource": "Facebook",
-      "leadType": "Facebook",
-      "leadStatus": "Test",
-      "id": 10
-    },
-    {
-      "leadNumber": 1036,
-      "dmsID": "5440",
-      "leadDealership": "Test",
-      "leadSalesConsultant": "Test",
-      "leadSource": "Facebook",
-      "leadType": "Boobs",
-      "leadStatus": "Test",
-      "id": 11
     }
   ],
+  "leads": [],
+  "vehicles": [],
   "configLeads": [
     {
-      "leadSourceUnactive": [
-        "Fred",
-        "Bruce"
+      "id": 1,
+      "leadDealershipUnactive": [],
+      "leadDealershipActive": [
+        "Skeezer Motors"
       ],
+      "leadSourceUnactive": [],
       "leadSourceActive": [
+        "Phone",
         "Walk-In",
-        "Facebook",
-        "Phone Call",
         "Website",
-        "NL Classifieds"
+        "Facebook",
+        "Referral"
+      ],
+      "leadStatusUnactive": [],
+      "leadStatusActive": [
+        "New Lead",
+        "Contacted"
       ],
       "leadTypeUnactive": [
-        "Walk-In"
+        "4"
       ],
       "leadTypeActive": [
-        "Facebook",
-        "Phone Call",
-        "Website",
-        "NL Classifieds"
-      ],
-      "id": 1
+        "3"
+      ]
     }
   ]
 }

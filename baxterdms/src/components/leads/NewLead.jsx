@@ -53,7 +53,7 @@ const NewLeadComponent = () => {
       .then((data) => {
         setSearchResults(data);
         setNoResults(data.length === 0);
-        setTotalCount(data.length); // Set total count here
+        setTotalCount(data.length);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -79,8 +79,8 @@ const NewLeadComponent = () => {
     setShowNewContactForm(true);
   };
 
-  const handleNewContactCreated = (contactId) => {
-    setNewContactId(contactId);
+  const handleNewContactCreated = (newContactId) => {
+    setContactIdForNewLead(newContactId);
     setShowNewContactForm(false);
     setShowNewLeadForm(true);
   };
@@ -178,42 +178,59 @@ const NewLeadComponent = () => {
           {noResults ? (
             <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
               <Box mb={1} mt={1} p={1}>
-                <Typography variant="body">No results found.</Typography>
+                {" "}
+                <Box>
+                  <Typography variant="body">No results found.</Typography>
+                </Box>
+                <Box>
+                  {" "}
+                  <Button
+                    variant={"contained"}
+                    onClick={handleNewContactClick}
+                    sx={{ mt: 2 }}
+                  >
+                    New Contact
+                  </Button>
+                </Box>
               </Box>
             </Paper>
           ) : (
             searchResults.length > 0 && (
               <>
-                <TableComponent
-                  title="Results"
-                  data={searchResults.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )}
-                  columns={[
-                    { field: "firstName", header: "First Name" },
-                    { field: "lastName", header: "Last Name" },
-                    { field: "primaryEmail", header: "Email" },
-                    { field: "mobilePhone", header: "Phone" },
-                  ]}
-                  onRowClick={(row) => handleNewLeadClick(row.id)}
-                  totalCount={totalCount}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                />
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 50, 100]}
-                  component="div"
-                  count={totalCount}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                <Paper sx={{ pt: 1, pl: 1, pr: 1, mt: 2, mb: 2 }}>
+                  <Box mb={1} mt={1} p={1}>
+                    <TableComponent
+                      title="Results"
+                      data={searchResults.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )}
+                      columns={[
+                        { field: "firstName", header: "First Name" },
+                        { field: "lastName", header: "Last Name" },
+                        { field: "primaryEmail", header: "Email" },
+                        { field: "mobilePhone", header: "Phone" },
+                      ]}
+                      onRowClick={(row) => handleNewLeadClick(row.id)}
+                      action={"Create Lead"}
+                    />
+
+                    <TablePagination
+                      rowsPerPageOptions={[5, 10, 25, 50, 100]}
+                      component="div"
+                      count={totalCount}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                  </Box>
+                </Paper>
+
                 <Divider />
 
                 <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-                  <Box mb={1} mt={1} p={1}>
+                  <Box mb={1} mt={1} p={1} j>
                     <Button
                       variant={"contained"}
                       onClick={handleNewContactClick}

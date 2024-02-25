@@ -46,7 +46,12 @@ const App = () => {
                     <Routes>
                       <Route
                         path="/contacts/:contactId/*"
-                        element={<Contact />}
+                        element={
+                          <Navigate
+                            to={`/contacts/:contactId`}
+                            target="_blank"
+                          />
+                        }
                       />
                       <Route path="/contacts/*" element={<ContactTable />} />
                       <Route
@@ -94,10 +99,10 @@ const App = () => {
                         path="/configuration/leads"
                         element={<LeadsConfig />}
                       />
-                      {/* <Route
-                          path="/contacts/:contactId/*"
+                      <Route
+                          path="/contacts/:contactId"
                           element={<Contact />}
-                        /> */}
+                        />
                       <Route
                         path="/vehicleinventory/*"
                         element={<InventoryVehicles />}
