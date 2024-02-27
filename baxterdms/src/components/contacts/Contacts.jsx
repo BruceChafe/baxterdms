@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Button, TablePagination } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TableComponent from "../tables/DataTable";
-import Contact from "./Customer";
 import UploadData from "../upload/Upload";
 
 const ContactTable = () => {
   const [contacts, setContacts] = useState([]);
-  const [selectedContact, setSelectedContact] = useState(null);
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -56,10 +54,6 @@ const ContactTable = () => {
     navigate(`/contacts/${contact.id}`);
       };
 
-  const handleCloseEditPanel = () => {
-    setSelectedContact(null);
-    document.body.style.overflow = "auto";
-  };
 
   const handleCloseUploadPanel = () => {
     setUploadPanelOpen(false);

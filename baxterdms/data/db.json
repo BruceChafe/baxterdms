@@ -44,7 +44,11 @@
       "workPhone": "",
       "email": "",
       "notes": "",
-      "id": 1
+      "id": 1,
+      "leadNumbers": [
+        1747,
+        1848
+      ]
     },
     {
       "firstName": "John",
@@ -65,9 +69,53 @@
       "email": "",
       "notes": "",
       "id": 2
+    },
+    {
+      "firstName": "Testy",
+      "middleName": "",
+      "lastName": "3",
+      "gender": "",
+      "dob": null,
+      "streetAddress": "",
+      "postalCode": "",
+      "city": "",
+      "province": "",
+      "country": "",
+      "preferredLanguage": "",
+      "preferredContact": "",
+      "mobilePhone": "",
+      "homePhone": "",
+      "workPhone": "",
+      "email": "",
+      "notes": "",
+      "id": 3,
+      "leadNumbers": [
+        1536
+      ]
     }
   ],
-  "leads": [],
+  "leads": [
+    {
+      "leadNumber": 1747,
+      "dmsID": 1,
+      "leadDealership": "Skeezer Motors",
+      "leadSalesConsultant": "Test",
+      "leadSource": "Referral",
+      "leadType": "3",
+      "leadStatus": "New Lead",
+      "id": 1
+    },
+    {
+      "leadNumber": 1536,
+      "dmsID": 3,
+      "leadDealership": "Skeezer Motors",
+      "leadSalesConsultant": "Test",
+      "leadSource": "Walk-In",
+      "leadType": "3",
+      "leadStatus": "New Lead",
+      "id": 2
+    }
+  ],
   "vehicles": [],
   "configLeads": [
     {

@@ -6,10 +6,10 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Grid, CssBaseline, Container } from "@mui/material";
-import Contact from "./components/customers/Customer";
+import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
-import NewContact from "./components/customers/NewCustomer";
-import ContactTable from "./components/customers/Customers";
+import NewContact from "./components/contacts/NewContact";
+import ContactTable from "./components/contacts/Contacts";
 import { AuthProvider } from "./context/AuthContext";
 import ThemeSelection from "./components/account/Theme";
 import { AccountOverview, AccountTiles } from "./components/account/Overview";
@@ -26,6 +26,7 @@ import ConfigLanding from "./components/configuration/ConfigLanding";
 import LeadsConfig from "./components/configuration/LeadsConfig";
 import InventoryVehicle from "./components/inventory/InventoryVehicle";
 import InventoryVehicles from "./components/tables/DataTable";
+import Lead from "./components/leads/Lead";
 
 const App = () => {
   return (
@@ -100,9 +101,13 @@ const App = () => {
                         element={<LeadsConfig />}
                       />
                       <Route
-                          path="/contacts/:contactId"
-                          element={<Contact />}
-                        />
+                        path="/contacts/:contactId"
+                        element={<Contact />}
+                      />
+                      <Route
+                        path="/leads/:leadNumber"
+                        element={<Lead />}
+                      />
                       <Route
                         path="/vehicleinventory/*"
                         element={<InventoryVehicles />}

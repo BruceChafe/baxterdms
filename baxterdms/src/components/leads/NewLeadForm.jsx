@@ -18,7 +18,7 @@ const NewLeadFields = [
   { label: "Status", key: "leadStatus" },
 ];
 
-const NewLeadForm = ({ onCloseForm, contactId, newContactId }) => {
+const NewLeadForm = ({ onCloseForm, contactId }) => {
   const [formData, setFormData] = useState({});
   const [filledFields, setFilledFields] = useState({});
   const [message, setMessage] = useState("");

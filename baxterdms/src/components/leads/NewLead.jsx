@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import NewLeadForm from "./NewLeadForm";
 import TableComponent from "../tables/DataTable";
-import NewContact from "../customers/NewCustomer";
+import NewContact from "../contacts/NewContact";
 
 const NewLeadComponent = () => {
   const [searchData, setSearchData] = useState({
@@ -29,7 +29,6 @@ const NewLeadComponent = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [showNewContactForm, setShowNewContactForm] = useState(false);
   const [newContactSubmitted, setNewContactSubmitted] = useState(false);
-  const [newContactId, setNewContactId] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

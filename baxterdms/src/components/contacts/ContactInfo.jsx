@@ -1,9 +1,13 @@
-import React, { useState } from "react";
-import { Typography, TextField, Divider, Box, Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Typography, TextField, Divider, Box, Button, Grid } from "@mui/material";
 
 const ContactInfo = ({ contact, onUpdateContact }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedContact, setEditedContact] = useState({ ...contact });
+
+  useEffect(() => {
+    setEditedContact({ ...contact });
+  }, [contact]);
 
   const basicInformationFields = [
     { label: "First Name", key: "firstName" },
@@ -28,10 +32,6 @@ const ContactInfo = ({ contact, onUpdateContact }) => {
     { label: "Work Email", key: "workEmail" },
   ];
 
-  const dmsFields =[
-    { label: "DMS ID", key: "dmsID" },
-  ]
-
   const handleEditToggle = () => {
     setIsEditMode((prevMode) => !prevMode);
   };
@@ -43,25 +43,27 @@ const ContactInfo = ({ contact, onUpdateContact }) => {
     });
   };
 
-  const handleSave = () => {
-    fetch(`http://localhost:8000/contacts/${contact.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(editedContact),
-    })
-      .then((response) => response.json())
-      .then((updatedContact) => {
-        onUpdateContact(updatedContact);
-        setIsEditMode(false);
-      })
-      .catch((error) => {
-        console.error("Error updating contact:", error);
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/contacts/${contact.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(editedContact),
       });
+      if (!response.ok) {
+        throw new Error("Failed to save contact data");
+      }
+      const updatedContact = await response.json();
+      onUpdateContact(updatedContact);
+      setIsEditMode(false);
+    } catch (error) {
+      console.error("Error updating contact:", error);
+    }
   };
 
-  const renderTextField = (label, key, value, isReadonly = true) => (
+  const renderTextField = (label, key, value) => (
     <TextField
       variant="outlined"
       label={label}
@@ -70,35 +72,36 @@ const ContactInfo = ({ contact, onUpdateContact }) => {
       InputProps={{
         readOnly: !isEditMode,
       }}
-      sx={{ mr: 2, width: "15%" }}
+      fullWidth
       disabled={!isEditMode}
     />
   );
 
   const renderSection = (sectionLabel, fields) => (
-    <Box label={sectionLabel} sx={{ width: "100%", mr: 2 }}>
+    <Box sx={{ mb: 2 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
         {sectionLabel}
       </Typography>
-      {fields.map((field) => (
-        <React.Fragment key={field.label}>
-          {renderTextField(field.label, field.key, editedContact[field.key], field.isReadOnly)}
-        </React.Fragment>
-      ))}
-      <Divider sx={{ mt: 1, mb: 1, width: 1 / 2 }} />
+      <Grid container spacing={2}>
+        {fields.map((field) => (
+          <Grid item xs={12} sm={6} key={field.label}>
+            {renderTextField(field.label, field.key, editedContact[field.key])}
+          </Grid>
+        ))}
+      </Grid>
+      <Divider sx={{ mt: 2, mb: 2 }} />
     </Box>
   );
 
   return (
-    <Box sx={{ width: "100%", mr: 2 }}>
-      <Button onClick={isEditMode ? handleSave : handleEditToggle} variant="outlined">
+    <Box>
+      <Button onClick={isEditMode ? handleSave : handleEditToggle} variant="outlined" sx={{ mb: 2 }}>
         {isEditMode ? "Save" : "Edit"}
       </Button>
 
       {renderSection("Basic Information", basicInformationFields)}
       {renderSection("Location", locationFields)}
       {renderSection("Contact Information", contactInformationFields)}
-      {renderSection("DMS ID", dmsFields)}
     </Box>
   );
 };

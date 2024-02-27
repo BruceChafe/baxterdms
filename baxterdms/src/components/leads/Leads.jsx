@@ -6,15 +6,16 @@ import {
   Paper,
   Divider,
 } from "@mui/material";
-import Lead from "./Lead";
+import { useNavigate } from "react-router-dom";
 import TableComponent from "../tables/DataTable";
 
 const LeadsTable = () => {
   const [leads, setLeads] = useState([]);
-  const [selectedLead, setSelectedLead] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchLeads();
@@ -23,7 +24,7 @@ const LeadsTable = () => {
   const fetchLeads = async () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
-  
+
     try {
       const response = await fetch(
         `http://localhost:8000/leads?_start=${startIndex}&_end=${endIndex}`
@@ -31,15 +32,16 @@ const LeadsTable = () => {
       const totalCountHeader = response.headers.get("X-Total-Count");
       setTotalCount(parseInt(totalCountHeader, 10) || 0);
       const leadsData = await response.json();
-  
+
       const updatedLeads = [];
-  
-      for (const lead of leadsData) {
+
+      for (let i = 0; i < leadsData.length; i++) {
+        const lead = leadsData[i];
         const contactResponse = await fetch(
           `http://localhost:8000/contacts?leadNumbers_like=${lead.leadNumber}`
         );
         const contactData = await contactResponse.json();
-  
+
         if (contactData.length > 0) {
           for (const contact of contactData) {
             const fullName = `${contact.firstName} ${contact.lastName}`;
@@ -49,13 +51,13 @@ const LeadsTable = () => {
           updatedLeads.push(lead);
         }
       }
-  
+
       setLeads(updatedLeads);
     } catch (error) {
       console.error("Error fetching leads:", error);
     }
   };
-  
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -65,10 +67,9 @@ const LeadsTable = () => {
     setPage(0);
   };
 
-  const handleEditClick = (lead) => {
-    setSelectedLead(lead);
-    document.body.style.overflow = "hidden";
-  };
+const handleEditClick = (lead, index) => {
+    navigate(`/leads/${lead.leadNumber}`);
+};
 
   const handleCloseEditPanel = () => {
     setSelectedLead(null);
@@ -92,7 +93,7 @@ const LeadsTable = () => {
               { field: "email", header: "Email Address" },
               { field: "leadDealership", header: "Phone Numbers" },
             ]}
-            onRowClick={handleEditClick}
+            onRowClick={(rowData, index) => handleEditClick(rowData, index)}
             action={"View Lead"}
           />
 
@@ -107,12 +108,6 @@ const LeadsTable = () => {
           />
         </Box>
       </Paper>
-
-      <Lead
-        lead={selectedLead}
-        showPanel={!!selectedLead}
-        onClose={handleCloseEditPanel}
-      />
     </Box>
   );
 };
