@@ -1,3 +1,4 @@
+// Lead.js
 import React, { useState, useEffect } from "react";
 import {
   Typography,
@@ -6,10 +7,13 @@ import {
   Tab,
   Paper,
   CircularProgress,
+  Button,
+  Grid,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useParams } from "react-router-dom";
 import LeadInfo from "./LeadInfo";
+import ContactInfo from "../contacts/ContactInfo";
 
 const Lead = () => {
   const { leadNumber } = useParams();
@@ -17,6 +21,8 @@ const Lead = () => {
   const [contact, setContact] = useState(null);
   const [loading, setLoading] = useState(true);
   const [value, setValue] = useState("1");
+  const [editedLead, setEditedLead] = useState(null);
+  const [editedContact, setEditedContact] = useState(null);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -32,7 +38,6 @@ const Lead = () => {
           throw new Error("Failed to fetch lead data");
         }
         const leadData = await leadResponse.json();
-        console.log(leadData);
 
         const contactResponse = await fetch(
           `http://localhost:8000/contacts?leadNumbers_like=${leadNumber}`
@@ -44,6 +49,8 @@ const Lead = () => {
 
         setLead(leadData[0] || null);
         setContact(contactData[0] || null);
+        setEditedLead(leadData[0] || null);
+        setEditedContact(contactData[0] || null);
       } catch (error) {
         console.error("Error fetching lead data:", error);
       } finally {
@@ -54,21 +61,61 @@ const Lead = () => {
     fetchLeadData();
   }, [leadNumber]);
 
+  const handleSave = async () => {
+    try {
+      // Save lead data
+      const leadResponse = await fetch(`http://localhost:8000/leads/${lead.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(editedLead),
+      });
+      if (!leadResponse.ok) {
+        throw new Error("Failed to save lead data");
+      }
+
+      // Save contact data
+      const contactResponse = await fetch(`http://localhost:8000/contacts/${contact.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(editedContact),
+      });
+      if (!contactResponse.ok) {
+        throw new Error("Failed to save contact data");
+      }
+    } catch (error) {
+      console.error("Error updating lead and contact:", error);
+    }
+  };
+
   return (
     <Box m={3}>
-      <Typography variant="h4" sx={{ m: 2 }}>
-        {loading ? (
-          <CircularProgress />
-        ) : lead && contact ? (
-          `${contact.firstName} ${contact.lastName} - ${lead.leadStatus}`
-        ) : (
-          "Lead not found"
-        )}
-      </Typography>
-
+      <Grid container>
+        <Grid item xs={11}>
+          {" "}
+          <Typography variant="h4" sx={{ m: 2 }}>
+            {loading ? (
+              <CircularProgress />
+            ) : lead && contact ? (
+              `${contact.firstName} ${contact.lastName} - ${lead.leadStatus}`
+            ) : (
+              "Lead not found"
+            )}
+          </Typography>
+        </Grid>
+        <Grid item xs={1}>
+          {" "}
+          <Button onClick={handleSave} variant="outlined">
+            Save
+          </Button>
+        </Grid>
+      </Grid>
       <Divider />
       <TabContext value={value}>
-        <Paper sx={{ pl: 1, pr: 1, mt: 2, mb: 2 }}>
+        <Paper sx={{ pl: 1, pr: 1, mt: 2 }}>
           <Box mb={1} mt={1} p={1}>
             <TabList
               onChange={handleChange}
@@ -82,8 +129,12 @@ const Lead = () => {
             </TabList>
           </Box>
         </Paper>
-        <TabPanel value="1">{lead && <LeadInfo lead={lead} />}</TabPanel>
-        <TabPanel value="2">{/* Render contact information */}</TabPanel>
+        <TabPanel value="1">
+          {lead && <LeadInfo lead={lead} onSaveLeadInfo={setEditedLead} />}
+        </TabPanel>
+        <TabPanel value="2">
+          {contact && <ContactInfo contact={contact} onSaveContactInfo={setEditedContact} />}
+        </TabPanel>
         <TabPanel value="3">Item Three</TabPanel>
         <TabPanel value="4">Item Four</TabPanel>
       </TabContext>

@@ -27,7 +27,7 @@
   ],
   "contacts": [
     {
-      "firstName": "Jane",
+      "firstName": "Jane Fonda",
       "middleName": "",
       "lastName": "Doe",
       "gender": "",
@@ -42,7 +42,7 @@
       "mobilePhone": "",
       "homePhone": "",
       "workPhone": "",
-      "email": "",
+      "email": "brucechafe@gmail.com",
       "notes": "",
       "id": 1,
       "leadNumbers": [
@@ -100,7 +100,7 @@
       "dmsID": 1,
       "leadDealership": "Skeezer Motors",
       "leadSalesConsultant": "Test",
-      "leadSource": "Referral",
+      "leadSource": "Facebook",
       "leadType": "3",
       "leadStatus": "New Lead",
       "id": 1

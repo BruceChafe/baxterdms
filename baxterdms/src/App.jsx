@@ -5,7 +5,7 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import { Grid, CssBaseline, Container } from "@mui/material";
+import { Grid, CssBaseline, Container, BottomNavigation } from "@mui/material";
 import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
 import NewContact from "./components/contacts/NewContact";
