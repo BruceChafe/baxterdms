@@ -61,6 +61,7 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
   
     if (allMandatoryFieldsFilled) {
       const newLeadNumber = Math.floor(Math.random() * 1000) + 1000;
+      const currentTimeStamp = new Date().toISOString(); // Get current timestamp
   
       fetch("http://localhost:8000/leads", {
         method: "POST",
@@ -70,6 +71,7 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
         body: JSON.stringify({
           leadNumber: newLeadNumber,
           dmsID: contactId,
+          timestamp: currentTimeStamp,
           ...formData,
         }),
       })
@@ -81,7 +83,6 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
   
           console.log("New Lead:", newLead);
   
-          // Associate the lead number with the contact
           fetch(`http://localhost:8000/contacts/${contactId}`, {
             method: "PATCH",
             headers: {
@@ -100,6 +101,7 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
       setMessage("Please fill out all mandatory fields.");
     }
   };
+  
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 
   const handleKeyPress = (event) => {

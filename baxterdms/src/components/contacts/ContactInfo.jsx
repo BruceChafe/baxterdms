@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Typography, TextField, Divider, Box, Grid, Paper } from "@mui/material";
 
-const ContactInfo = ({ contact, onSaveContactInfo, showInBottomNavigation }) => {
+const ContactInfo = ({ contact, onSaveContactInfo }) => {
   const [editedContact, setEditedContact] = useState({ ...contact });
 
   useEffect(() => {
@@ -71,7 +71,6 @@ const ContactInfo = ({ contact, onSaveContactInfo, showInBottomNavigation }) => 
     </Box>
   );
 
-  if (!showInBottomNavigation) {
     return (
       <Box>
         {renderSection("Basic Information", basicInformationFields)}
@@ -81,9 +80,7 @@ const ContactInfo = ({ contact, onSaveContactInfo, showInBottomNavigation }) => 
         {renderSection("Contact Information", contactInformationFields)}
       </Box>
     );
-  }
 
-  return null;
 };
 
 export default ContactInfo;

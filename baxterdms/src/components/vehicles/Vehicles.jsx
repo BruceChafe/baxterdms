@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, TablePagination } from "@mui/material";
 import UploadData from "../upload/Upload";
 import Vehicle from "./Vehicle";
-import TableComponent from "../tables/DataTable";
+import BasicTable from "../tables/BasicTable";
 
 const VehiclesTable = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -72,7 +72,7 @@ const VehiclesTable = () => {
         Import
       </Button>
 
-      <TableComponent
+      <BasicTable
         data={vehicles}
         columns={[
           { field: "modelMake", header: "Make" },

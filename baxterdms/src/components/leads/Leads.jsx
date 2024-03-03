@@ -7,7 +7,7 @@ import {
   Divider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import TableComponent from "../tables/DataTable";
+import BasicTable from "../tables/BasicTable";
 
 const LeadsTable = () => {
   const [leads, setLeads] = useState([]);
@@ -67,9 +67,9 @@ const LeadsTable = () => {
     setPage(0);
   };
 
-const handleEditClick = (lead, index) => {
+  const handleEditClick = (lead, index) => {
     navigate(`/leads/${lead.leadNumber}`);
-};
+  };
 
   const handleCloseEditPanel = () => {
     setSelectedLead(null);
@@ -78,13 +78,21 @@ const handleEditClick = (lead, index) => {
 
   return (
     <Box m={3}>
-      <Typography variant="h4" sx={{ m: 2 }}>
-        Leads
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h4" sx={{ m: 2 }}>
+          Leads
+        </Typography>
+      </Box>
       <Divider />
       <Paper sx={{ pt: 1, pl: 1, pr: 1, mt: 2, mb: 2 }}>
         <Box mb={1} mt={1} p={1}>
-          <TableComponent
+          <BasicTable
             data={leads}
             columns={[
               { field: "leadStatus", header: "Status" },

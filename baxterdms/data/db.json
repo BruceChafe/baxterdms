@@ -10,7 +10,7 @@
       "companyName": "Skeezer Motors",
       "primaryEmail": "brucechafe@skeezermotors.ca",
       "companyNumber": "709.700.6182",
-      "theme": "royalBlueDarkTheme"
+      "theme": "slateTheme"
     },
     {
       "UID": "cay7knM7AsVkg7VvpGXS1t31rDa2",
@@ -27,9 +27,9 @@
   ],
   "contacts": [
     {
-      "firstName": "Jane Fonda",
+      "firstName": "Jane",
       "middleName": "",
-      "lastName": "Doe",
+      "lastName": "Fondue",
       "gender": "",
       "dob": null,
       "streetAddress": "",
@@ -46,8 +46,7 @@
       "notes": "",
       "id": 1,
       "leadNumbers": [
-        1747,
-        1848
+        1565
       ]
     },
     {
@@ -73,7 +72,7 @@
     {
       "firstName": "Testy",
       "middleName": "",
-      "lastName": "3",
+      "lastName": "",
       "gender": "",
       "dob": null,
       "streetAddress": "",
@@ -92,6 +91,52 @@
       "leadNumbers": [
         1536
       ]
+    },
+    {
+      "firstName": "Test1",
+      "middleName": "",
+      "lastName": "Test1",
+      "gender": "",
+      "dob": null,
+      "streetAddress": "",
+      "postalCode": "",
+      "city": "",
+      "province": "",
+      "country": "",
+      "preferredLanguage": "",
+      "preferredContact": "",
+      "mobilePhone": "",
+      "homePhone": "",
+      "workPhone": "",
+      "email": "",
+      "notes": "",
+      "id": 4,
+      "leadNumbers": [
+        1654
+      ]
+    },
+    {
+      "firstName": "Joel",
+      "middleName": "Test",
+      "lastName": "Lake",
+      "gender": "",
+      "dob": null,
+      "streetAddress": "",
+      "postalCode": "",
+      "city": "",
+      "province": "",
+      "country": "",
+      "preferredLanguage": "",
+      "preferredContact": "",
+      "mobilePhone": "",
+      "homePhone": "",
+      "workPhone": "",
+      "email": "",
+      "notes": "",
+      "id": 5,
+      "leadNumbers": [
+        1054
+      ]
     }
   ],
   "leads": [
@@ -101,9 +146,10 @@
       "leadDealership": "Skeezer Motors",
       "leadSalesConsultant": "Test",
       "leadSource": "Facebook",
-      "leadType": "3",
+      "leadType": "",
       "leadStatus": "New Lead",
-      "id": 1
+      "id": 1,
+      "history": []
     },
     {
       "leadNumber": 1536,
@@ -111,9 +157,82 @@
       "leadDealership": "Skeezer Motors",
       "leadSalesConsultant": "Test",
       "leadSource": "Walk-In",
-      "leadType": "3",
+      "leadType": "",
       "leadStatus": "New Lead",
-      "id": 2
+      "id": 2,
+      "history": []
+    },
+    {
+      "leadNumber": 1654,
+      "dmsID": 4,
+      "leadDealership": "Skeezer Motors",
+      "leadSalesConsultant": "Test1",
+      "leadSource": "Phone",
+      "leadType": "",
+      "leadStatus": "Contacted",
+      "id": 3,
+      "history": []
+    },
+    {
+      "leadNumber": 1054,
+      "dmsID": 5,
+      "leadDealership": "Skeezer Motors",
+      "leadSource": "TypeSource",
+      "leadType": "TypeTest",
+      "leadStatus": "StatusTest",
+      "leadSalesConsultant": "JoelTest",
+      "id": 4,
+      "history": []
+    },
+    {
+      "leadNumber": 1565,
+      "dmsID": 1,
+      "timestamp": "2024-03-02T19:35:26.580Z",
+      "leadDealership": "Skeezer Motors",
+      "leadSalesConsultant": "Test",
+      "leadSource": "Referral",
+      "leadType": "TypeTest",
+      "leadStatus": "New Lead",
+      "id": 5,
+      "history": [
+        [
+          "2024-03-02T19:35:26.580Z",
+          "Lead Created"
+        ],
+        [
+          "2024-03-03T21:03:04.293Z"
+        ],
+        [
+          "2024-03-03T21:40:20.972Z"
+        ]
+      ],
+      "tasks": [
+        {
+          "type": "Test",
+          "employee": "Test",
+          "subject": "Test",
+          "additionalInfo": "Test",
+          "timestamp": "2024-03-03T21:06:40.965Z"
+        },
+        {
+          "followUpDate": "2024-03-06T03:30:00.000Z",
+          "type": "Send Email",
+          "employee": "Bruce",
+          "subject": "Send Email",
+          "additionalInfo": ".",
+          "timestamp": "2024-03-03T21:37:24.598Z",
+          "status": "Active"
+        },
+        {
+          "followUpDate": null,
+          "type": "",
+          "employee": "",
+          "subject": "",
+          "additionalInfo": "",
+          "timestamp": "2024-03-03T22:03:24.484Z",
+          "status": "Active"
+        }
+      ]
     }
   ],
   "vehicles": [],
@@ -124,24 +243,27 @@
       "leadDealershipActive": [
         "Skeezer Motors"
       ],
-      "leadSourceUnactive": [],
+      "leadSourceUnactive": [
+        "Phone"
+      ],
       "leadSourceActive": [
-        "Phone",
         "Walk-In",
         "Website",
         "Facebook",
-        "Referral"
+        "Referral",
+        "Test",
+        "TypeSource"
       ],
       "leadStatusUnactive": [],
       "leadStatusActive": [
         "New Lead",
-        "Contacted"
+        "Contacted",
+        "StatusTest"
       ],
-      "leadTypeUnactive": [
-        "4"
-      ],
+      "leadTypeUnactive": [],
       "leadTypeActive": [
-        "3"
+        "",
+        "TypeTest"
       ]
     }
   ]

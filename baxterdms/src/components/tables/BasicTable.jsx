@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const TableComponent = ({ data, columns, onRowClick, title, action }) => {
+const BasicTable = ({ data, columns, onRowClick, title, action }) => {
   return (
     <>
       <Typography variant="h5" mb={2}>
@@ -46,4 +46,4 @@ const TableComponent = ({ data, columns, onRowClick, title, action }) => {
   );
 };
 
-export default TableComponent;
+export default BasicTable;

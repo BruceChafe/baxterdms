@@ -109,7 +109,6 @@ const LeadInfo = ({ lead, onSaveLeadInfo }) => {
               </Grid>
             </Box>
           </Paper>
-          <Divider />
         </Box>
       )}
     </>

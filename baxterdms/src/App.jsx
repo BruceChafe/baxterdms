@@ -24,8 +24,6 @@ import NewLeadComponent from "./components/leads/NewLead";
 import { ThemeProvider } from "./context/ThemeContext";
 import ConfigLanding from "./components/configuration/ConfigLanding";
 import LeadsConfig from "./components/configuration/LeadsConfig";
-import InventoryVehicle from "./components/inventory/InventoryVehicle";
-import InventoryVehicles from "./components/tables/DataTable";
 import Lead from "./components/leads/Lead";
 
 const App = () => {
@@ -108,10 +106,7 @@ const App = () => {
                         path="/leads/:leadNumber"
                         element={<Lead />}
                       />
-                      <Route
-                        path="/vehicleinventory/*"
-                        element={<InventoryVehicles />}
-                      />
+
                       {/* <Route
                           path="/vehicleinventory/add"
                           element={<Vehicle />}

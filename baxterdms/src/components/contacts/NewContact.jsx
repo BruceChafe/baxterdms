@@ -69,7 +69,7 @@ const NewContact = ({ onCloseForm, onNewContactCreated }) => {
  
 
   return (
-    <Box>
+    <Box sx={{m: 3}}>
       <Typography variant="h4" mb={2}>
         New Contact
       </Typography>

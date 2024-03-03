@@ -10,7 +10,7 @@ import {
   Paper,
 } from "@mui/material";
 import NewLeadForm from "./NewLeadForm";
-import TableComponent from "../tables/DataTable";
+import BasicTable from "../tables/BasicTable";
 import NewContact from "../contacts/NewContact";
 
 const NewLeadComponent = () => {
@@ -198,7 +198,7 @@ const NewLeadComponent = () => {
               <>
                 <Paper sx={{ pt: 1, pl: 1, pr: 1, mt: 2, mb: 2 }}>
                   <Box mb={1} mt={1} p={1}>
-                    <TableComponent
+                    <BasicTable
                       title="Results"
                       data={searchResults.slice(
                         page * rowsPerPage,

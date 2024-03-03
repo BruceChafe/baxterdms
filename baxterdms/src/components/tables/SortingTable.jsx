@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const TableComponent = ({ data, columns, defaultSortKey, defaultSortDirection, action }) => {
+const SortingTable = ({ data, columns, defaultSortKey, defaultSortDirection, action }) => {
   const [sortConfig, setSortConfig] = useState({ key: defaultSortKey || null, direction: defaultSortDirection || 'ascending' });
 
   // Function to handle sorting
@@ -82,4 +82,4 @@ const TableComponent = ({ data, columns, defaultSortKey, defaultSortDirection, a
   );
 };
 
-export default TableComponent;
+export default SortingTable;
