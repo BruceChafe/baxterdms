@@ -25,6 +25,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import ConfigLanding from "./components/configuration/ConfigLanding";
 import LeadsConfig from "./components/configuration/LeadsConfig";
 import Lead from "./components/leads/Lead";
+import LeadTaskConfig from "./components/configuration/LeadTaskConfig";
 
 const App = () => {
   return (
@@ -97,6 +98,10 @@ const App = () => {
                       <Route
                         path="/configuration/leads"
                         element={<LeadsConfig />}
+                      />
+                                            <Route
+                        path="/configuration/leadtasks"
+                        element={<LeadTaskConfig />}
                       />
                       <Route
                         path="/contacts/:contactId"

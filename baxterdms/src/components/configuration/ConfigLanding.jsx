@@ -23,11 +23,11 @@ const ConfigLanding = () => {
         "Access and manage detailed information about your personal profile and user details.",
       to: "/configuration/leads",
     },
-    // {
-    //   text: "Account Settings",
-    //   description: "Manage your account settings and preferences.",
-    //   to: "/account/settings",
-    // },
+    {
+      text: "Lead Task",
+      description: "Manage your account settings and preferences.",
+      to: "/configuration/leadtasks",
+    },
     // {
     //   text: "Device Management",
     //   description: "View and manage the devices associated with your account.",

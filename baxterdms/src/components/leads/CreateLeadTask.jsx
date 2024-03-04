@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Dialog,
@@ -8,6 +8,7 @@ import {
   IconButton,
   TextField,
   Snackbar,
+  MenuItem
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -17,6 +18,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 const CreateLeadTask = ({ open, onClose, lead, id }) => {
   const [leadTask, setLeadTask] = useState({
     leadTaskType: "",
+    leadTaskPriority: "",
     leadTaskEmployee: "",
     leadTaskSubject: "",
     leadTaskAdditionalInfo: "",
@@ -24,6 +26,8 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
   });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [taskTypeOptions, setTaskTypeOptions] = useState([]);
+  const [taskPriorityOptions, setTaskPriorityOptions] = useState([]);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -36,6 +40,20 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
     });
   };
 
+  useEffect(() => {
+    fetch("http://localhost:8000/configLeadTasks/1")
+      .then((response) => response.json())
+      .then((configData) => {
+        const taskTypeOptions = configData.leadTaskTypeActive || [];
+        const taskPriorityOptions = configData.leadTaskPriorityActive || [];
+        setTaskTypeOptions(taskTypeOptions);
+        setTaskPriorityOptions(taskPriorityOptions);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
+  }, []);
+
   const handleSave = async () => {
     try {
       const timestamp = new Date().toISOString();
@@ -46,6 +64,7 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
           {
             followUpDate: leadTask.followUpDate,
             type: leadTask.leadTaskType,
+            priority: leadTask.leadTaskPriority,
             employee: leadTask.leadTaskEmployee,
             subject: leadTask.leadTaskSubject,
             additionalInfo: leadTask.leadTaskAdditionalInfo,
@@ -64,12 +83,13 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
 
       setLeadTask({
         leadTaskType: "",
+        leadTaskPriority: "",
         leadTaskEmployee: "",
         leadTaskSubject: "",
         leadTaskAdditionalInfo: "",
         followUpDate: null,
       });
-      setSnackbarMessage("Email sent successfully!");
+      setSnackbarMessage("Task saved successfully!");
       setSnackbarOpen(true);
 
       setTimeout(() => {
@@ -113,8 +133,29 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
           label="Follow-Up Type"
           value={leadTask.leadTaskType}
           onChange={(e) => handleFieldChange("leadTaskType", e.target.value)}
+          select
           fullWidth
-        />
+        >
+          {taskTypeOptions.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          variant="outlined"
+          label="Follow-Up Priority"
+          value={leadTask.leadTaskPriority}
+          onChange={(e) => handleFieldChange("leadTaskPriority", e.target.value)}
+          select
+          fullWidth
+        >
+          {taskPriorityOptions.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField
           variant="outlined"
           label="Assigned Employee"

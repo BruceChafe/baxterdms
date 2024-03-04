@@ -204,6 +204,15 @@
         ],
         [
           "2024-03-03T21:40:20.972Z"
+        ],
+        [
+          "2024-03-04T22:40:10.677Z"
+        ],
+        [
+          "2024-03-04T22:42:32.281Z"
+        ],
+        [
+          "2024-03-04T22:43:47.062Z"
         ]
       ],
       "tasks": [
@@ -230,6 +239,16 @@
           "subject": "",
           "additionalInfo": "",
           "timestamp": "2024-03-03T22:03:24.484Z",
+          "status": "Active"
+        },
+        {
+          "followUpDate": "2024-03-05T03:30:00.000Z",
+          "type": "48 Hour Follow Up",
+          "priority": "Low",
+          "employee": "Test",
+          "subject": "Test",
+          "additionalInfo": "Test",
+          "timestamp": "2024-03-04T23:05:16.756Z",
           "status": "Active"
         }
       ]
@@ -264,6 +283,55 @@
       "leadTypeActive": [
         "",
         "TypeTest"
+      ]
+    }
+  ],
+  "configLeadTasks": [
+    {
+      "id": 1,
+      "leadTaskTypeUnactive": [
+        "24 Hour Follow Up"
+      ],
+      "leadTaskTypeActive": [
+        "48 Hour Follow Up",
+        "Delivery Follow Up",
+        "Email Follow Up",
+        "Phone Follow Up",
+        "SMS Follow Up",
+        "Long Term Follow Up",
+        "Appointment Follow Up",
+        "Appointment Confirmation",
+        "Lead Qualification",
+        "Information Gathering",
+        "Vehicle Search",
+        "Post-Sale Follow-Up",
+        "Feedback Collection",
+        "Other"
+      ],
+      "leadTaskStatusUnactive": [
+        "24 Hour Follow Up"
+      ],
+      "leadTaskStatusActive": [
+        "48 Hour Follow Up",
+        "Delivery Follow Up",
+        "Email Follow Up",
+        "Phone Follow Up",
+        "SMS Follow Up",
+        "Long Term Follow Up",
+        "Appointment Follow Up",
+        "Appointment Confirmation",
+        "Lead Qualification",
+        "Information Gathering",
+        "Vehicle Search",
+        "Post-Sale Follow-Up",
+        "Feedback Collection",
+        "Other"
+      ],
+      "leadTaskPriorityUnactive": [],
+      "leadTaskPriorityActive": [
+        "Low",
+        "Normal",
+        "High"
       ]
     }
   ]

@@ -22,8 +22,9 @@ const EmailContact = ({ id, open, onClose, primaryEmail }) => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-  
   const handleSubmit = async (e) => {
+    e.preventDefault();
+
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
