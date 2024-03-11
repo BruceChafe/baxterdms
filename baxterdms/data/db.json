@@ -27,9 +27,9 @@
   ],
   "contacts": [
     {
-      "firstName": "Jane",
+      "firstName": "Jand",
       "middleName": "",
-      "lastName": "Fondue",
+      "lastName": "Fondu",
       "gender": "",
       "dob": null,
       "streetAddress": "",
@@ -85,7 +85,7 @@
       "mobilePhone": "",
       "homePhone": "",
       "workPhone": "",
-      "email": "",
+      "email": "danahawco@gmail.com",
       "notes": "",
       "id": 3,
       "leadNumbers": [
@@ -108,7 +108,7 @@
       "mobilePhone": "",
       "homePhone": "",
       "workPhone": "",
-      "email": "",
+      "email": "brucechafe@gmail.com",
       "notes": "",
       "id": 4,
       "leadNumbers": [
@@ -135,7 +135,7 @@
       "notes": "",
       "id": 5,
       "leadNumbers": [
-        1054
+        1127
       ]
     }
   ],
@@ -149,7 +149,20 @@
       "leadType": "",
       "leadStatus": "New Lead",
       "id": 1,
-      "history": []
+      "history": [],
+      "tasks": [
+        {
+          "followUpDate": "2024-03-12T02:30:00.000Z",
+          "type": "SMS Follow Up",
+          "priority": "Low",
+          "employee": "TEst",
+          "subject": "test",
+          "additionalInfo": "test",
+          "timestamp": "2024-03-10T21:38:44.305Z",
+          "status": "Active",
+          "activity": "Task Created"
+        }
+      ]
     },
     {
       "leadNumber": 1536,
@@ -160,7 +173,29 @@
       "leadType": "",
       "leadStatus": "New Lead",
       "id": 2,
-      "history": []
+      "history": [],
+      "emails": [
+        {
+          "from": "baxterdms@outlook.com",
+          "to": "danahawco@gmail.com",
+          "subject": "Email Test",
+          "body": "Email Test",
+          "timestamp": "2024-03-10T16:19:09.710Z"
+        }
+      ],
+      "tasks": [
+        {
+          "followUpDate": "2024-03-12T02:30:00.000Z",
+          "type": "Phone Follow Up",
+          "priority": "Low",
+          "employee": "Phone",
+          "subject": "test",
+          "additionalInfo": "test",
+          "timestamp": "2024-03-10T21:38:44.305Z",
+          "status": "Active",
+          "activity": "Task Created"
+        }
+      ]
     },
     {
       "leadNumber": 1654,
@@ -171,7 +206,26 @@
       "leadType": "",
       "leadStatus": "Contacted",
       "id": 3,
-      "history": []
+      "history": [
+        [
+          "2024-03-05T21:43:53.286Z"
+        ],
+        [
+          "2024-03-05T21:44:10.763Z"
+        ]
+      ],
+      "tasks": [
+        {
+          "followUpDate": "2024-03-07T03:30:00.000Z",
+          "type": "Email Follow Up",
+          "priority": "Low",
+          "employee": "Test",
+          "subject": "Follow up with customer",
+          "additionalInfo": "Cuistomer came in, follow up with an email. see 180 for more notes.",
+          "timestamp": "2024-03-05T21:47:22.772Z",
+          "status": "Active"
+        }
+      ]
     },
     {
       "leadNumber": 1054,
@@ -190,68 +244,105 @@
       "timestamp": "2024-03-02T19:35:26.580Z",
       "leadDealership": "Skeezer Motors",
       "leadSalesConsultant": "Test",
-      "leadSource": "Referral",
+      "leadSource": "Facebook",
       "leadType": "TypeTest",
       "leadStatus": "New Lead",
       "id": 5,
       "history": [
-        [
-          "2024-03-02T19:35:26.580Z",
-          "Lead Created"
-        ],
-        [
-          "2024-03-03T21:03:04.293Z"
-        ],
-        [
-          "2024-03-03T21:40:20.972Z"
-        ],
-        [
-          "2024-03-04T22:40:10.677Z"
-        ],
-        [
-          "2024-03-04T22:42:32.281Z"
-        ],
-        [
-          "2024-03-04T22:43:47.062Z"
-        ]
+        {
+          "timestamp": "2024-03-02T19:35:26.580Z",
+          "activity": "Lead Created"
+        }
       ],
       "tasks": [
         {
-          "type": "Test",
-          "employee": "Test",
-          "subject": "Test",
-          "additionalInfo": "Test",
-          "timestamp": "2024-03-03T21:06:40.965Z"
-        },
-        {
-          "followUpDate": "2024-03-06T03:30:00.000Z",
-          "type": "Send Email",
-          "employee": "Bruce",
-          "subject": "Send Email",
-          "additionalInfo": ".",
-          "timestamp": "2024-03-03T21:37:24.598Z",
-          "status": "Active"
+          "followUpDate": null,
+          "type": "",
+          "priority": "",
+          "employee": "",
+          "subject": "",
+          "additionalInfo": "",
+          "timestamp": "2024-03-10T16:40:14.611Z",
+          "status": "Active",
+          "activity": "Task Created"
         },
         {
           "followUpDate": null,
           "type": "",
+          "priority": "",
           "employee": "",
           "subject": "",
           "additionalInfo": "",
-          "timestamp": "2024-03-03T22:03:24.484Z",
-          "status": "Active"
+          "timestamp": "2024-03-10T16:42:45.449Z",
+          "status": "Active",
+          "activity": "Task Create"
         },
         {
-          "followUpDate": "2024-03-05T03:30:00.000Z",
-          "type": "48 Hour Follow Up",
-          "priority": "Low",
-          "employee": "Test",
+          "followUpDate": null,
+          "type": "",
+          "priority": "",
+          "employee": "",
+          "subject": "",
+          "additionalInfo": "",
+          "timestamp": "2024-03-10T16:44:34.001Z",
+          "status": "Active",
+          "activity": "Task Created"
+        }
+      ],
+      "emails": [
+        {
+          "from": "baxterdms@outlook.com",
+          "to": "brucechafe@gmail.com",
+          "subject": "TEst 3",
+          "body": "Test",
+          "timestamp": "2024-03-10T16:18:02.636Z",
+          "activity": "Email Sent"
+        },
+        {
+          "from": "baxterdms@outlook.com",
+          "to": "brucechafe@gmail.com",
           "subject": "Test",
-          "additionalInfo": "Test",
-          "timestamp": "2024-03-04T23:05:16.756Z",
-          "status": "Active"
+          "body": "Test",
+          "timestamp": "2024-03-10T16:39:05.001Z",
+          "activity": "Email Sent"
+        },
+        {
+          "from": "baxterdms@outlook.com",
+          "to": "brucechafe@gmail.com",
+          "subject": "",
+          "body": "",
+          "timestamp": "2024-03-10T16:42:57.951Z",
+          "activity": "Email Sent"
+        },
+        {
+          "from": "baxterdms@outlook.com",
+          "to": "brucechafe@gmail.com",
+          "subject": "",
+          "body": "",
+          "timestamp": "2024-03-10T16:46:54.271Z",
+          "activity": "Email Sent"
+        },
+        {
+          "from": "baxterdms@outlook.com",
+          "to": "brucechafe@gmail.com",
+          "subject": "",
+          "body": "",
+          "timestamp": "2024-03-10T16:47:26.106Z",
+          "activity": "Email Sent"
         }
       ]
+    },
+    {
+      "leadNumber": 1127,
+      "dmsID": 5,
+      "timestamp": "2024-03-05T21:22:11.761Z",
+      "leadDealership": "Skeezer Motors",
+      "leadSalesConsultant": "Test",
+      "leadSource": "Walk-In",
+      "leadType": "TypeTest",
+      "leadStatus": "New Lead",
+      "id": 6,
+      "history": []
     }
   ],
   "vehicles": [],

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Typography, TextField, Divider, Box, Grid, Paper } from "@mui/material";
 
-const ContactInfo = ({ contact, onSaveContactInfo }) => {
+const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange }) => {
   const [editedContact, setEditedContact] = useState({ ...contact });
 
   useEffect(() => {
@@ -36,7 +36,14 @@ const ContactInfo = ({ contact, onSaveContactInfo }) => {
       ...editedContact,
       [key]: value,
     });
+    onInfoChange(true);
   };
+
+  useEffect(() => {
+    if (editedContact) {
+      onSaveContactInfo(editedContact);
+    }
+  }, [editedContact, onSaveContactInfo]);
 
   const renderTextField = (label, key, value) => (
     <TextField
@@ -47,12 +54,6 @@ const ContactInfo = ({ contact, onSaveContactInfo }) => {
       fullWidth
     />
   );
-
-  useEffect(() => {
-    if (editedContact) {
-      onSaveContactInfo(editedContact);
-    }
-  }, [editedContact, onSaveContactInfo]);
 
   const renderSection = (sectionLabel, fields) => (
     <Box sx={{ mb: 2 }}>

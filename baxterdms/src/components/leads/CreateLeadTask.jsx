@@ -8,14 +8,14 @@ import {
   IconButton,
   TextField,
   Snackbar,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const CreateLeadTask = ({ open, onClose, lead, id }) => {
+const CreateLeadTask = ({ open, onClose, lead, id, onSaveSuccess }) => {
   const [leadTask, setLeadTask] = useState({
     leadTaskType: "",
     leadTaskPriority: "",
@@ -26,8 +26,10 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
   });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [taskTypeOptions, setTaskTypeOptions] = useState([]);
   const [taskPriorityOptions, setTaskPriorityOptions] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -41,6 +43,7 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetch("http://localhost:8000/configLeadTasks/1")
       .then((response) => response.json())
       .then((configData) => {
@@ -51,10 +54,15 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
+        setFetchError("Failed to fetch task options.");
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
   const handleSave = async () => {
+    setLoading(true);
     try {
       const timestamp = new Date().toISOString();
       const updatedLead = {
@@ -70,6 +78,7 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
             additionalInfo: leadTask.leadTaskAdditionalInfo,
             timestamp: timestamp,
             status: "Active",
+            activity: "Task Created"
           },
         ],
       };
@@ -80,7 +89,6 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
         },
         body: JSON.stringify(updatedLead),
       });
-
       setLeadTask({
         leadTaskType: "",
         leadTaskPriority: "",
@@ -91,20 +99,16 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
       });
       setSnackbarMessage("Task saved successfully!");
       setSnackbarOpen(true);
-
       setTimeout(() => {
         onClose();
-        setSnackbarOpen(false);
-      }, 3000);
+      }, 2000);
+      onSaveSuccess();
     } catch (error) {
       console.error("Error saving lead task:", error);
-      setSnackbarMessage(`Error: ${error.message}`);
+      setSnackbarMessage("Error saving lead task.");
       setSnackbarOpen(true);
-
-      setTimeout(() => {
-        onClose();
-        setSnackbarOpen(false);
-      }, 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -146,7 +150,9 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
           variant="outlined"
           label="Follow-Up Priority"
           value={leadTask.leadTaskPriority}
-          onChange={(e) => handleFieldChange("leadTaskPriority", e.target.value)}
+          onChange={(e) =>
+            handleFieldChange("leadTaskPriority", e.target.value)
+          }
           select
           fullWidth
         >
@@ -183,7 +189,9 @@ const CreateLeadTask = ({ open, onClose, lead, id }) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSave}>Save changes</Button>
+        <Button onClick={handleSave} disabled={loading}>
+          {loading ? "Saving..." : "Save changes"}
+        </Button>
       </DialogActions>
       <Snackbar
         open={snackbarOpen}

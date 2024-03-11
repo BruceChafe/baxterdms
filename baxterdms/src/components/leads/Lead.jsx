@@ -14,7 +14,7 @@ import { useParams } from "react-router-dom";
 import LeadInfo from "./LeadInfo";
 import ContactInfo from "../contacts/ContactInfo";
 import { EmailOutlined } from "@mui/icons-material";
-import EmailContact from "../contacts/EmailCustomer"
+import EmailContact from "../contacts/EmailCustomer";
 import CustomSnackbar from "../snackbar/CustomSnackbar";
 import CustomBreadcrumbs from "../breadcrumbs/CustomBreadcrumbs";
 import LeadHistory from "./LeadHistory";
@@ -34,8 +34,10 @@ const Lead = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [createNewLeadOpen, setCreateNewLeadOpen] = useState(false);
-
   const [id, setID] = useState("");
+  const [reloadLeadHistory, setReloadLeadHistory] = useState(false);
+  const [leadInfoChanged, setLeadInfoChanged] = useState(false);
+  const [contactInfoChanged, setContactInfoChanged] = useState(false);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -85,7 +87,7 @@ const Lead = () => {
 
   useEffect(() => {
     fetchLeadData();
-  }, [leadNumber]);
+  }, [leadNumber, reloadLeadHistory]);
 
   const handleSave = async () => {
     try {
@@ -116,6 +118,8 @@ const Lead = () => {
       if (leadResponse.ok && contactResponse.ok) {
         setSnackbarMessage("Save successful");
         fetchLeadData();
+        setLeadInfoChanged(false);
+        setContactInfoChanged(false);
       } else {
         setSnackbarMessage("Error: Failed to save");
       }
@@ -142,6 +146,18 @@ const Lead = () => {
     }
   };
 
+  const handleSaveSuccess = () => {
+    setReloadLeadHistory((prevState) => !prevState);
+  };
+
+  const handleLeadInfoChange = (changed) => {
+    setLeadInfoChanged(changed);
+  };
+
+  const handleContactInfoChange = (changed) => {
+    setContactInfoChanged(changed);
+  };
+
   return (
     <Box m={3}>
       <Box
@@ -162,7 +178,11 @@ const Lead = () => {
         ) : (
           <CircularProgress sx={{ m: 2 }} />
         )}
-        <Button onClick={handleSave} variant="outlined">
+        <Button
+          onClick={handleSave}
+          variant="outlined"
+          disabled={!leadInfoChanged && !contactInfoChanged}
+        >
           Save
         </Button>
         <CustomSnackbar
@@ -190,19 +210,32 @@ const Lead = () => {
             </Box>
           </Paper>
           <TabPanel value="1">
-            {lead && <LeadInfo lead={lead} onSaveLeadInfo={setEditedLead} />}
+            {lead && (
+              <LeadInfo
+                lead={lead}
+                onSaveLeadInfo={setEditedLead}
+                onInfoChange={handleLeadInfoChange}
+              />
+            )}
           </TabPanel>
           <TabPanel value="2">
             {contact && (
               <ContactInfo
                 contact={contact}
                 onSaveContactInfo={setEditedContact}
+                onInfoChange={handleContactInfoChange}
               />
             )}
           </TabPanel>
           <TabPanel value="3">
-  {lead && <LeadHistory leadData={lead} tasks={lead.tasks || []} />}
-</TabPanel>
+            {lead && (
+              <LeadHistory
+                leadData={lead}
+                tasks={lead.tasks || []}
+                emails={lead.emails || []}
+              />
+            )}
+          </TabPanel>
 
           <TabPanel value="4">Item Four</TabPanel>
         </TabContext>
@@ -223,12 +256,16 @@ const Lead = () => {
         primaryEmail={primaryEmail}
         open={sendEmailOpen}
         onClose={() => setSendEmailOpen(false)}
+        lead={lead}
+        onSaveSuccess={handleSaveSuccess}
       />
+
       <CreateLeadTask
-      lead={lead}
-      id={id}
+        lead={lead}
+        id={id}
         open={createNewLeadOpen}
         onClose={() => setCreateNewLeadOpen(false)}
+        onSaveSuccess={handleSaveSuccess}
       />
     </Box>
   );

@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from "react";
-import {
-  Typography,
-  TextField,
-  Divider,
-  Box,
-  Grid,
-  MenuItem,
-  Paper,
-} from "@mui/material";
+// LeadInfo.js
 
-const LeadInfo = ({ lead, onSaveLeadInfo }) => {
+import React, { useState, useEffect } from "react";
+import { Typography, TextField, Divider, Box, Grid, MenuItem, Paper } from "@mui/material";
+
+const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
   const [editedLead, setEditedLead] = useState(null);
   const [sourceOptions, setSourceOptions] = useState([]);
   const [typeOptions, setTypeOptions] = useState([]);
@@ -49,6 +43,7 @@ const LeadInfo = ({ lead, onSaveLeadInfo }) => {
       ...editedLead,
       [key]: value,
     });
+    onInfoChange(true); // Notify parent component of changes
   };
 
   useEffect(() => {

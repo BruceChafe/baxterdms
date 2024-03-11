@@ -1,85 +1,90 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,
+  Box,
+  Drawer,
+  CssBaseline,
+  Toolbar,
+  List,
   Typography,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText
 } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../../firebase";
 
-const TableComponent = ({ data, columns, defaultSortKey, defaultSortDirection, action }) => {
-  const [sortConfig, setSortConfig] = useState({ key: defaultSortKey || null, direction: defaultSortDirection || 'ascending' });
+const drawerWidth = 240; // Consider moving this outside if it's a constant
 
-  // Function to handle sorting
-  const handleSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+const SidebarComponent = ({ pageName, navigationLinks }) => {
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigate("/signin");
+    } catch (error) {
+      console.error("Logout error:", error.message);
     }
-    setSortConfig({ key, direction });
   };
-
-  // Function to perform sorting based on the sortConfig
-  const sortedData = () => {
-    const sortedData = [...data];
-    if (sortConfig.key) {
-      sortedData.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortedData;
-  };
-
-  useEffect(() => {
-    setSortConfig({ key: defaultSortKey || null, direction: defaultSortDirection || 'ascending' });
-  }, [defaultSortKey, defaultSortDirection]);
 
   return (
-    <>
-      <Typography variant="h5" mb={2}>
-        Lead History
-      </Typography>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Actions</TableCell>
-              {columns.map((column) => (
-                <TableCell key={column.field}>
-                  <Button onClick={() => handleSort(column.field)}>
-                    {column.header}
-                  </Button>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sortedData().map((row, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Button variant="outlined" onClick={() => action(row)}>
-                    {action}
-                  </Button>
-                </TableCell>
-                {columns.map((column) => (
-                  <TableCell key={column.field}>{row[column.field]}</TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </>
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            boxSizing: "border-box",
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <Toolbar>
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/home"
+            sx={{ color: "white", textDecoration: "none" }}
+          >
+            baxter.
+          </Typography>
+        </Toolbar>
+        <Divider />
+        <List>
+          {navigationLinks.map((link, index) => (
+            <ListItem
+              key={link.to}
+              disablePadding
+              component={Link}
+              to={link.to}
+              sx={{ color: link.color || "inherit" }}
+            >
+              <ListItemButton>
+                <ListItemText primary={link.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <Box sx={{ flexGrow: 1 }} />
+        <List>
+          <ListItem>
+            <ListItemButton onClick={handleLogout}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Drawer>
+    </Box>
   );
 };
 
-export default TableComponent;
+export default SidebarComponent;

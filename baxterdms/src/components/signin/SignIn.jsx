@@ -21,18 +21,19 @@ import Copyright from '../copyright/Copyright';
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(''); // Added for error handling
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSignIn = async (event) => {
     event.preventDefault();
+    setError(''); // Reset error on new submission
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password)   
-      console.log(user)
+      await signInWithEmailAndPassword(auth, email, password);
       navigate('/home');
     } catch (error) {
-      console.error('Authentication error:', error.message);
-      console.error('Full error details:', error);
+      setError('Failed to log in'); // Set a user-friendly error message
+      console.error('Authentication error:', error.message); // Optionally keep this for debugging
     }
   };
 
