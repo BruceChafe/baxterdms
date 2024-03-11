@@ -34,3 +34,5 @@ const useFetchLeads = (page, rowsPerPage) => {
 
   return { leads, totalCount, loading, error };
 };
+
+export { useFetchLeads };

@@ -1,23 +1,40 @@
 import React, { useState, useEffect } from "react";
-import { Box, Divider, Typography, Paper, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Typography,
+  Paper,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 
 const WeeklyCalendar = () => {
-  const [dates, setDates] = useState([]); // State for dates of the week
-  const [tasksByDay, setTasksByDay] = useState({}); // State for tasks grouped by day
+  const [dates, setDates] = useState([]);
+  const [tasksByDay, setTasksByDay] = useState({});
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
     const getWeekDates = (date) => {
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      const currentDayIndex = date.getDay(); // Index of the current day (0 for Sunday, 1 for Monday, etc.)
+      const days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      const currentDayIndex = date.getDay();
       const weekDates = [];
-
-      // Calculate the start of the week
       const startOfWeek = new Date(date);
-      startOfWeek.setDate(startOfWeek.getDate() - currentDayIndex); // Start from Sunday
+      startOfWeek.setDate(startOfWeek.getDate() - currentDayIndex);
 
-      // Generate dates for the week
       for (let i = 0; i < 7; i++) {
         const newDate = new Date(startOfWeek);
         newDate.setDate(newDate.getDate() + i);
@@ -26,8 +43,12 @@ const WeeklyCalendar = () => {
 
       return weekDates.map((date, index) => ({
         day: days[index],
-        date: date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
-        isoDate: date.toISOString() // Added ISO string for API call
+        date: date.toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
+        isoDate: date.toISOString().split("T")[0],
       }));
     };
 
@@ -35,12 +56,11 @@ const WeeklyCalendar = () => {
       const groupedTasks = {};
       tasks.forEach((task) => {
         const taskDate = new Date(task.followUpDate);
-        const dayIndex = taskDate.getDay();
-        const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayIndex];
-        if (!groupedTasks[dayName]) {
-          groupedTasks[dayName] = [];
+        const isoDate = taskDate.toISOString().split("T")[0];
+        if (!groupedTasks[isoDate]) {
+          groupedTasks[isoDate] = [];
         }
-        groupedTasks[dayName].push(task);
+        groupedTasks[isoDate].push(task);
       });
       return groupedTasks;
     };
@@ -48,32 +68,32 @@ const WeeklyCalendar = () => {
     const fetchTasksForWeek = async () => {
       try {
         const startOfWeek = new Date(currentDate);
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Start from Sunday
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
         const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(endOfWeek.getDate() + 6); // End at Saturday
+        endOfWeek.setDate(endOfWeek.getDate() + 6);
 
-        // Assuming your API endpoint is correct and returns data in the correct format
         const response = await fetch(`http://localhost:8000/leads`);
         if (!response.ok) {
-          throw new Error('Failed to fetch tasks data');
+          throw new Error("Failed to fetch tasks data");
         }
 
         const responseData = await response.json();
-        const leadsData = responseData.leads || []; // Ensure leads property exists
+        const leadsData = responseData || [];
 
-        // Flatten tasks array from leads data
         const tasks = leadsData.flatMap((lead) => lead.tasks || []);
 
-        // Filter tasks for the current week
         const tasksForWeek = tasks.filter((task) => {
           const taskDate = new Date(task.followUpDate);
-          return taskDate >= startOfWeek && taskDate <= endOfWeek;
-        });
+          const isoDate = taskDate.toISOString().split("T")[0];
+          return (
+            isoDate >= startOfWeek.toISOString().split("T")[0] &&
+            isoDate <= endOfWeek.toISOString().split("T")[0]
+          );
+        });        
 
         setTasksByDay(groupTasksByDay(tasksForWeek));
       } catch (error) {
-        console.error('Error fetching tasks for the week:', error);
-        // Handle error
+        console.error("Error fetching tasks for the week:", error);
       }
     };
 
@@ -120,7 +140,7 @@ const WeeklyCalendar = () => {
               <TableRow>
                 {dates.map(({ day, date }) => (
                   <TableCell key={day}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
                       {day}
                     </Typography>
                     <Typography variant="body1">{date}</Typography>
@@ -130,12 +150,18 @@ const WeeklyCalendar = () => {
             </TableHead>
             <TableBody>
               <TableRow>
-                {dates.map(({ day }) => (
-                  <TableCell key={day}>
-                    {tasksByDay[day] ? (
-                      tasksByDay[day].map((task, index) => (
-                        <Typography key={index} variant="body2">{task.subject}</Typography>
-                      ))
+                {dates.map(({ isoDate }) => (
+                  <TableCell key={isoDate}>
+                    {tasksByDay[isoDate] ? (
+                      <>
+                        {tasksByDay[isoDate].map((task, index) => (
+                          <Box key={index} mt={index > 0 ? 5 : 0}>
+                            <Typography variant="body2">
+                              {task.type}: {task.subject}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </>
                     ) : (
                       <Typography variant="body2">No tasks</Typography>
                     )}

@@ -2,33 +2,36 @@ import React, { useState, useEffect } from "react";
 import {
   Typography,
   Box,
-  Divider,
-  Tab,
-  Paper,
   CircularProgress,
   Button,
+  Paper,
+  Tab,
+  Divider,
   BottomNavigation,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useParams } from "react-router-dom";
 import LeadInfo from "./LeadInfo";
 import ContactInfo from "../contacts/ContactInfo";
-import { EmailOutlined } from "@mui/icons-material";
 import EmailContact from "../contacts/EmailCustomer";
 import CustomSnackbar from "../snackbar/CustomSnackbar";
 import CustomBreadcrumbs from "../breadcrumbs/CustomBreadcrumbs";
 import LeadHistory from "./LeadHistory";
-import AddTaskIcon from "@mui/icons-material/AddTask";
 import CreateLeadTask from "./CreateLeadTask";
+import { EmailOutlined } from "@mui/icons-material";
+import AddTaskIcon from "@mui/icons-material/AddTask";
+import { useFetchLeadAndContact } from "../../hooks/FetchLeadAndContact";
 
 const Lead = () => {
   const { leadNumber } = useParams();
-  const [lead, setLead] = useState(null);
-  const [contact, setContact] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [value, setValue] = useState("1");
+  const { lead, contact, loading, error, refetch } =
+    useFetchLeadAndContact(leadNumber);
+  const [tabValue, setTabValue] = useState("1");
   const [editedLead, setEditedLead] = useState(null);
   const [editedContact, setEditedContact] = useState(null);
+
+  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
+
   const [sendEmailOpen, setSendEmailOpen] = useState(null);
   const [primaryEmail, setPrimaryEmail] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -36,12 +39,9 @@ const Lead = () => {
   const [createNewLeadOpen, setCreateNewLeadOpen] = useState(false);
   const [id, setID] = useState("");
   const [reloadLeadHistory, setReloadLeadHistory] = useState(false);
+
   const [leadInfoChanged, setLeadInfoChanged] = useState(false);
   const [contactInfoChanged, setContactInfoChanged] = useState(false);
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
 
   const handleSendEmailClick = () => {
     setSendEmailOpen(true);
@@ -51,8 +51,16 @@ const Lead = () => {
     setCreateNewLeadOpen(true);
   };
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleChangeTab = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const showSnackbar = (message) => {
+    setSnackbar({ open: true, message });
   };
 
   const fetchLeadData = async () => {
@@ -116,12 +124,12 @@ const Lead = () => {
       const timestamp = new Date().toISOString();
 
       if (leadResponse.ok && contactResponse.ok) {
-        setSnackbarMessage("Save successful");
-        fetchLeadData();
+        showSnackbar("Save successful");
         setLeadInfoChanged(false);
         setContactInfoChanged(false);
+        refetch();
       } else {
-        setSnackbarMessage("Error: Failed to save");
+        showSnackbar("Error: Failed to save");
       }
 
       const leadData = await leadResponse.json();
@@ -138,10 +146,10 @@ const Lead = () => {
         }),
       });
 
-      setSnackbarOpen(true);
+      showSnackbar(true);
       setSendEmailOpen(false);
     } catch (error) {
-      setSnackbarMessage(`Error: ${error.message}`);
+      showSnackbar(`Error: ${error.message}`);
       setSnackbarOpen(true);
     }
   };
@@ -157,6 +165,9 @@ const Lead = () => {
   const handleContactInfoChange = (changed) => {
     setContactInfoChanged(changed);
   };
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Box>Error: {error}</Box>;
 
   return (
     <Box m={3}>
@@ -194,11 +205,11 @@ const Lead = () => {
 
       <Divider />
       <Box>
-        <TabContext value={value}>
+        <TabContext value={tabValue}>
           <Paper sx={{ pl: 1, pr: 1, mt: 2 }}>
             <Box mb={1} mt={1} p={1}>
               <TabList
-                onChange={handleChange}
+                onChange={handleChangeTab}
                 textColor="secondary"
                 indicatorColor="secondary"
               >

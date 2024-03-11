@@ -1,0 +1,44 @@
+import { useState, useEffect } from "react";
+
+function useFetchLeadAndContact(leadNumber) {
+  const [data, setData] = useState({
+    lead: null,
+    contact: null,
+    loading: true,
+    error: null,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const leadRes = await fetch(
+          `http://localhost:8000/Leads/?leadNumber=${leadNumber}`
+        );
+        const leadData = await leadRes.json();
+        const contactRes = await fetch(
+          `http://localhost:8000/contacts?leadNumbers_like=${leadNumber}`
+        );
+        const contactData = await contactRes.json();
+
+        setData({
+          lead: leadData[0] || null,
+          contact: contactData[0] || null,
+          loading: false,
+          error: null,
+        });
+      } catch (error) {
+        setData((prevState) => ({
+          ...prevState,
+          loading: false,
+          error: error.toString(),
+        }));
+      }
+    };
+
+    fetchData();
+  }, [leadNumber]);
+
+  return data;
+}
+
+export { useFetchLeadAndContact };
