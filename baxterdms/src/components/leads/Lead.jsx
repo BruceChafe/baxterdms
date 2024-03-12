@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Typography,
-  Box,
-  CircularProgress,
-  Button,
-  Paper,
-  Tab,
-  Divider,
-  BottomNavigation,
-} from "@mui/material";
+import { Box, CircularProgress, Button, Typography, Divider, BottomNavigation, Paper, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useParams } from "react-router-dom";
 import LeadInfo from "./LeadInfo";
@@ -20,15 +11,17 @@ import LeadHistory from "./LeadHistory";
 import CreateLeadTask from "./CreateLeadTask";
 import { EmailOutlined } from "@mui/icons-material";
 import AddTaskIcon from "@mui/icons-material/AddTask";
+
 import { useFetchLeadAndContact } from "../../hooks/FetchLeadAndContact";
 
 const Lead = () => {
   const { leadNumber } = useParams();
-  const { lead, contact, loading, error, refetch } =
-    useFetchLeadAndContact(leadNumber);
+  const { lead, contact, loading, error, refetch } = useFetchLeadAndContact(leadNumber);
   const [tabValue, setTabValue] = useState("1");
   const [editedLead, setEditedLead] = useState(null);
   const [editedContact, setEditedContact] = useState(null);
+  const leadId = lead?.id;
+
 
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
 
@@ -63,39 +56,10 @@ const Lead = () => {
     setSnackbar({ open: true, message });
   };
 
-  const fetchLeadData = async () => {
-    try {
-      const leadResponse = await fetch(
-        `http://localhost:8000/Leads/?leadNumber=${leadNumber}`
-      );
-      if (!leadResponse.ok) {
-        throw new Error("Failed to fetch lead data");
-      }
-      const leadData = await leadResponse.json();
-
-      const contactResponse = await fetch(
-        `http://localhost:8000/contacts?leadNumbers_like=${leadNumber}`
-      );
-      if (!contactResponse.ok) {
-        throw new Error("Failed to fetch contact data");
-      }
-      const contactData = await contactResponse.json();
-
-      setLead(leadData[0] || null);
-      setContact(contactData[0] || null);
-      setEditedLead(leadData[0] || null);
-      setID(leadData[0]?.id || "");
-      setEditedContact(contactData[0] || null);
-      setPrimaryEmail(contactData[0]?.email || "");
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching lead data:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchLeadData();
-  }, [leadNumber, reloadLeadHistory]);
+    setEditedLead(lead);
+    setEditedContact(contact);
+  }, [lead, contact]);
 
   const handleSave = async () => {
     try {
@@ -273,7 +237,7 @@ const Lead = () => {
 
       <CreateLeadTask
         lead={lead}
-        id={id}
+        id={leadId}
         open={createNewLeadOpen}
         onClose={() => setCreateNewLeadOpen(false)}
         onSaveSuccess={handleSaveSuccess}

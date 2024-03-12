@@ -10,7 +10,7 @@
       "companyName": "Skeezer Motors",
       "primaryEmail": "brucechafe@skeezermotors.ca",
       "companyNumber": "709.700.6182",
-      "theme": "slateTheme"
+      "theme": "royalBlueDarkTheme"
     },
     {
       "UID": "cay7knM7AsVkg7VvpGXS1t31rDa2",
@@ -159,6 +159,17 @@
           "subject": "test",
           "additionalInfo": "test",
           "timestamp": "2024-03-10T21:38:44.305Z",
+          "status": "Active",
+          "activity": "Task Created"
+        },
+        {
+          "followUpDate": "2024-03-14T02:30:00.000Z",
+          "type": "Phone Follow Up",
+          "priority": "Low",
+          "employee": "Employee",
+          "subject": "Subject",
+          "additionalInfo": "Boobs.",
+          "timestamp": "2024-03-12T22:49:06.500Z",
           "status": "Active",
           "activity": "Task Created"
         }

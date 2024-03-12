@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Divider,
@@ -13,108 +13,72 @@ import {
   TableRow,
 } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import { getWeekDates } from "./WeekDates";
+import TaskDialog from "./TaskDialog";
 
 const WeeklyCalendar = () => {
-  const [dates, setDates] = useState([]);
-  const [tasksByDay, setTasksByDay] = useState({});
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [tasksByDay, setTasksByDay] = useState({});
+  const [error, setError] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const dates = getWeekDates(currentDate);
 
   useEffect(() => {
-    const getWeekDates = (date) => {
-      const days = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ];
-      const currentDayIndex = date.getDay();
-      const weekDates = [];
-      const startOfWeek = new Date(date);
-      startOfWeek.setDate(startOfWeek.getDate() - currentDayIndex);
-
-      for (let i = 0; i < 7; i++) {
-        const newDate = new Date(startOfWeek);
-        newDate.setDate(newDate.getDate() + i);
-        weekDates.push(newDate);
-      }
-
-      return weekDates.map((date, index) => ({
-        day: days[index],
-        date: date.toLocaleDateString("en-US", {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }),
-        isoDate: date.toISOString().split("T")[0],
-      }));
-    };
-
-    const groupTasksByDay = (tasks) => {
-      const groupedTasks = {};
-      tasks.forEach((task) => {
-        const taskDate = new Date(task.followUpDate);
-        const isoDate = taskDate.toISOString().split("T")[0];
-        if (!groupedTasks[isoDate]) {
-          groupedTasks[isoDate] = [];
-        }
-        groupedTasks[isoDate].push(task);
-      });
-      return groupedTasks;
-    };
-
     const fetchTasksForWeek = async () => {
-      try {
-        const startOfWeek = new Date(currentDate);
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(endOfWeek.getDate() + 6);
+      const startOfWeek = dates[0].isoDate;
+      const endOfWeek = dates[dates.length - 1].isoDate;
 
+      try {
         const response = await fetch(`http://localhost:8000/leads`);
         if (!response.ok) {
           throw new Error("Failed to fetch tasks data");
         }
+        const leadsData = (await response.json()) || [];
+        const tasks = leadsData
+          .flatMap((lead) => lead.tasks || [])
+          .filter((task) => {
+            if (!task.followUpDate) {
+              return false;
+            }
+            const isoDate = task.followUpDate.split("T")[0];
+            return isoDate >= startOfWeek && isoDate <= endOfWeek;
+          });
 
-        const responseData = await response.json();
-        const leadsData = responseData || [];
+        const groupedTasks = tasks.reduce((acc, task) => {
+          const isoDate = task.followUpDate.split("T")[0];
+          acc[isoDate] = acc[isoDate] || [];
+          acc[isoDate].push(task);
+          return acc;
+        }, {});
 
-        const tasks = leadsData.flatMap((lead) => lead.tasks || []);
-
-        const tasksForWeek = tasks.filter((task) => {
-          const taskDate = new Date(task.followUpDate);
-          const isoDate = taskDate.toISOString().split("T")[0];
-          return (
-            isoDate >= startOfWeek.toISOString().split("T")[0] &&
-            isoDate <= endOfWeek.toISOString().split("T")[0]
-          );
-        });        
-
-        setTasksByDay(groupTasksByDay(tasksForWeek));
+        setTasksByDay(groupedTasks);
       } catch (error) {
-        console.error("Error fetching tasks for the week:", error);
+        setError("Error fetching tasks for the week: " + error.message);
+        console.error(error);
       }
     };
 
-    setDates(getWeekDates(currentDate));
     fetchTasksForWeek();
-  }, [currentDate]);
+  }, [dates]);
 
-  const goToPreviousWeek = () => {
-    const prevWeek = new Date(currentDate);
-    prevWeek.setDate(prevWeek.getDate() - 7);
-    setCurrentDate(prevWeek);
+  const handleCellClick = (task) => {
+    setSelectedTask(task);
+    console.log(selectedTask);
+    setDialogOpen(true);
   };
 
-  const goToNextWeek = () => {
-    const nextWeek = new Date(currentDate);
-    nextWeek.setDate(nextWeek.getDate() + 7);
-    setCurrentDate(nextWeek);
+  const navigateWeek = (offset) => {
+    setCurrentDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setDate(newDate.getDate() + offset);
+      return newDate;
+    });
   };
 
   return (
     <Box m={3}>
+      {error && <Typography color="error">{error}</Typography>}
       <Box
         sx={{
           display: "flex",
@@ -122,13 +86,13 @@ const WeeklyCalendar = () => {
           alignItems: "center",
         }}
       >
-        <IconButton onClick={goToPreviousWeek}>
+        <IconButton onClick={() => navigateWeek(-7)}>
           <ArrowBack />
         </IconButton>
         <Typography variant="h4" sx={{ m: 2 }}>
           Weekly Tasks
         </Typography>
-        <IconButton onClick={goToNextWeek}>
+        <IconButton onClick={() => navigateWeek(7)}>
           <ArrowForward />
         </IconButton>
       </Box>
@@ -138,8 +102,16 @@ const WeeklyCalendar = () => {
           <Table>
             <TableHead>
               <TableRow>
-                {dates.map(({ day, date }) => (
-                  <TableCell key={day}>
+                {dates.map(({ day, date }, index) => (
+                  <TableCell
+                    key={day}
+                    align="center"
+                    sx={{
+                      width: `${100 / dates.length}%`,
+                      borderRight: index !== dates.length - 1 ? 1 : 0,
+                      borderColor: "divider",
+                    }}
+                  >
                     <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
                       {day}
                     </Typography>
@@ -150,20 +122,37 @@ const WeeklyCalendar = () => {
             </TableHead>
             <TableBody>
               <TableRow>
-                {dates.map(({ isoDate }) => (
-                  <TableCell key={isoDate}>
+                {dates.map(({ isoDate }, index) => (
+                  <TableCell key={isoDate} sx={{
+                    width: `${100 / dates.length}%`,
+                    borderRight: index !== dates.length - 1 ? 1 : 0,
+                    borderColor: "divider",
+                  }}>
                     {tasksByDay[isoDate] ? (
-                      <>
-                        {tasksByDay[isoDate].map((task, index) => (
-                          <Box key={index} mt={index > 0 ? 5 : 0}>
-                            <Typography variant="body2">
-                              {task.type}: {task.subject}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </>
+                      tasksByDay[isoDate].map((task, index) => (
+                        <Box
+                          key={task.id || index}
+                          mt={index > 0 ? 2 : 0}
+                          onClick={() => handleCellClick(task)}
+                          sx={{
+                            cursor: "pointer",
+                            border: "1px solid",
+                            borderColor: "primary.main",
+                            borderRadius: 1,
+                            p: 2,
+                            transition: "background-color 0.5s",
+                            "&:hover": {
+                              backgroundColor: "primary.dark",
+                            },
+                          }}
+                        >
+                          <Typography variant="body2">
+                            Task: {task.type}
+                          </Typography>
+                        </Box>
+                      ))
                     ) : (
-                      <Typography variant="body2">No tasks</Typography>
+                      <Typography variant="body2"></Typography>
                     )}
                   </TableCell>
                 ))}
@@ -172,6 +161,11 @@ const WeeklyCalendar = () => {
           </Table>
         </TableContainer>
       </Paper>
+      <TaskDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        taskDetails={selectedTask}
+      />
     </Box>
   );
 };
