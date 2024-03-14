@@ -131,11 +131,12 @@
       "mobilePhone": "",
       "homePhone": "",
       "workPhone": "",
-      "email": "",
+      "email": "joeldaniellake@gmail.com",
       "notes": "",
       "id": 5,
       "leadNumbers": [
-        1127
+        1127,
+        1747
       ]
     }
   ],
@@ -145,7 +146,7 @@
       "dmsID": 1,
       "leadDealership": "Skeezer Motors",
       "leadSalesConsultant": "Test",
-      "leadSource": "Facebook",
+      "leadSource": "Referral",
       "leadType": "",
       "leadStatus": "New Lead",
       "id": 1,
@@ -161,7 +162,7 @@
           "timestamp": "2024-03-10T21:38:44.305Z",
           "status": "Active",
           "activity": "Task Created",
-          "id": 1
+          "taskId": 1
         },
         {
           "followUpDate": "2024-03-14T02:30:00.000Z",
@@ -173,7 +174,40 @@
           "timestamp": "2024-03-12T22:49:06.500Z",
           "status": "Active",
           "activity": "Task Created",
-          "id": 2
+          "taskId": 2
+        },
+        {
+          "followUpDate": null,
+          "type": "48 Hour Follow Up",
+          "priority": "Low",
+          "employee": "Test",
+          "subject": "Test",
+          "additionalInfo": "Test",
+          "timestamp": "2024-03-14T20:24:20.852Z",
+          "status": "Active",
+          "activity": "Task Created"
+        },
+        {
+          "followUpDate": "2024-03-15T02:30:00.000Z",
+          "type": "Other",
+          "priority": "Low",
+          "employee": "Janet",
+          "subject": "Reload3",
+          "additionalInfo": "Test",
+          "timestamp": "2024-03-14T20:25:14.657Z",
+          "status": "Active",
+          "activity": "Task Created"
+        },
+        {
+          "followUpDate": "2024-03-15T02:30:00.000Z",
+          "type": "Feedback Collection",
+          "priority": "Low",
+          "employee": "Joel",
+          "subject": "Joel Test",
+          "additionalInfo": "Joel Test",
+          "timestamp": "2024-03-14T20:47:45.293Z",
+          "status": "Active",
+          "activity": "Task Created"
         }
       ]
     },
@@ -196,19 +230,7 @@
           "timestamp": "2024-03-10T16:19:09.710Z"
         }
       ],
-      "tasks": [
-        {
-          "followUpDate": "2024-03-12T02:30:00.000Z",
-          "type": "Phone Follow Up",
-          "priority": "Low",
-          "employee": "Bruce Chafe",
-          "subject": "test",
-          "additionalInfo": "test",
-          "timestamp": "2024-03-10T21:38:44.305Z",
-          "status": "Active",
-          "activity": "Task Created"
-        }
-      ]
+      "tasks": []
     },
     {
       "leadNumber": 1654,
@@ -227,18 +249,7 @@
           "2024-03-05T21:44:10.763Z"
         ]
       ],
-      "tasks": [
-        {
-          "followUpDate": "2024-03-07T03:30:00.000Z",
-          "type": "Email Follow Up",
-          "priority": "Low",
-          "employee": "Test",
-          "subject": "Follow up with customer",
-          "additionalInfo": "Cuistomer came in, follow up with an email. see 180 for more notes.",
-          "timestamp": "2024-03-05T21:47:22.772Z",
-          "status": "Active"
-        }
-      ]
+      "tasks": []
     },
     {
       "leadNumber": 1054,
@@ -267,52 +278,7 @@
           "activity": "Lead Created"
         }
       ],
-      "tasks": [
-        {
-          "followUpDate": null,
-          "type": "",
-          "priority": "",
-          "employee": "",
-          "subject": "",
-          "additionalInfo": "",
-          "timestamp": "2024-03-10T16:40:14.611Z",
-          "status": "Active",
-          "activity": "Task Created"
-        },
-        {
-          "followUpDate": null,
-          "type": "",
-          "priority": "",
-          "employee": "",
-          "subject": "",
-          "additionalInfo": "",
-          "timestamp": "2024-03-10T16:42:45.449Z",
-          "status": "Active",
-          "activity": "Task Create"
-        },
-        {
-          "followUpDate": null,
-          "type": "",
-          "priority": "",
-          "employee": "",
-          "subject": "",
-          "additionalInfo": "",
-          "timestamp": "2024-03-10T16:44:34.001Z",
-          "status": "Active",
-          "activity": "Task Created"
-        },
-        {
-          "followUpDate": "2024-03-15T02:30:00.000Z",
-          "type": "",
-          "priority": "",
-          "employee": "Test3",
-          "subject": "Test3",
-          "additionalInfo": "Test3",
-          "timestamp": "2024-03-13T21:10:30.129Z",
-          "status": "Active",
-          "activity": "Task Created"
-        }
-      ],
+      "tasks": [],
       "emails": [
         {
           "from": "baxterdms@outlook.com",
@@ -369,7 +335,8 @@
       "history": []
     }
   ],
-  "vehicles": [],
+  "vehicles": [
+  ],
   "configLeads": [
     {
       "id": 1,

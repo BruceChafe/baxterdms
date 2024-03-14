@@ -1,285 +1,125 @@
 import React, { useState, useEffect } from "react";
 import {
-  Typography,
-  Box,
-  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Button,
-  Paper,
-  Tab,
-  Divider,
-  BottomNavigation,
+  IconButton,
+  TextField,
+  Box,
 } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { useParams } from "react-router-dom";
-import LeadInfo from "./LeadInfo";
-import ContactInfo from "../contacts/ContactInfo";
-import EmailContact from "../contacts/EmailCustomer";
-import CustomSnackbar from "../snackbar/CustomSnackbar";
-import CustomBreadcrumbs from "../breadcrumbs/CustomBreadcrumbs";
-import LeadHistory from "./LeadHistory";
-import CreateLeadTask from "./CreateLeadTask";
-import { EmailOutlined } from "@mui/icons-material";
-import AddTaskIcon from "@mui/icons-material/AddTask";
-import { useFetchLeadAndContact } from "../../hooks/FetchLeadAndContact";
+import CloseIcon from "@mui/icons-material/Close";
 
-const Lead = () => {
-  const { leadNumber } = useParams();
-  const { lead, contact, loading, error, refetch } =
-    useFetchLeadAndContact(leadNumber);
-  const [tabValue, setTabValue] = useState("1");
-  const [editedLead, setEditedLead] = useState(null);
-  const [editedContact, setEditedContact] = useState(null);
-
-  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
-
-  const [sendEmailOpen, setSendEmailOpen] = useState(null);
-  const [primaryEmail, setPrimaryEmail] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [createNewLeadOpen, setCreateNewLeadOpen] = useState(false);
-  const [id, setID] = useState("");
-  const [reloadLeadHistory, setReloadLeadHistory] = useState(false);
-
-  const [leadInfoChanged, setLeadInfoChanged] = useState(false);
-  const [contactInfoChanged, setContactInfoChanged] = useState(false);
-
-  const handleSendEmailClick = () => {
-    setSendEmailOpen(true);
-  };
-
-  const handleNewLeadClick = () => {
-    setCreateNewLeadOpen(true);
-  };
-
-  const handleChangeTab = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-
-  const showSnackbar = (message) => {
-    setSnackbar({ open: true, message });
-  };
-
-  const fetchLeadData = async () => {
-    try {
-      const leadResponse = await fetch(
-        `http://localhost:8000/Leads/?leadNumber=${leadNumber}`
-      );
-      if (!leadResponse.ok) {
-        throw new Error("Failed to fetch lead data");
-      }
-      const leadData = await leadResponse.json();
-
-      const contactResponse = await fetch(
-        `http://localhost:8000/contacts?leadNumbers_like=${leadNumber}`
-      );
-      if (!contactResponse.ok) {
-        throw new Error("Failed to fetch contact data");
-      }
-      const contactData = await contactResponse.json();
-
-      setLead(leadData[0] || null);
-      setContact(contactData[0] || null);
-      setEditedLead(leadData[0] || null);
-      setID(leadData[0]?.id || "");
-      setEditedContact(contactData[0] || null);
-      setPrimaryEmail(contactData[0]?.email || "");
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching lead data:", error);
-    }
-  };
+const TaskDialog = ({ open, onClose, taskDetails }) => {
+  const [selectedTask, setSelectedTask] = useState({ ...taskDetails });
+  const [editedTask, setEditedTask] = useState({ ...taskDetails });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchLeadData();
-  }, [leadNumber, reloadLeadHistory]);
+    setSelectedTask({ ...taskDetails });
+  }, [taskDetails]);
 
-  const handleSave = async () => {
-    try {
-      const leadResponse = await fetch(
-        `http://localhost:8000/leads/${lead?.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify(editedLead),
-        }
-      );
-
-      const contactResponse = await fetch(
-        `http://localhost:8000/contacts/${contact?.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify(editedContact),
-        }
-      );
-
-      const timestamp = new Date().toISOString();
-
-      if (leadResponse.ok && contactResponse.ok) {
-        showSnackbar("Save successful");
-        setLeadInfoChanged(false);
-        setContactInfoChanged(false);
-        refetch();
-      } else {
-        showSnackbar("Error: Failed to save");
-      }
-
-      const leadData = await leadResponse.json();
-
-      const updatedHistory = [...leadData.history, [timestamp]];
-
-      await fetch(`http://localhost:8000/leads/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          history: updatedHistory,
-        }),
-      });
-
-      showSnackbar(true);
-      setSendEmailOpen(false);
-    } catch (error) {
-      showSnackbar(`Error: ${error.message}`);
-      setSnackbarOpen(true);
-    }
+  const handleChange = (e, field) => {
+    setEditedTask((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  const handleSaveSuccess = () => {
-    setReloadLeadHistory((prevState) => !prevState);
-  };
+  // const handleSave = () => {
+  //   setLoading(true);
+  //   try {
+  //     // const updatedTask = {
 
-  const handleLeadInfoChange = (changed) => {
-    setLeadInfoChanged(changed);
-  };
-
-  const handleContactInfoChange = (changed) => {
-    setContactInfoChanged(changed);
-  };
-
-  if (loading) return <CircularProgress />;
-  if (error) return <Box>Error: {error}</Box>;
+  //   }
+  // };
 
   return (
-    <Box m={3}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        {contact ? (
-          <Typography variant="h4" sx={{ m: 2 }}>
-            <CustomBreadcrumbs
-              title={`${contact.firstName} ${contact.lastName} - ${
-                lead?.leadStatus || ""
-              } `}
-            />
-          </Typography>
-        ) : (
-          <CircularProgress sx={{ m: 2 }} />
-        )}
-        <Button
-          onClick={handleSave}
-          variant="outlined"
-          disabled={!leadInfoChanged && !contactInfoChanged}
+    <Dialog
+      onClose={() => onClose(false)}
+      open={open}
+      sx={{ "& .MuiDialog-paper": { width: "600px", maxWidth: "100%" } }}
+    >
+      <DialogTitle>
+        Task Details
+        <IconButton
+          onClick={() => onClose(false)}
+          sx={{ position: "absolute", right: 8, top: 8 }}
         >
-          Save
-        </Button>
-        <CustomSnackbar
-          open={snackbarOpen}
-          message={snackbarMessage}
-          handleClose={handleSnackbarClose}
-        />
-      </Box>
-
-      <Divider />
-      <Box>
-        <TabContext value={tabValue}>
-          <Paper sx={{ pl: 1, pr: 1, mt: 2 }}>
-            <Box mb={1} mt={1} p={1}>
-              <TabList
-                onChange={handleChangeTab}
-                textColor="secondary"
-                indicatorColor="secondary"
-              >
-                <Tab label="Summary" value="1" />
-                <Tab label="Contact " value="2" />
-                <Tab label="History" value="3" />
-                <Tab label="Trade-In" value="4" disabled />
-              </TabList>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent dividers>
+        {selectedTask && (
+          <Box>
+            <TextField
+              variant="outlined"
+              label="Task Date"
+              value={selectedTask.followUpDate || ""}
+              onChange={(e) => handleChange(e, "followUpDate")}
+              fullWidth
+            />
+            <TextField
+              variant="outlined"
+              label="Task Type"
+              value={selectedTask.type || ""}
+              onChange={(e) => handleChange(e, "type")}
+              fullWidth
+            />
+            {/* <Box>
+              <TextField
+                variant="outlined"
+                label="Task Type"
+                value={selectedTask.type || ""}
+                onChange={(e) => handleChange(e, "type")}
+                fullWidth
+              />
+              <TextField
+                variant="outlined"
+                label="Task Type"
+                value={taskDetails.type}
+                fullWidth
+              />
             </Box>
-          </Paper>
-          <TabPanel value="1">
-            {lead && (
-              <LeadInfo
-                lead={lead}
-                onSaveLeadInfo={setEditedLead}
-                onInfoChange={handleLeadInfoChange}
+            <Box>
+              <TextField
+                variant="outlined"
+                label="Employee"
+                value={taskDetails.employee}
+                fullWidth
               />
-            )}
-          </TabPanel>
-          <TabPanel value="2">
-            {contact && (
-              <ContactInfo
-                contact={contact}
-                onSaveContactInfo={setEditedContact}
-                onInfoChange={handleContactInfoChange}
+            </Box>
+            <Box>
+              <TextField
+                variant="outlined"
+                label="Status"
+                value={taskDetails.status}
+                fullWidth
               />
-            )}
-          </TabPanel>
-          <TabPanel value="3">
-            {lead && (
-              <LeadHistory
-                leadData={lead}
-                tasks={lead.tasks || []}
-                emails={lead.emails || []}
+            </Box>
+            <Box>
+              <TextField
+                variant="outlined"
+                label="Subject:"
+                value={taskDetails.subject}
+                fullWidth
               />
-            )}
-          </TabPanel>
-
-          <TabPanel value="4">Item Four</TabPanel>
-        </TabContext>
-      </Box>
-      <Box></Box>
-      <BottomNavigation
-        sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
-      >
-        <Button onClick={handleSendEmailClick}>
-          <EmailOutlined />
-        </Button>
-        <Button onClick={handleNewLeadClick}>
-          <AddTaskIcon />
-        </Button>
-      </BottomNavigation>
-      <EmailContact
-        id={id}
-        primaryEmail={primaryEmail}
-        open={sendEmailOpen}
-        onClose={() => setSendEmailOpen(false)}
-        lead={lead}
-        onSaveSuccess={handleSaveSuccess}
-      />
-
-      <CreateLeadTask
-        lead={lead}
-        id={id}
-        open={createNewLeadOpen}
-        onClose={() => setCreateNewLeadOpen(false)}
-        onSaveSuccess={handleSaveSuccess}
-      />
-    </Box>
+            </Box>
+            <Box>
+              <TextField
+                variant="outlined"
+                label="Additional Info:"
+                value={taskDetails.additionalInfo}
+                fullWidth
+              />
+            </Box> */}
+          </Box>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => onClose(false)}>Cancel</Button>
+        {/* <Button onClick={handleSave}>Save</Button> */}
+      </DialogActions>
+    </Dialog>
   );
 };
 
-export default Lead;
+export default TaskDialog;

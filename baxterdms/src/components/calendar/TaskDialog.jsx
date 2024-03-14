@@ -20,16 +20,33 @@ const TaskDialog = ({ open, onClose, taskDetails }) => {
   }, [taskDetails]);
 
   const handleChange = (e, field) => {
-    setEditedTask((prev) => ({ ...prev, [field]: e.target.value }));
+    setSelectedTask((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  // const handleSave = () => {
-  //   setLoading(true);
-  //   try {
-  //     // const updatedTask = {
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:8000/leads/${selectedTask.leadId}/tasks/${selectedTask.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(selectedTask),
+      });
 
-  //   }
-  // };
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+      }
+
+      const updatedTask = await response.json();
+      console.log('Task updated:', updatedTask);
+      setLoading(false);
+      onClose(true);
+    } catch (error) {
+      console.error('Error updating task:', error);
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog
@@ -59,11 +76,11 @@ const TaskDialog = ({ open, onClose, taskDetails }) => {
             <TextField
               variant="outlined"
               label="Task Type"
-              value={selectedTask.type || ""}
+              value={selectedTask.id || ""}
               onChange={(e) => handleChange(e, "type")}
               fullWidth
             />
-            {/* <Box>
+            
               <TextField
                 variant="outlined"
                 label="Task Type"
@@ -74,48 +91,43 @@ const TaskDialog = ({ open, onClose, taskDetails }) => {
               <TextField
                 variant="outlined"
                 label="Task Type"
-                value={taskDetails.type}
+                value={selectedTask.type}
                 fullWidth
               />
-            </Box>
-            <Box>
+
               <TextField
                 variant="outlined"
                 label="Employee"
-                value={taskDetails.employee}
+                value={selectedTask.employee}
                 fullWidth
               />
-            </Box>
-            <Box>
+
               <TextField
                 variant="outlined"
                 label="Status"
-                value={taskDetails.status}
+                value={selectedTask.status}
                 fullWidth
               />
-            </Box>
-            <Box>
+
               <TextField
                 variant="outlined"
                 label="Subject:"
-                value={taskDetails.subject}
+                value={selectedTask.subject}
                 fullWidth
               />
-            </Box>
-            <Box>
+
               <TextField
                 variant="outlined"
                 label="Additional Info:"
-                value={taskDetails.additionalInfo}
+                value={selectedTask.additionalInfo}
                 fullWidth
               />
-            </Box> */}
           </Box>
         )}
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(false)}>Cancel</Button>
-        {/* <Button onClick={handleSave}>Save</Button> */}
+        <Button onClick={handleSave}>Save</Button>
       </DialogActions>
     </Dialog>
   );

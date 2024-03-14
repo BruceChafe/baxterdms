@@ -30,7 +30,7 @@ const SignIn = () => {
     setError(''); // Reset error on new submission
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/home');
+      navigate('/leads');
     } catch (error) {
       setError('Failed to log in'); // Set a user-friendly error message
       console.error('Authentication error:', error.message); // Optionally keep this for debugging
