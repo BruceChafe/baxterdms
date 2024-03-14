@@ -78,7 +78,7 @@ const CreateLeadTask = ({ open, onClose, lead, id, onSaveSuccess }) => {
             additionalInfo: leadTask.leadTaskAdditionalInfo,
             timestamp: timestamp,
             status: "Active",
-            activity: "Task Created"
+            activity: "Task Created",
           },
         ],
       };
@@ -113,7 +113,11 @@ const CreateLeadTask = ({ open, onClose, lead, id, onSaveSuccess }) => {
   };
 
   return (
-    <Dialog onClose={onClose} open={open}>
+    <Dialog
+      onClose={onClose}
+      open={open}
+      sx={{ "& .MuiDialog-paper": { width: "600px", maxWidth: "100%" } }}
+    >
       <DialogTitle>
         Create Follow-Up
         <IconButton

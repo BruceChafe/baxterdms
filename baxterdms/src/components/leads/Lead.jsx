@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Box, CircularProgress, Button, Typography, Divider, BottomNavigation, Paper, Tab } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Button,
+  Typography,
+  Divider,
+  BottomNavigation,
+  Paper,
+  Tab,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useParams } from "react-router-dom";
 import LeadInfo from "./LeadInfo";
@@ -16,15 +25,13 @@ import { useFetchLeadAndContact } from "../../hooks/FetchLeadAndContact";
 
 const Lead = () => {
   const { leadNumber } = useParams();
-  const { lead, contact, loading, error, refetch } = useFetchLeadAndContact(leadNumber);
+  const { lead, contact, loading, error, refetch } =
+    useFetchLeadAndContact(leadNumber);
   const [tabValue, setTabValue] = useState("1");
   const [editedLead, setEditedLead] = useState(null);
   const [editedContact, setEditedContact] = useState(null);
   const leadId = lead?.id;
-
-
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
-
   const [sendEmailOpen, setSendEmailOpen] = useState(null);
   const [primaryEmail, setPrimaryEmail] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -32,7 +39,6 @@ const Lead = () => {
   const [createNewLeadOpen, setCreateNewLeadOpen] = useState(false);
   const [id, setID] = useState("");
   const [reloadLeadHistory, setReloadLeadHistory] = useState(false);
-
   const [leadInfoChanged, setLeadInfoChanged] = useState(false);
   const [contactInfoChanged, setContactInfoChanged] = useState(false);
 

@@ -62,11 +62,12 @@ const WeeklyCalendar = () => {
     fetchTasksForWeek();
   }, [dates]);
 
-  const handleCellClick = (task) => {
-    setSelectedTask(task);
-    console.log(selectedTask);
+  const handleCellClick = (task, leadId) => {
+    const taskWithLeadId = { ...task, leadId: leadId };
+    setSelectedTask(taskWithLeadId);
     setDialogOpen(true);
   };
+  
 
   const navigateWeek = (offset) => {
     setCurrentDate((prevDate) => {
@@ -123,11 +124,14 @@ const WeeklyCalendar = () => {
             <TableBody>
               <TableRow>
                 {dates.map(({ isoDate }, index) => (
-                  <TableCell key={isoDate} sx={{
-                    width: `${100 / dates.length}%`,
-                    borderRight: index !== dates.length - 1 ? 1 : 0,
-                    borderColor: "divider",
-                  }}>
+                  <TableCell
+                    key={isoDate}
+                    sx={{
+                      width: `${100 / dates.length}%`,
+                      borderRight: index !== dates.length - 1 ? 1 : 0,
+                      borderColor: "divider",
+                    }}
+                  >
                     {tasksByDay[isoDate] ? (
                       tasksByDay[isoDate].map((task, index) => (
                         <Box

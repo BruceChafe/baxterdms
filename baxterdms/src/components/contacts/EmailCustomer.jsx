@@ -12,7 +12,14 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) => {
+const EmailContact = ({
+  id,
+  open,
+  onClose,
+  primaryEmail,
+  lead,
+  onSaveSuccess,
+}) => {
   const [emailData, setEmailData] = useState({
     from: "baxterdms@outlook.com",
     subject: "",
@@ -50,12 +57,12 @@ const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) 
           body: emailData.body,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (data.success) {
         setSnackbarMessage("Email sent successfully!");
-  
+
         const timestamp = new Date().toISOString();
         const updatedLead = {
           ...lead,
@@ -67,11 +74,11 @@ const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) 
               subject: emailData.subject,
               body: emailData.body,
               timestamp: timestamp,
-              activity: "Email Sent"
+              activity: "Email Sent",
             },
           ],
         };
-  
+
         await fetch(`http://localhost:8000/leads/${id}`, {
           method: "PATCH",
           headers: {
@@ -82,7 +89,7 @@ const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) 
       } else {
         setSnackbarMessage(`Error: ${data.error}`);
       }
-  
+
       setSnackbarOpen(true);
       setTimeout(() => {
         onClose();
@@ -95,10 +102,13 @@ const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) 
       setLoading(false);
     }
   };
-  
 
   return (
-    <Dialog onClose={onClose} open={open}>
+    <Dialog
+      onClose={onClose}
+      open={open}
+      sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+    >
       <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
         Send Email
         <IconButton

@@ -1,7 +1,11 @@
-// LeadInfo.js
-
 import React, { useState, useEffect } from "react";
-import { Typography, TextField, Divider, Box, Grid, MenuItem, Paper } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Grid,
+  Paper,
+} from "@mui/material";
+import DropdownMenu from "../fields/renderDropdownMenu";
 
 const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
   const [editedLead, setEditedLead] = useState(null);
@@ -43,7 +47,7 @@ const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
       ...editedLead,
       [key]: value,
     });
-    onInfoChange(true); // Notify parent component of changes
+    onInfoChange(true);
   };
 
   useEffect(() => {
@@ -51,23 +55,6 @@ const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
       onSaveLeadInfo(editedLead);
     }
   }, [editedLead, onSaveLeadInfo]);
-
-  const renderDropdownMenu = (label, key, options, isDisabled = false) => (
-    <TextField
-      select
-      label={label}
-      value={editedLead[key] || ""}
-      onChange={(e) => handleDropdownChange(key, e.target.value)}
-      fullWidth
-      disabled={isDisabled}
-    >
-      {options.map((option) => (
-        <MenuItem key={option} value={option}>
-          {option}
-        </MenuItem>
-      ))}
-    </TextField>
-  );
 
   return (
     <>
@@ -77,29 +64,44 @@ const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
             <Box mb={1} mt={1} p={1}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  {renderDropdownMenu(
-                    "Lead Source",
-                    "leadSource",
-                    sourceOptions
-                  )}
+                  <DropdownMenu
+                    label="Lead Source"
+                    value={editedLead?.leadSource || ""}
+                    options={sourceOptions}
+                    onChange={(e) =>
+                      handleDropdownChange("leadSource", e.target.value)
+                    }
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  {renderDropdownMenu(
-                    "Lead Dealership",
-                    "leadDealership",
-                    dealershipOptions,
-                    true
-                  )}
+                  <DropdownMenu
+                    label="Lead Dealership"
+                    value={editedLead?.leadDealership || ""}
+                    options={dealershipOptions}
+                    onChange={(e) =>
+                      handleDropdownChange("leadSource", e.target.value)
+                    }
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  {renderDropdownMenu("Lead Type", "leadType", typeOptions)}
+                  <DropdownMenu
+                    label="Lead Type"
+                    value={editedLead?.leadType || ""}
+                    options={typeOptions}
+                    onChange={(e) =>
+                      handleDropdownChange("leadSource", e.target.value)
+                    }
+                  />
                 </Grid>
-                <Grid item  sm={6}>
-                  {renderDropdownMenu(
-                    "Lead Status",
-                    "leadStatus",
-                    statusOptions
-                  )}
+                <Grid item xs={12} sm={6}>
+                  <DropdownMenu
+                    label="Lead Status"
+                    value={editedLead?.leadStatus || ""}
+                    options={statusOptions}
+                    onChange={(e) =>
+                      handleDropdownChange("leadSource", e.target.value)
+                    }
+                  />
                 </Grid>
               </Grid>
             </Box>
