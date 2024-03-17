@@ -27,7 +27,7 @@ const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange }) => {
     { label: "Mobile Phone", key: "mobilePhone" },
     { label: "Home Phone", key: "homePhone" },
     { label: "Work Phone", key: "workPhone" },
-    { label: "Primary Email", key: "email" },
+    { label: "Primary Email", key: "primaryEmail" },
     { label: "Work Email", key: "workEmail" },
   ];
 

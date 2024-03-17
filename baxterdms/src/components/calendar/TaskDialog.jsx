@@ -26,24 +26,27 @@ const TaskDialog = ({ open, onClose, taskDetails }) => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/leads/${selectedTask.leadId}/tasks/${selectedTask.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(selectedTask),
-      });
+      const response = await fetch(
+        `http://localhost:8000/tasks/${selectedTask.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(selectedTask),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to update task');
+        throw new Error("Failed to update task");
       }
 
       const updatedTask = await response.json();
-      console.log('Task updated:', updatedTask);
+      console.log("Task updated:", updatedTask);
       setLoading(false);
       onClose(true);
     } catch (error) {
-      console.error('Error updating task:', error);
+      console.error("Error updating task:", error);
       setLoading(false);
     }
   };
@@ -80,48 +83,42 @@ const TaskDialog = ({ open, onClose, taskDetails }) => {
               onChange={(e) => handleChange(e, "type")}
               fullWidth
             />
-            
-              <TextField
-                variant="outlined"
-                label="Task Type"
-                value={selectedTask.type || ""}
-                onChange={(e) => handleChange(e, "type")}
-                fullWidth
-              />
-              <TextField
-                variant="outlined"
-                label="Task Type"
-                value={selectedTask.type}
-                fullWidth
-              />
+            <TextField
+              variant="outlined"
+              label="Task Type"
+              value={selectedTask.type}
+              fullWidth
+            />
 
-              <TextField
-                variant="outlined"
-                label="Employee"
-                value={selectedTask.employee}
-                fullWidth
-              />
+            <TextField
+              variant="outlined"
+              label="Employee"
+              value={selectedTask.employee}
+              fullWidth
+            />
 
-              <TextField
-                variant="outlined"
-                label="Status"
-                value={selectedTask.status}
-                fullWidth
-              />
+            <TextField
+              variant="outlined"
+              label="Status"
+              value={selectedTask.status}
+              onChange={(e) => handleChange(e, "status")}
 
-              <TextField
-                variant="outlined"
-                label="Subject:"
-                value={selectedTask.subject}
-                fullWidth
-              />
+              fullWidth
+            />
 
-              <TextField
-                variant="outlined"
-                label="Additional Info:"
-                value={selectedTask.additionalInfo}
-                fullWidth
-              />
+            <TextField
+              variant="outlined"
+              label="Subject:"
+              value={selectedTask.subject}
+              fullWidth
+            />
+
+            <TextField
+              variant="outlined"
+              label="Additional Info:"
+              value={selectedTask.additionalInfo}
+              fullWidth
+            />
           </Box>
         )}
       </DialogContent>

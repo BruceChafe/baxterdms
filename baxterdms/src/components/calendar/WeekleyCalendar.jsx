@@ -11,63 +11,28 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  CircularProgress,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { getWeekDates } from "./WeekDates";
 import TaskDialog from "./TaskDialog";
+import { useFetchTasksForWeek } from "../../hooks/FetchTasksForWeek";
 
 const WeeklyCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [tasksByDay, setTasksByDay] = useState({});
-  const [error, setError] = useState("");
+  const dates = useMemo(() => getWeekDates(currentDate), [currentDate]);
+  const { tasks, loading, error } = useFetchTasksForWeek(dates);
+  const [showCompletedTasks, setShowCompletedTasks] = useState(false);
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const dates = getWeekDates(currentDate);
 
-  useEffect(() => {
-    const fetchTasksForWeek = async () => {
-      const startOfWeek = dates[0].isoDate;
-      const endOfWeek = dates[dates.length - 1].isoDate;
-
-      try {
-        const response = await fetch(`http://localhost:8000/leads`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch tasks data");
-        }
-        const leadsData = (await response.json()) || [];
-        const tasks = leadsData
-          .flatMap((lead) => lead.tasks || [])
-          .filter((task) => {
-            if (!task.followUpDate) {
-              return false;
-            }
-            const isoDate = task.followUpDate.split("T")[0];
-            return isoDate >= startOfWeek && isoDate <= endOfWeek;
-          });
-
-        const groupedTasks = tasks.reduce((acc, task) => {
-          const isoDate = task.followUpDate.split("T")[0];
-          acc[isoDate] = acc[isoDate] || [];
-          acc[isoDate].push(task);
-          return acc;
-        }, {});
-
-        setTasksByDay(groupedTasks);
-      } catch (error) {
-        setError("Error fetching tasks for the week: " + error.message);
-        console.error(error);
-      }
-    };
-
-    fetchTasksForWeek();
-  }, [dates]);
-
-  const handleCellClick = (task, leadId) => {
-    const taskWithLeadId = { ...task, leadId: leadId };
-    setSelectedTask(taskWithLeadId);
+  const handleCellClick = (task) => {
+    setSelectedTask(task);
     setDialogOpen(true);
   };
-  
 
   const navigateWeek = (offset) => {
     setCurrentDate((prevDate) => {
@@ -77,9 +42,17 @@ const WeeklyCalendar = () => {
     });
   };
 
+  const toggleCompletedTasks = () => {
+    setShowCompletedTasks(!showCompletedTasks);
+  };
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Typography color="error">{error}</Typography>;
+
   return (
     <Box m={3}>
       {error && <Typography color="error">{error}</Typography>}
+
       <Box
         sx={{
           display: "flex",
@@ -99,7 +72,19 @@ const WeeklyCalendar = () => {
       </Box>
       <Divider />
       <Paper sx={{ mt: 2, mb: 2 }}>
-        <TableContainer>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={showCompletedTasks}
+              onChange={toggleCompletedTasks}
+            />
+          }
+          label="Show Completed Tasks"
+          sx={{ mb: 2 }}
+        />
+      </Paper>
+      <Paper sx={{ mt: 2, mb: 2 }}>
+        <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -113,9 +98,7 @@ const WeeklyCalendar = () => {
                       borderColor: "divider",
                     }}
                   >
-                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                      {day}
-                    </Typography>
+                    <Typography variant="subtitle1">{day}</Typography>
                     <Typography variant="body1">{date}</Typography>
                   </TableCell>
                 ))}
@@ -126,17 +109,22 @@ const WeeklyCalendar = () => {
                 {dates.map(({ isoDate }, index) => (
                   <TableCell
                     key={isoDate}
+                    align="center"
                     sx={{
                       width: `${100 / dates.length}%`,
                       borderRight: index !== dates.length - 1 ? 1 : 0,
                       borderColor: "divider",
                     }}
                   >
-                    {tasksByDay[isoDate] ? (
-                      tasksByDay[isoDate].map((task, index) => (
+                    {tasks
+                      .filter((task) => task.followUpDate.startsWith(isoDate))
+                      .filter(
+                        (task) =>
+                          showCompletedTasks || task.status !== "Completed"
+                      )
+                      .map((task, idx) => (
                         <Box
-                          key={task.id || index}
-                          mt={index > 0 ? 2 : 0}
+                          key={task.id || idx}
                           onClick={() => handleCellClick(task)}
                           sx={{
                             cursor: "pointer",
@@ -144,20 +132,31 @@ const WeeklyCalendar = () => {
                             borderColor: "primary.main",
                             borderRadius: 1,
                             p: 2,
-                            transition: "background-color 0.5s",
-                            "&:hover": {
-                              backgroundColor: "primary.dark",
-                            },
+                            backgroundColor:
+                              task.status === "Completed"
+                                ? "darkgreen"
+                                : task.status === "Cancelled"
+                                ? "darkgrey"
+                                : task.status === "Active"
+                                ? "darkblue"
+                                : "",
                           }}
                         >
                           <Typography variant="body2">
-                            Task: {task.type}
+                            <strong>{task.type}</strong> ({task.priority})
                           </Typography>
+                          <Box>
+                            <Typography variant="caption">
+                              {task.subject}
+                            </Typography>
+                          </Box>
+                          <Box>
+                            <Typography variant="caption">
+                              {task.status}
+                            </Typography>
+                          </Box>
                         </Box>
-                      ))
-                    ) : (
-                      <Typography variant="body2"></Typography>
-                    )}
+                      ))}
                   </TableCell>
                 ))}
               </TableRow>

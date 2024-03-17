@@ -27,9 +27,9 @@
   ],
   "contacts": [
     {
-      "firstName": "Jand",
+      "firstName": "Jane",
       "middleName": "",
-      "lastName": "Fondu",
+      "lastName": "Fondue",
       "gender": "",
       "dob": null,
       "streetAddress": "",
@@ -42,7 +42,7 @@
       "mobilePhone": "",
       "homePhone": "",
       "workPhone": "",
-      "email": "brucechafe@gmail.com",
+      "primaryEmail": "brucechafe@gmail.com",
       "notes": "",
       "id": 1,
       "leadNumbers": [
@@ -65,7 +65,7 @@
       "mobilePhone": "",
       "homePhone": "",
       "workPhone": "",
-      "email": "",
+      "primaryEmail": "",
       "notes": "",
       "id": 2
     },
@@ -85,7 +85,7 @@
       "mobilePhone": "",
       "homePhone": "",
       "workPhone": "",
-      "email": "danahawco@gmail.com",
+      "primaryEmail": "danahawco@gmail.com",
       "notes": "",
       "id": 3,
       "leadNumbers": [
@@ -108,7 +108,7 @@
       "mobilePhone": "",
       "homePhone": "",
       "workPhone": "",
-      "email": "brucechafe@gmail.com",
+      "primaryEmail": "brucechafe@gmail.com",
       "notes": "",
       "id": 4,
       "leadNumbers": [
@@ -116,7 +116,7 @@
       ]
     },
     {
-      "firstName": "Joel",
+      "firstName": "Joe",
       "middleName": "Test",
       "lastName": "Lake",
       "gender": "",
@@ -131,7 +131,7 @@
       "mobilePhone": "",
       "homePhone": "",
       "workPhone": "",
-      "email": "joeldaniellake@gmail.com",
+      "primaryEmail": "brucechafe@gmail.com",
       "notes": "",
       "id": 5,
       "leadNumbers": [
@@ -146,70 +146,11 @@
       "dmsID": 1,
       "leadDealership": "Skeezer Motors",
       "leadSalesConsultant": "Test",
-      "leadSource": "Referral",
-      "leadType": "",
-      "leadStatus": "New Lead",
+      "leadSource": "Website",
+      "leadType": "TypeTest",
+      "leadStatus": "Contacted",
       "id": 1,
-      "history": [],
-      "tasks": [
-        {
-          "followUpDate": "2024-03-12T02:30:00.000Z",
-          "type": "SMS Follow Up",
-          "priority": "Low",
-          "employee": "TEst",
-          "subject": "test",
-          "additionalInfo": "test",
-          "timestamp": "2024-03-10T21:38:44.305Z",
-          "status": "Active",
-          "activity": "Task Created",
-          "taskId": 1
-        },
-        {
-          "followUpDate": "2024-03-14T02:30:00.000Z",
-          "type": "Phone Follow Up",
-          "priority": "Low",
-          "employee": "Employee",
-          "subject": "Subject",
-          "additionalInfo": "Boobs.",
-          "timestamp": "2024-03-12T22:49:06.500Z",
-          "status": "Active",
-          "activity": "Task Created",
-          "taskId": 2
-        },
-        {
-          "followUpDate": null,
-          "type": "48 Hour Follow Up",
-          "priority": "Low",
-          "employee": "Test",
-          "subject": "Test",
-          "additionalInfo": "Test",
-          "timestamp": "2024-03-14T20:24:20.852Z",
-          "status": "Active",
-          "activity": "Task Created"
-        },
-        {
-          "followUpDate": "2024-03-15T02:30:00.000Z",
-          "type": "Other",
-          "priority": "Low",
-          "employee": "Janet",
-          "subject": "Reload3",
-          "additionalInfo": "Test",
-          "timestamp": "2024-03-14T20:25:14.657Z",
-          "status": "Active",
-          "activity": "Task Created"
-        },
-        {
-          "followUpDate": "2024-03-15T02:30:00.000Z",
-          "type": "Feedback Collection",
-          "priority": "Low",
-          "employee": "Joel",
-          "subject": "Joel Test",
-          "additionalInfo": "Joel Test",
-          "timestamp": "2024-03-14T20:47:45.293Z",
-          "status": "Active",
-          "activity": "Task Created"
-        }
-      ]
+      "history": []
     },
     {
       "leadNumber": 1536,
@@ -220,17 +161,7 @@
       "leadType": "",
       "leadStatus": "New Lead",
       "id": 2,
-      "history": [],
-      "emails": [
-        {
-          "from": "baxterdms@outlook.com",
-          "to": "danahawco@gmail.com",
-          "subject": "Email Test",
-          "body": "Email Test",
-          "timestamp": "2024-03-10T16:19:09.710Z"
-        }
-      ],
-      "tasks": []
+      "history": []
     },
     {
       "leadNumber": 1654,
@@ -241,15 +172,7 @@
       "leadType": "",
       "leadStatus": "Contacted",
       "id": 3,
-      "history": [
-        [
-          "2024-03-05T21:43:53.286Z"
-        ],
-        [
-          "2024-03-05T21:44:10.763Z"
-        ]
-      ],
-      "tasks": []
+      "history": []
     },
     {
       "leadNumber": 1054,
@@ -272,55 +195,7 @@
       "leadType": "TypeTest",
       "leadStatus": "New Lead",
       "id": 5,
-      "history": [
-        {
-          "timestamp": "2024-03-02T19:35:26.580Z",
-          "activity": "Lead Created"
-        }
-      ],
-      "tasks": [],
-      "emails": [
-        {
-          "from": "baxterdms@outlook.com",
-          "to": "brucechafe@gmail.com",
-          "subject": "TEst 3",
-          "body": "Test",
-          "timestamp": "2024-03-10T16:18:02.636Z",
-          "activity": "Email Sent"
-        },
-        {
-          "from": "baxterdms@outlook.com",
-          "to": "brucechafe@gmail.com",
-          "subject": "Test",
-          "body": "Test",
-          "timestamp": "2024-03-10T16:39:05.001Z",
-          "activity": "Email Sent"
-        },
-        {
-          "from": "baxterdms@outlook.com",
-          "to": "brucechafe@gmail.com",
-          "subject": "",
-          "body": "",
-          "timestamp": "2024-03-10T16:42:57.951Z",
-          "activity": "Email Sent"
-        },
-        {
-          "from": "baxterdms@outlook.com",
-          "to": "brucechafe@gmail.com",
-          "subject": "",
-          "body": "",
-          "timestamp": "2024-03-10T16:46:54.271Z",
-          "activity": "Email Sent"
-        },
-        {
-          "from": "baxterdms@outlook.com",
-          "to": "brucechafe@gmail.com",
-          "subject": "",
-          "body": "",
-          "timestamp": "2024-03-10T16:47:26.106Z",
-          "activity": "Email Sent"
-        }
-      ]
+      "history": []
     },
     {
       "leadNumber": 1127,
@@ -335,7 +210,58 @@
       "history": []
     }
   ],
-  "vehicles": [
+  "tasks": [
+    {
+      "followUpDate": "2024-03-18T02:30:00.000Z",
+      "type": "Phone Follow Up",
+      "priority": "Low",
+      "employee": "Janet",
+      "subject": "ReloadTest",
+      "additionalInfo": "Test",
+      "timestamp": "2024-03-17T17:28:52.358Z",
+      "status": "Completed",
+      "activity": "Task Created",
+      "leadNumber": 1747,
+      "id": 1
+    },
+    {
+      "followUpDate": "2024-03-19T02:30:00.000Z",
+      "type": "Phone Follow Up",
+      "priority": "Normal",
+      "employee": "Dana",
+      "subject": "Test",
+      "additionalInfo": "Dana",
+      "timestamp": "2024-03-17T20:21:02.289Z",
+      "status": "Cancelled",
+      "activity": "Task Created",
+      "leadNumber": 1565,
+      "id": 2
+    },
+    {
+      "followUpDate": "2024-03-20T02:30:00.000Z",
+      "type": "Email Follow Up",
+      "priority": "Low",
+      "employee": "Dana Test",
+      "subject": "Dana Test",
+      "additionalInfo": "Dana Test",
+      "timestamp": "2024-03-17T20:33:58.570Z",
+      "status": "Completed",
+      "activity": "Task Created",
+      "leadNumber": 1747,
+      "id": 3
+    }
+  ],
+  "emails": [
+    {
+      "from": "baxterdms@outlook.com",
+      "to": "brucechafe@gmail.com",
+      "subject": "Test",
+      "body": "Test",
+      "leadNumber": 1747,
+      "timestamp": "2024-03-17T17:21:16.438Z",
+      "activityType": "Email Sent",
+      "id": 1
+    }
   ],
   "configLeads": [
     {

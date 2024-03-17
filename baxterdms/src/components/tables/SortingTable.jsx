@@ -10,28 +10,35 @@ import {
   Typography,
 } from "@mui/material";
 
-const SortingTable = ({ data, columns, defaultSortKey, defaultSortDirection, action }) => {
-  const [sortConfig, setSortConfig] = useState({ key: defaultSortKey || null, direction: defaultSortDirection || 'ascending' });
+const SortingTable = ({
+  data,
+  columns,
+  defaultSortKey,
+  defaultSortDirection,
+  action,
+}) => {
+  const [sortConfig, setSortConfig] = useState({
+    key: defaultSortKey || null,
+    direction: defaultSortDirection || "ascending",
+  });
 
-  // Function to handle sorting
   const handleSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
 
-  // Function to perform sorting based on the sortConfig
   const sortedData = () => {
     const sortedData = [...data];
     if (sortConfig.key) {
       sortedData.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
+          return sortConfig.direction === "ascending" ? -1 : 1;
         }
         if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
+          return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
       });
@@ -39,8 +46,22 @@ const SortingTable = ({ data, columns, defaultSortKey, defaultSortDirection, act
     return sortedData;
   };
 
+  const renderCellContent = (content, isActivityDetails = false) => {
+    if (!isActivityDetails) {
+      return content;
+    }
+    return content.split("\n").map((line, index) => (
+      <Typography key={index} variant="body2">
+        {line}
+      </Typography>
+    ));
+  };
+
   useEffect(() => {
-    setSortConfig({ key: defaultSortKey || null, direction: defaultSortDirection || 'ascending' });
+    setSortConfig({
+      key: defaultSortKey || null,
+      direction: defaultSortDirection || "ascending",
+    });
   }, [defaultSortKey, defaultSortDirection]);
 
   return (
@@ -52,9 +73,17 @@ const SortingTable = ({ data, columns, defaultSortKey, defaultSortDirection, act
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Actions</TableCell>
-              {columns.map((column) => (
-                <TableCell key={column.field}>
+              {columns.map((column, index) => (
+                <TableCell
+                  key={column.field}
+                  align="center"
+                  sx={{
+                    borderTop: 1,
+                    borderRight: index !== columns.length - 1 ? 1 : 0,
+                    borderColor: "divider",
+                  }}
+                >
+                  {" "}
                   <Button onClick={() => handleSort(column.field)}>
                     {column.header}
                   </Button>
@@ -63,15 +92,21 @@ const SortingTable = ({ data, columns, defaultSortKey, defaultSortDirection, act
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedData().map((row, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Button variant="outlined" onClick={() => action(row)}>
-                    {action}
-                  </Button>
-                </TableCell>
-                {columns.map((column) => (
-                  <TableCell key={column.field}>{row[column.field]}</TableCell>
+            {sortedData().map((row, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {columns.map((column, colIndex) => (
+                  <TableCell
+                    key={`${rowIndex}-${colIndex}`}
+                    align="center"
+                    sx={{
+                      borderRight: colIndex !== columns.length - 1 ? 1 : 0,
+                      borderColor: "divider",
+                    }}
+                  >
+                    {column.field === "activityDetails"
+                      ? renderCellContent(row[column.field], true)
+                      : renderCellContent(row[column.field])}
+                  </TableCell>
                 ))}
               </TableRow>
             ))}

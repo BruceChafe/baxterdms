@@ -1,42 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-  Typography,
-  Box,
-  Grid,
-  Paper,
-} from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import DropdownMenu from "../fields/renderDropdownMenu";
+import { useFetchLeadConfig } from "../../hooks/FetchLeadConfig";
 
 const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
+  const { sourceOptions, typeOptions, dealershipOptions, statusOptions } =
+    useFetchLeadConfig();
+
   const [editedLead, setEditedLead] = useState(null);
-  const [sourceOptions, setSourceOptions] = useState([]);
-  const [typeOptions, setTypeOptions] = useState([]);
-  const [dealershipOptions, setDealershipOptions] = useState([]);
-  const [statusOptions, setStatusOptions] = useState([]);
-
-  useEffect(() => {
-    fetch("http://localhost:8000/configLeads/1")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch configuration data");
-        }
-        return response.json();
-      })
-      .then((configData) => {
-        const sourceOptions = configData.leadSourceActive || [];
-        const typeOptions = configData.leadTypeActive || [];
-        const statusOptions = configData.leadStatusActive || [];
-        const dealershipOptions = configData.leadDealershipActive || [];
-
-        setSourceOptions(sourceOptions);
-        setTypeOptions(typeOptions);
-        setDealershipOptions(dealershipOptions);
-        setStatusOptions(statusOptions);
-      })
-      .catch((error) => {
-        console.error("Error fetching options:", error);
-      });
-  }, []);
 
   useEffect(() => {
     setEditedLead({ ...lead });
@@ -79,7 +50,7 @@ const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
                     value={editedLead?.leadDealership || ""}
                     options={dealershipOptions}
                     onChange={(e) =>
-                      handleDropdownChange("leadSource", e.target.value)
+                      handleDropdownChange("leadDealership", e.target.value)
                     }
                   />
                 </Grid>
@@ -89,7 +60,7 @@ const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
                     value={editedLead?.leadType || ""}
                     options={typeOptions}
                     onChange={(e) =>
-                      handleDropdownChange("leadSource", e.target.value)
+                      handleDropdownChange("leadType", e.target.value)
                     }
                   />
                 </Grid>
@@ -99,7 +70,7 @@ const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
                     value={editedLead?.leadStatus || ""}
                     options={statusOptions}
                     onChange={(e) =>
-                      handleDropdownChange("leadSource", e.target.value)
+                      handleDropdownChange("leadStatus", e.target.value)
                     }
                   />
                 </Grid>

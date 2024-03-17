@@ -29,6 +29,7 @@ const Contact = () => {
   const [primaryEmail, setPrimaryEmail] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [contactInfoChanged, setContactInfoChanged] = useState(false);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -73,38 +74,41 @@ const Contact = () => {
     fetchContactData();
   }, [contactId]);
 
-const handleSave = async () => {
-  try {
-    const response = await fetch(
-      `http://localhost:8000/contacts/${contact.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(editedContact),
+  const handleSave = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/contacts/${contact.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(editedContact),
+        }
+      );
+
+      if (response.ok) {
+        setSnackbarMessage("Save successful");
+        fetchContactData();
+      } else {
+        setSnackbarMessage("Error: Failed to save");
       }
-    );
 
-    if (response.ok) {
-      setSnackbarMessage("Save successful");
-      fetchContactData();
-    } else {
-      setSnackbarMessage("Error: Failed to save");
+      setSnackbarOpen(true);
+      setIsEmailPaperOpen(false);
+    } catch (error) {
+      setSnackbarMessage(`Error: ${error.message}`);
+      setSnackbarOpen(true);
     }
+  };
 
-    setSnackbarOpen(true);
-    setIsEmailPaperOpen(false);
-  } catch (error) {
-    setSnackbarMessage(`Error: ${error.message}`);
-    setSnackbarOpen(true);
-  }
-};
-
+  const handleContactInfoChange = (changed) => {
+    setContactInfoChanged(changed);
+  };
 
   return (
     <Box m={3}>
-            <Box
+      <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
@@ -113,12 +117,18 @@ const handleSave = async () => {
       >
         {contact ? (
           <Typography variant="h4" sx={{ m: 2 }}>
-            <CustomBreadcrumbs title={`${contact.firstName} ${contact.lastName}`} />
+            <CustomBreadcrumbs
+              title={`${contact.firstName} ${contact.lastName}`}
+            />
           </Typography>
         ) : (
           <CircularProgress sx={{ m: 2 }} />
         )}
-        <Button onClick={handleSave} variant="outlined">
+        <Button
+          onClick={handleSave}
+          variant="outlined"
+          disabled={!contactInfoChanged}
+        >
           Save
         </Button>
         <CustomSnackbar
@@ -148,6 +158,7 @@ const handleSave = async () => {
               <ContactInfo
                 contact={contact}
                 onSaveContactInfo={setEditedContact}
+                onInfoChange={handleContactInfoChange}
               />
             </Box>
           )}

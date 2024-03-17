@@ -8,13 +8,13 @@ import {
   BottomNavigation,
   Paper,
   Tab,
+  Snackbar,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useParams } from "react-router-dom";
 import LeadInfo from "./LeadInfo";
 import ContactInfo from "../contacts/ContactInfo";
 import EmailContact from "../contacts/EmailCustomer";
-import CustomSnackbar from "../snackbar/CustomSnackbar";
 import CustomBreadcrumbs from "../breadcrumbs/CustomBreadcrumbs";
 import LeadHistory from "./LeadHistory";
 import CreateLeadTask from "./CreateLeadTask";
@@ -25,22 +25,22 @@ import { useFetchLeadAndContact } from "../../hooks/FetchLeadAndContact";
 
 const Lead = () => {
   const { leadNumber } = useParams();
-  const { lead, contact, loading, error, refetch } =
+  const { lead, contact, primaryEmail, loading, error, refetch } =
     useFetchLeadAndContact(leadNumber);
   const [tabValue, setTabValue] = useState("1");
   const [editedLead, setEditedLead] = useState(null);
   const [editedContact, setEditedContact] = useState(null);
   const leadId = lead?.id;
-  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
   const [sendEmailOpen, setSendEmailOpen] = useState(null);
-  const [primaryEmail, setPrimaryEmail] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [createNewLeadOpen, setCreateNewLeadOpen] = useState(false);
   const [id, setID] = useState("");
   const [reloadLeadHistory, setReloadLeadHistory] = useState(false);
+
   const [leadInfoChanged, setLeadInfoChanged] = useState(false);
   const [contactInfoChanged, setContactInfoChanged] = useState(false);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const handleSendEmailClick = () => {
     setSendEmailOpen(true);
@@ -54,18 +54,10 @@ const Lead = () => {
     setTabValue(newValue);
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-
-  const showSnackbar = (message) => {
-    setSnackbar({ open: true, message });
-  };
-
   useEffect(() => {
     setEditedLead(lead);
     setEditedContact(contact);
-  }, [lead, contact]);
+  }, [lead, contact, primaryEmail]);
 
   const handleSave = async () => {
     try {
@@ -94,12 +86,12 @@ const Lead = () => {
       const timestamp = new Date().toISOString();
 
       if (leadResponse.ok && contactResponse.ok) {
-        showSnackbar("Save successful");
+        setSnackbarMessage("Save successful");
         setLeadInfoChanged(false);
         setContactInfoChanged(false);
         refetch();
       } else {
-        showSnackbar("Error: Failed to save");
+        setSnackbarMessage("Error: Failed to save");
       }
 
       const leadData = await leadResponse.json();
@@ -116,10 +108,8 @@ const Lead = () => {
         }),
       });
 
-      showSnackbar(true);
-      setSendEmailOpen(false);
+      setSnackbarOpen(true);
     } catch (error) {
-      showSnackbar(`Error: ${error.message}`);
       setSnackbarOpen(true);
     }
   };
@@ -134,6 +124,10 @@ const Lead = () => {
 
   const handleContactInfoChange = (changed) => {
     setContactInfoChanged(changed);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   if (loading) return <CircularProgress />;
@@ -166,10 +160,16 @@ const Lead = () => {
         >
           Save
         </Button>
-        <CustomSnackbar
+        <Snackbar
           open={snackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
           message={snackbarMessage}
-          handleClose={handleSnackbarClose}
+          action={
+            <Button color="inherit" size="small" onClick={handleSnackbarClose}>
+              Close
+            </Button>
+          }
         />
       </Box>
 
@@ -209,13 +209,7 @@ const Lead = () => {
             )}
           </TabPanel>
           <TabPanel value="3">
-            {lead && (
-              <LeadHistory
-                leadData={lead}
-                tasks={lead.tasks || []}
-                emails={lead.emails || []}
-              />
-            )}
+            {lead && <LeadHistory leadData={lead} />}
           </TabPanel>
 
           <TabPanel value="4">Item Four</TabPanel>
