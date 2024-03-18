@@ -47,7 +47,7 @@ const SortingTable = ({
   };
 
   const renderCellContent = (content, isActivityDetails = false) => {
-    if (!isActivityDetails) {
+    if (!isActivityDetails || typeof content !== 'string') {
       return content;
     }
     return content.split("\n").map((line, index) => (
@@ -56,6 +56,7 @@ const SortingTable = ({
       </Typography>
     ));
   };
+  
 
   useEffect(() => {
     setSortConfig({

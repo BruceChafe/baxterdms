@@ -1,26 +1,29 @@
 import React, { useState } from "react";
 import {
-  Box,
   CircularProgress,
+  Box,
+  Typography,
   Divider,
   TablePagination,
-  Typography,
+  Paper,
+  Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import BasicTable from "../tables/BasicTable";
-import { useFetchLeads } from "../../hooks/FetchLeads";
+import { useFetchContacts } from "../../hooks/FetchContacts";
+import UploadData from "../upload/Upload";
 
-const LeadsTable = () => {
+const ContactTable = () => {
+  const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const navigate = useNavigate();
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const { leads, totalCount, loading, error } = useFetchLeads(
+  const { contacts, totalCount, loading, error } = useFetchContacts(
     page,
     rowsPerPage
   );
 
-  const handleChangePage = (newPage) => {
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
@@ -29,54 +32,68 @@ const LeadsTable = () => {
     setPage(0);
   };
 
-  const handleEditClick = (lead) => {
-    navigate(`/leads/${lead.leadNumber}`);
+  const handleImportClick = () => {
+    setUploadPanelOpen(true);
+    document.body.style.overflow = "hidden";
   };
 
-  if (error) return <div>Error: {error}</div>;
+  const handleCloseUploadPanel = () => {
+    setUploadPanelOpen(false);
+    document.body.style.overflow = "auto";
+  };
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Box>Error: {error}</Box>;
 
   return (
-    <Box>
+    <Box sx={{ m: 3 }}>
+      {error && <Typography color="error">{error}</Typography>}
       <Box
         sx={{
-          mt: 3,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
         }}
       >
         <Typography variant="h4" sx={{ m: 2 }}>
-          Leads
+          Contacts
         </Typography>
+        <Button variant="outlined" onClick={handleImportClick}>
+          Import
+        </Button>
       </Box>
       <Divider />
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <BasicTable
-          data={leads && contacts}
-          columns={[
-            { field: "leadStatus", header: "Status" },
-            { field: "firstName", header: "Lead Type" },
-            { field: "fullName", header: "Full Name" },
-            { field: "email", header: "Email Address" },
-            { field: "leadDealership", header: "Dealership" },
-          ]}
-          onRowClick={handleEditClick}
-          action="Edit"
+      <BasicTable
+        data={contacts}
+        columns={[
+          { field: "firstName", header: "First Name" },
+          { field: "lastName", header: "Last Name" },
+          { field: "email", header: "Email" },
+        ]}
+        action="View More"
+      />
+      <Paper sx={{ mt: 2, mb: 2 }}>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          component="div"
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{ mr: 5 }}
         />
-      )}
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50, 100]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+      </Paper>
+      <UploadData
+        showPanel={uploadPanelOpen}
+        onClose={handleCloseUploadPanel}
+        updateData={useFetchContacts}
+        uploadUrl="http://localhost:8000/contacts"
+        uploadMethod="POST"
+        stepLabels={["Upload Contacts"]}
       />
     </Box>
   );
 };
 
-export default LeadsTable;
+export default ContactTable;

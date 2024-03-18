@@ -26,7 +26,7 @@ import ConfigLanding from "./components/configuration/ConfigLanding";
 import LeadsConfig from "./components/configuration/LeadsConfig";
 import Lead from "./components/leads/Lead";
 import LeadTaskConfig from "./components/configuration/LeadTaskConfig";
-import WeeklyCalendar from "./components/calendar/WeekleyCalendar";
+import WeeklyCalendar from "./components/calendar/WeeklyCalendar";
 
 const App = () => {
   return (

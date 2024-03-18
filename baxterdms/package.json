@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@date-io/date-fns": "^3.0.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.0",
@@ -21,6 +22,7 @@
     "@mui/x-date-pickers": "^6.18.5",
     "@react-email/render": "^0.0.10",
     "cors": "^2.8.5",
+    "date-fns": "^3.5.0",
     "dayjs": "^1.11.10",
     "express": "^4.18.2",
     "firebase": "^10.7.1",

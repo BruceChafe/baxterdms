@@ -9,6 +9,8 @@ import {
   Paper,
   Tab,
   Snackbar,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useParams } from "react-router-dom";
@@ -32,7 +34,7 @@ const Lead = () => {
   const [editedContact, setEditedContact] = useState(null);
   const leadId = lead?.id;
   const [sendEmailOpen, setSendEmailOpen] = useState(null);
-  const [createNewLeadOpen, setCreateNewLeadOpen] = useState(false);
+  const [createNewLeadOpen, setCreateNewLeadTaskOpen] = useState(false);
   const [id, setID] = useState("");
   const [reloadLeadHistory, setReloadLeadHistory] = useState(false);
 
@@ -46,8 +48,8 @@ const Lead = () => {
     setSendEmailOpen(true);
   };
 
-  const handleNewLeadClick = () => {
-    setCreateNewLeadOpen(true);
+  const handleNewLeadTaskClick = () => {
+    setCreateNewLeadTaskOpen(true);
   };
 
   const handleChangeTab = (event, newValue) => {
@@ -219,12 +221,17 @@ const Lead = () => {
       <BottomNavigation
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
       >
-        <Button onClick={handleSendEmailClick}>
-          <EmailOutlined />
-        </Button>
-        <Button onClick={handleNewLeadClick}>
-          <AddTaskIcon />
-        </Button>
+        <Tooltip title="Send Email">
+          <IconButton onClick={handleSendEmailClick} color="primary">
+            <EmailOutlined />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Create Task">
+          <IconButton onClick={handleNewLeadTaskClick} color="primary">
+            <AddTaskIcon />
+          </IconButton>
+        </Tooltip>
       </BottomNavigation>
       <EmailContact
         id={id}
@@ -239,7 +246,7 @@ const Lead = () => {
         lead={lead}
         id={leadId}
         open={createNewLeadOpen}
-        onClose={() => setCreateNewLeadOpen(false)}
+        onClose={() => setCreateNewLeadTaskOpen(false)}
         onSaveSuccess={handleSaveSuccess}
       />
     </Box>

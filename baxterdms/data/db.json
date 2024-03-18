@@ -261,6 +261,16 @@
       "timestamp": "2024-03-17T17:21:16.438Z",
       "activityType": "Email Sent",
       "id": 1
+    },
+    {
+      "from": "baxterdms@outlook.com",
+      "to": "brucechafe@gmail.com",
+      "subject": "Your next vehicle is waiting for you!",
+      "body": "Hey Bruce, your next vehicle is waiting for you at Skeezer Motors!",
+      "leadNumber": 1747,
+      "timestamp": "2024-03-18T20:28:04.850Z",
+      "activityType": "Email Sent",
+      "id": 2
     }
   ],
   "configLeads": [

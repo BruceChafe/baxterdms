@@ -13,11 +13,11 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const BasicTable = ({ data, columns, action }) => {
+const BasicTable = ({ data, columns, action, baseNavigationUrl }) => {
   const [error, setError] = useState("");
 
   return (
-    <Box m={3}>
+    <Box>
       {error && <Typography color="error">{error}</Typography>}
       <Paper sx={{ mt: 2, mb: 2 }}>
         <TableContainer>
@@ -54,7 +54,7 @@ const BasicTable = ({ data, columns, action }) => {
                     <Button
                       variant="outlined"
                       component={Link}
-                      to={`/leads/${row.leadNumber}`}
+                      to={`${baseNavigationUrl}/${row.leadNumber || row.id}`}
                     >
                       {action}
                     </Button>

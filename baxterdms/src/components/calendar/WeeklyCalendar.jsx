@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Divider,
@@ -25,6 +25,7 @@ const WeeklyCalendar = () => {
   const dates = useMemo(() => getWeekDates(currentDate), [currentDate]);
   const { tasks, loading, error } = useFetchTasksForWeek(dates);
   const [showCompletedTasks, setShowCompletedTasks] = useState(false);
+  const [showCancelledTasks, setShowCancelledTasks] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -44,15 +45,15 @@ const WeeklyCalendar = () => {
 
   const toggleCompletedTasks = () => {
     setShowCompletedTasks(!showCompletedTasks);
+    setShowCancelledTasks(!showCancelledTasks);
   };
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">{error}</Typography>;
 
   return (
-    <Box m={3}>
+    <Box sx={{ m: 3 }}>
       {error && <Typography color="error">{error}</Typography>}
-
       <Box
         sx={{
           display: "flex",
@@ -71,6 +72,7 @@ const WeeklyCalendar = () => {
         </IconButton>
       </Box>
       <Divider />
+
       <Paper sx={{ mt: 2, mb: 2 }}>
         <FormControlLabel
           control={
@@ -79,10 +81,11 @@ const WeeklyCalendar = () => {
               onChange={toggleCompletedTasks}
             />
           }
-          label="Show Completed Tasks"
-          sx={{ mb: 2 }}
+          label="Show Completed, Cancelled Tasks"
+          sx={{ m: 2 }}
         />
       </Paper>
+
       <Paper sx={{ mt: 2, mb: 2 }}>
         <TableContainer component={Paper}>
           <Table>
@@ -121,6 +124,10 @@ const WeeklyCalendar = () => {
                       .filter(
                         (task) =>
                           showCompletedTasks || task.status !== "Completed"
+                      )
+                      .filter(
+                        (task) =>
+                          showCancelledTasks || task.status !== "Cancelled"
                       )
                       .map((task, idx) => (
                         <Box
