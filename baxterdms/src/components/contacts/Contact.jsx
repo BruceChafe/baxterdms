@@ -13,7 +13,7 @@ import {
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useParams } from "react-router-dom";
 import ContactInfo from "./ContactInfo";
-import ContactLead from "./ContactLeads";
+import ContactLeads from "./ContactLeads";
 import { EmailOutlined } from "@mui/icons-material";
 import EmailContact from "./EmailCustomer";
 import CustomSnackbar from "../snackbar/CustomSnackbar";
@@ -164,7 +164,7 @@ const Contact = () => {
           )}
         </TabPanel>
         <TabPanel value="2">
-          {contact && <ContactLead contact={contact} />}
+          {contact && <ContactLeads contact={contact} />}
         </TabPanel>
         <TabPanel value="3">Item Three</TabPanel>
       </TabContext>

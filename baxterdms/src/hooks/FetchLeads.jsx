@@ -1,38 +1,43 @@
 import { useState, useEffect } from 'react';
 
-const useFetchLeads = (page, rowsPerPage) => {
+const useFetchLeads = (leadNumbers) => {
   const [leads, setLeads] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchLeads = async () => {
-      const startIndex = page * rowsPerPage;
-      const endIndex = startIndex + rowsPerPage;
-      try {
-        setLoading(true);
-        setError('');
-
-        const response = await fetch(`http://localhost:8000/leads?_start=${startIndex}&_end=${endIndex}`);
-        const totalCountHeader = response.headers.get('X-Total-Count');
-        setTotalCount(parseInt(totalCountHeader, 10) || 0);
-
-        const leadsData = await response.json();
-
-        setLeads(leadsData);
-      } catch (error) {
-        console.error('Error fetching leads:', error);
-        setError('Failed to fetch leads');
-      } finally {
-        setLoading(false);
+      if (leadNumbers.length === 0) {
+        setLeads([]);
+        return;
       }
+
+      setLoading(true);
+      setError('');
+      const fetchedLeads = [];
+
+      for (const number of leadNumbers) {
+        try {
+          const response = await fetch(`http://localhost:8000/leads/?leadNumber=${number}`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch lead with number ${number}`);
+          }
+          const leadData = await response.json();
+          fetchedLeads.push(...leadData);
+        } catch (error) {
+          console.error('Error fetching lead:', error);
+          setError(`Failed to fetch leads. ${error.message}`);
+        }
+      }
+
+      setLeads(fetchedLeads);
+      setLoading(false);
     };
 
     fetchLeads();
-  }, [page, rowsPerPage]);
+  }, [leadNumbers]);
 
-  return { leads, totalCount, loading, error };
+  return { leads, loading, error };
 };
 
-export default useFetchLeads;
+export { useFetchLeads };

@@ -16,17 +16,27 @@ import { Link } from "react-router-dom";
 const BasicTable = ({ data, columns, action, baseNavigationUrl }) => {
   const [error, setError] = useState("");
 
+  const cellWidth = `${100 / (columns.length + 1)}%`;
+
   return (
     <Box>
       {error && <Typography color="error">{error}</Typography>}
-      <Paper sx={{ mt: 2, mb: 2 }}>
-        <TableContainer>
-          <Table>
+      <Paper elevation={3} sx={{ mt: 2, mb: 2 }}>
+        <TableContainer component={Paper}>
+          <Table
+            sx={{
+              "&:active": { boxShadow: "none" },
+            }}
+          >
             <TableHead>
               <TableRow>
                 <TableCell
                   align="center"
-                  sx={{ borderRight: 1, borderColor: "divider" }}
+                  sx={{
+                    borderRight: 1,
+                    borderColor: "divider",
+                    width: cellWidth,
+                  }}
                 >
                   Actions
                 </TableCell>
@@ -35,6 +45,7 @@ const BasicTable = ({ data, columns, action, baseNavigationUrl }) => {
                     key={column.field}
                     align="center"
                     sx={{
+                      width: cellWidth,
                       borderRight: index !== columns.length - 1 ? 1 : 0,
                       borderColor: "divider",
                     }}
@@ -46,7 +57,8 @@ const BasicTable = ({ data, columns, action, baseNavigationUrl }) => {
             </TableHead>
             <TableBody>
               {data.map((row) => (
-                <TableRow key={row.leadNumber}>
+                <TableRow key={row.id} hover>
+                  {" "}
                   <TableCell
                     align="center"
                     sx={{ borderRight: 1, borderColor: "divider" }}

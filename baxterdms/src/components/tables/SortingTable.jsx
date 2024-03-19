@@ -57,7 +57,6 @@ const SortingTable = ({
     ));
   };
   
-
   useEffect(() => {
     setSortConfig({
       key: defaultSortKey || null,

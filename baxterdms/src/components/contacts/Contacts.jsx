@@ -8,10 +8,11 @@ import {
   Paper,
   Button,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import BasicTable from "../tables/BasicTable";
 import { useFetchContacts } from "../../hooks/FetchContacts";
 import UploadData from "../upload/Upload";
+import FormatPhoneNumber from "../../hooks/FormatPhoneNumber"
+import FormatAddress from "../../hooks/FormatAddress"
 
 const ContactTable = () => {
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
@@ -22,6 +23,27 @@ const ContactTable = () => {
     page,
     rowsPerPage
   );
+  
+  const transformedData = contacts.map(contact => ({
+    ...contact,
+    fullName: `${contact.firstName || ""} ${contact.lastName || ""}`.trim(),
+    phoneNumbers: (
+      <>
+        <FormatPhoneNumber type="mobile" number={contact.mobilePhone} />
+        <FormatPhoneNumber type="home" number={contact.homePhone} />
+        <FormatPhoneNumber type="work" number={contact.workPhone} />
+      </>
+    ),
+    address: (
+      <FormatAddress
+        streetAddress={contact.streetAddress}
+        city={contact.city}
+        province={contact.province}
+        postalCode={contact.postalCode}
+      />
+    )
+  }));
+  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -64,11 +86,12 @@ const ContactTable = () => {
       </Box>
       <Divider />
       <BasicTable
-        data={contacts}
+        data={transformedData}
         columns={[
-          { field: "firstName", header: "First Name" },
-          { field: "lastName", header: "Last Name" },
-          { field: "email", header: "Email" },
+          { field: "fullName", header: "Last Name" },
+          { field: "primaryEmail", header: "Email" },
+          { field: "phoneNumbers", header: "Phone Numbers"},
+          { field: "address", header: "Home Address"},
         ]}
         action="View More"
         baseNavigationUrl="/contacts"

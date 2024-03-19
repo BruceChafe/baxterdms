@@ -1,39 +1,28 @@
-import React from "react";
-import { Box, Typography, Divider, Grid, TextField } from "@mui/material";
+import React from 'react';
+import { Typography, Paper, CircularProgress, Alert } from '@mui/material';
+import { useFetchLeads } from '../../hooks/FetchLeads';
 
-const ContactLead = ({ contact }) => {
+const ContactLeads = ({ contact }) => {
   const leadNumbers = contact?.leadNumbers || [];
+  const { leads, loading, error } = useFetchLeads(leadNumbers);
 
-  const renderTextField = (label, value) => (
-    <TextField
-      variant="outlined"
-      label={label}
-      value={value}
-      fullWidth
-      disabled
-    />
-  );
+  if (loading) return <CircularProgress />;
+  if (error) return <Alert severity="error">Error: {error}</Alert>;
 
-  const renderSection = (sectionLabel, data) => (
-    <Box sx={{ mb: 2 }}>
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        {sectionLabel}
-      </Typography>
-      {data.map((leadNumber, index) => (
-        <Grid container spacing={2} key={index}>
-          <Grid item xs={12} sm={6}>
-            {renderTextField("Lead", leadNumber)}
-          </Grid>
-        </Grid>
-      ))}
-      {data.length === 0 && (
-        <Typography>No leads found for the specified contact.</Typography>
+  return (
+    <>
+      {leads.length > 0 ? (
+        leads.map((lead, index) => (
+          <Paper key={index} sx={{ p: 3, mb: 2 }}>
+            <Typography>Lead Number: {lead.leadNumber}</Typography>
+            <Typography>Lead Number: {lead.leadStatus}</Typography>
+          </Paper>
+        ))
+      ) : (
+        <Typography>No leads found.</Typography>
       )}
-      <Divider sx={{ mt: 2, mb: 2 }} />
-    </Box>
+    </>
   );
-
-  return <Box>{renderSection("Leads", leadNumbers)}</Box>;
 };
 
-export default ContactLead;
+export default ContactLeads;
