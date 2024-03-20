@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   CircularProgress,
@@ -131,9 +131,6 @@ const Lead = () => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-
-  if (loading) return <CircularProgress />;
-  if (error) return <Box>Error: {error}</Box>;
 
   return (
     <Box m={3}>

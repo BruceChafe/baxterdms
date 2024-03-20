@@ -8,6 +8,7 @@ import {
   TableRow,
   Button,
   Typography,
+  Box,
 } from "@mui/material";
 
 const SortingTable = ({
@@ -15,12 +16,13 @@ const SortingTable = ({
   columns,
   defaultSortKey,
   defaultSortDirection,
-  action,
 }) => {
   const [sortConfig, setSortConfig] = useState({
     key: defaultSortKey || null,
     direction: defaultSortDirection || "ascending",
   });
+
+  const [error, setError] = useState("");
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -47,7 +49,7 @@ const SortingTable = ({
   };
 
   const renderCellContent = (content, isActivityDetails = false) => {
-    if (!isActivityDetails || typeof content !== 'string') {
+    if (!isActivityDetails || typeof content !== "string") {
       return content;
     }
     return content.split("\n").map((line, index) => (
@@ -56,7 +58,7 @@ const SortingTable = ({
       </Typography>
     ));
   };
-  
+
   useEffect(() => {
     setSortConfig({
       key: defaultSortKey || null,
@@ -64,8 +66,11 @@ const SortingTable = ({
     });
   }, [defaultSortKey, defaultSortDirection]);
 
+  const cellWidth = `${100 / (columns.length + 1)}%`;
+
   return (
-    <>
+    <Box>
+      {error && <Typography color="error">{error}</Typography>}
       <Typography variant="h5" mb={2}>
         Lead History
       </Typography>
@@ -81,9 +86,9 @@ const SortingTable = ({
                     borderTop: 1,
                     borderRight: index !== columns.length - 1 ? 1 : 0,
                     borderColor: "divider",
+                    width: cellWidth,
                   }}
                 >
-                  {" "}
                   <Button onClick={() => handleSort(column.field)}>
                     {column.header}
                   </Button>
@@ -93,7 +98,15 @@ const SortingTable = ({
           </TableHead>
           <TableBody>
             {sortedData().map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
+              <TableRow 
+                key={rowIndex} 
+                hover
+                sx={{
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.07)', // Example hover color
+                  },
+                }}
+              >
                 {columns.map((column, colIndex) => (
                   <TableCell
                     key={`${rowIndex}-${colIndex}`}
@@ -113,7 +126,7 @@ const SortingTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-    </>
+    </Box>
   );
 };
 
