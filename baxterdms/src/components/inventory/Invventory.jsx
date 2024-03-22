@@ -9,40 +9,28 @@ import {
   Button,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
-import { useFetchContacts } from "../../hooks/FetchContacts";
+import { useFetchInventory } from "../../hooks/FetchInventory";
 import UploadData from "../upload/Upload";
-import FormatPhoneNumber from "../../hooks/FormatPhoneNumber";
-import FormatAddress from "../../hooks/FormatAddress";
 
-const ContactTable = () => {
+const Inventory = () => {
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const { contacts, totalCount, loading, error } = useFetchContacts(
+  const { inventory, totalCount, loading, error } = useFetchInventory(
     page,
     rowsPerPage
   );
 
-  const transformedData = contacts.map((contact) => ({
-    ...contact,
-    fullName: `${contact.firstName || ""} ${contact.lastName || ""}`.trim(),
-    phoneNumbers: (
-      <>
-        <FormatPhoneNumber type="mobile" number={contact.mobilePhone} />
-        <FormatPhoneNumber type="home" number={contact.homePhone} />
-        <FormatPhoneNumber type="work" number={contact.workPhone} />
-      </>
-    ),
-    address: (
-      <FormatAddress
-        streetAddress={contact.streetAddress}
-        city={contact.city}
-        province={contact.province}
-        postalCode={contact.postalCode}
-      />
-    ),
+  const transformedData = inventory.map((inventory) => ({
+    ...inventory,
+    dealerName: `${inventory.dealer_name}`,
+    stockNumber: `${inventory.stock}`,
+    modelYear: `${inventory.year}`,
+    modelMake: `${inventory.make}`,
+    modelModel: `${inventory.model}`,
   }));
+  console.log(inventory);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -78,7 +66,7 @@ const ContactTable = () => {
         height={80}
       >
         <Typography variant="h4" sx={{ m: 2 }}>
-          Contacts
+          Inventory
         </Typography>
         <Button variant="outlined" onClick={handleImportClick}>
           Import
@@ -88,13 +76,15 @@ const ContactTable = () => {
       <BasicTable
         data={transformedData}
         columns={[
-          { field: "fullName", header: "Last Name" },
-          { field: "primaryEmail", header: "Email" },
-          { field: "phoneNumbers", header: "Phone Numbers" },
-          { field: "address", header: "Home Address" },
+          { field: "dealerName", header: "Dealership" },
+          { field: "stockNumber", header: "Stock No." },
+          { field: "modelYear", header: "Year" },
+          { field: "modelMake", header: "Make" },
+          { field: "modelModel", header: "Model" },
+
         ]}
         action="View More"
-        baseNavigationUrl="/contacts"
+        baseNavigationUrl="/inventory"
       />
       <Paper sx={{ mt: 2, mb: 2 }}>
         <TablePagination
@@ -111,13 +101,13 @@ const ContactTable = () => {
       <UploadData
         showPanel={uploadPanelOpen}
         onClose={handleCloseUploadPanel}
-        updateData={useFetchContacts}
-        uploadUrl="http://localhost:8000/contacts"
+        updateData={useFetchInventory}
+        uploadUrl="http://localhost:8000/inventory"
         uploadMethod="POST"
-        stepLabels={["Upload Contacts"]}
+        stepLabels={["Upload Inventory"]}
       />
     </Box>
   );
 };
 
-export default ContactTable;
+export default Inventory;

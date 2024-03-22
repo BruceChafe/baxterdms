@@ -43,7 +43,7 @@ const LeadsTable = () => {
   if (error) return <Box>Error: {error}</Box>;
 
   return (
-    <Box sx={{ m: 3 }}>
+    <Box sx={{ mt: 3, mr: 8 }}>
       {error && <Typography color="error">{error}</Typography>}
       <Box
         sx={{
@@ -61,7 +61,6 @@ const LeadsTable = () => {
         data={transformedData}
         columns={[
           { field: "leadStatus", header: "Status" },
-          { field: "contactFirstName", header: "First Name" },
           { field: "fullName", header: "Full Name" },
           { field: "email", header: "Email Address" },
           { field: "leadDealership", header: "Dealership" },

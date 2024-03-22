@@ -20,6 +20,7 @@ const EmailContact = ({
   lead,
   onSaveSuccess,
 }) => {
+  console.log(primaryEmail)
   const [emailData, setEmailData] = useState({
     from: "baxterdms@outlook.com",
     to: primaryEmail,

@@ -107,7 +107,7 @@ const Contact = () => {
   };
 
   return (
-    <Box m={3}>
+    <Box sx={{ mt: 3, mr: 8 }}>
       <Box
         sx={{
           display: "flex",
@@ -148,7 +148,8 @@ const Contact = () => {
             >
               <Tab label="Basic Information" value="1" />
               <Tab label="Leads" value="2" />
-              <Tab label="Vehicles" value="3" />
+              <Tab label="History" value="3" />
+              <Tab label="Vehicles" value="4" variant="disabled" />
             </TabList>
           </Box>
         </Paper>

@@ -14,11 +14,14 @@ import {
   CircularProgress,
   Switch,
   FormControlLabel,
+  Tooltip,
 } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { getWeekDates } from "./WeekDates";
 import TaskDialog from "./TaskDialog";
 import { useFetchTasksForWeek } from "../../hooks/FetchTasksForWeek";
+import LaunchIcon from "@mui/icons-material/Launch";
+import { Link } from "react-router-dom";
 
 const WeeklyCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -26,7 +29,6 @@ const WeeklyCalendar = () => {
   const { tasks, loading, error } = useFetchTasksForWeek(dates);
   const [showCompletedTasks, setShowCompletedTasks] = useState(false);
   const [showCancelledTasks, setShowCancelledTasks] = useState(false);
-
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
 
@@ -52,7 +54,7 @@ const WeeklyCalendar = () => {
   if (error) return <Typography color="error">{error}</Typography>;
 
   return (
-    <Box sx={{ m: 3 }}>
+    <Box sx={{ mt: 3, mr: 8 }}>
       {error && <Typography color="error">{error}</Typography>}
       <Box
         sx={{
@@ -161,6 +163,15 @@ const WeeklyCalendar = () => {
                             <Typography variant="caption">
                               {task.status}
                             </Typography>
+                            <Tooltip title="Open Lead">
+                              <IconButton
+                                component={Link}
+                                to={`/leads/${task.leadNumber}`}
+                                color="primary"
+                              >
+                                <LaunchIcon />
+                              </IconButton>
+                            </Tooltip>
                           </Box>
                         </Box>
                       ))}

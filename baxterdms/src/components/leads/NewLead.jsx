@@ -90,9 +90,10 @@ const NewLeadComponent = () => {
   };
 
   return (
-    <Box m={3}>
+    <Box sx={{ mt: 3, mr: 8 }}>
       {!showNewLeadForm && !showNewContactForm && !newContactSubmitted && (
         <>
+
           <Typography variant="h4" mb={2}>
             New Lead
           </Typography>

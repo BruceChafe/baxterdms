@@ -6,11 +6,11 @@ const SidebarItems = {
   home: {
     navigationLinks: [
       { text: "Contacts", to: "/contacts"},
-      { text: 'Vehicles', to: "/vehicles"},
       { text: 'Leads', to: "/leads"},
       { text: "Account Overview", to: "/account/overview"},
       { text: "Configuration", to: "/configuration"},
-      { text: "Inventory", to: "/vehicleinventory"},
+      { text: "Inventory", to: "/inventory"},
+
     ],
   },
   account: {
@@ -36,13 +36,6 @@ const SidebarItems = {
       { text: "New Lead", to: "/leads/newlead" },
     ],
   },
-  vehicles: {
-    pageName: "Contacts",
-    navigationLinks: [
-      { text: "Vehicles", to: "/vehicles" },
-      { text: "Add Vehicle", to: "/vehicles/add"},
-    ],
-  },
   configuration: {
     pageName: "Configuration",
     navigationLinks: [
@@ -55,8 +48,7 @@ const SidebarItems = {
   inventory: {
     pageName: "Inventory",
     navigationLinks: [
-      { text: "Vehicles", to: "/vehicleinventory" },
-      { text: "Add Vehicle", to: "/vehicleinventory/add"},
+      { text: "Inventory", to: "/inventory" },
     ],
   },
 };

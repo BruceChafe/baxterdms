@@ -1,29 +1,26 @@
 import React, { useState } from "react";
 import Papa from "papaparse";
-import {
-  Paper,
-  IconButton,
-  Box,
-  Stepper,
-  Step,
-  StepLabel,
-  Typography,
-  Button,
-  Toolbar,
-} from "@mui/material";
+import { Paper, IconButton, Box, Stepper, Step, StepLabel, Typography, Button, Toolbar } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
+// Improved UploadData component with structured and optimized code
 const UploadData = ({ showPanel, onClose, updateData, uploadUrl, uploadMethod, stepLabels }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [csvData, setCSVData] = useState([]);
 
+  // Proceed to the next step
   const handleNext = () => setActiveStep((prevStep) => prevStep + 1);
+
+  // Go back to the previous step
   const handleBack = () => setActiveStep((prevStep) => prevStep - 1);
+
+  // Reset the steps and clear CSV data
   const handleReset = () => {
     setActiveStep(0);
     setCSVData([]);
   };
 
+  // Handle CSV file upload and parse the file
   const handleFileUpload = (file) => {
     Papa.parse(file, {
       complete: (result) => {
@@ -33,26 +30,26 @@ const UploadData = ({ showPanel, onClose, updateData, uploadUrl, uploadMethod, s
     });
   };
 
+  // Handle the final step and upload data
   const handleFinish = () => {
-    Promise.all(
-      csvData.map((data) =>
-        fetch(uploadUrl, {
-          method: uploadMethod,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }).then((res) => res.json())
-      )
-    )
-      .then((updatedData) => {
-        updateData(updatedData);
-        handleReset();
-        onClose();
-      })
-      .catch((error) => {
-        console.error("Error uploading data:", error);
-      });
+    Promise.all(csvData.map((data) =>
+      fetch(uploadUrl, {
+        method: uploadMethod,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }).then((res) => res.json())
+    ))
+    .then((updatedData) => {
+      updateData(updatedData);
+      handleReset();
+      onClose();
+    })
+    .catch((error) => {
+      console.error("Error uploading data:", error);
+    });
   };
 
+  // Render the component UI
   return (
     <>
       {showPanel && (
@@ -74,29 +71,44 @@ const UploadData = ({ showPanel, onClose, updateData, uploadUrl, uploadMethod, s
           </Stepper>
 
           {activeStep === stepLabels.length ? (
-            <Box>
-              <Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you&apos;re finished</Typography>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleFinish}>Finish</Button>
-              </Box>
-            </Box>
+            <CompletionActions onFinish={handleFinish} />
           ) : (
-            <Box>
-              <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
-                  Back
-                </Button>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={handleNext}>{activeStep === stepLabels.length - 1 ? "Finish" : "Next"}</Button>
-              </Box>
-            </Box>
+            <StepActions 
+              activeStep={activeStep} 
+              stepCount={stepLabels.length} 
+              onBack={handleBack} 
+              onNext={handleNext} 
+            />
           )}
         </Paper>
       )}
     </>
   );
 };
+
+// Component for step actions
+const StepActions = ({ activeStep, stepCount, onBack, onNext }) => (
+  <Box>
+    <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
+    <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+      <Button color="inherit" disabled={activeStep === 0} onClick={onBack} sx={{ mr: 1 }}>
+        Back
+      </Button>
+      <Box sx={{ flex: "1 1 auto" }} />
+      <Button onClick={onNext}>{activeStep === stepCount - 1 ? "Finish" : "Next"}</Button>
+    </Box>
+  </Box>
+);
+
+// Component for completion actions
+const CompletionActions = ({ onFinish }) => (
+  <Box>
+    <Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you&apos;re finished</Typography>
+    <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+      <Box sx={{ flex: "1 1 auto" }} />
+      <Button onClick={onFinish}>Finish</Button>
+    </Box>
+  </Box>
+);
 
 export default UploadData;

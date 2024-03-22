@@ -1,41 +1,49 @@
-import React, { useState, useEffect } from "react";
-import { Button, TablePagination } from "@mui/material";
-import UploadData from "../upload/Upload";
-import Vehicle from "./Vehicle";
+import React, { useState } from "react";
+import {
+  CircularProgress,
+  Box,
+  Typography,
+  Divider,
+  TablePagination,
+  Paper,
+  Button,
+} from "@mui/material";
 import BasicTable from "../tables/BasicTable";
+import { useFetchContacts } from "../../hooks/FetchContacts";
+import UploadData from "../upload/Upload";
+import FormatPhoneNumber from "../../hooks/FormatPhoneNumber"
+import FormatAddress from "../../hooks/FormatAddress"
 
-const VehiclesTable = () => {
-  const [vehicles, setVehicles] = useState([]);
-  const [selectedVehicle, setSelectedVehicle] = useState(null);
+const ContactTable = () => {
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalCount, setTotalCount] = useState(0);
 
-  useEffect(() => {
-    fetchVehicles();
-  }, [page, rowsPerPage]);
-
-  const fetchVehicles = () => {
-    const startIndex = page * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-
-    fetch(
-      `http://localhost:8000/vehicles?_start=${startIndex}&_end=${endIndex}`
+  const { contacts, totalCount, loading, error } = useFetchContacts(
+    page,
+    rowsPerPage
+  );
+  
+  const transformedData = contacts.map(contact => ({
+    ...contact,
+    fullName: `${contact.firstName || ""} ${contact.lastName || ""}`.trim(),
+    phoneNumbers: (
+      <>
+        <FormatPhoneNumber type="mobile" number={contact.mobilePhone} />
+        <FormatPhoneNumber type="home" number={contact.homePhone} />
+        <FormatPhoneNumber type="work" number={contact.workPhone} />
+      </>
+    ),
+    address: (
+      <FormatAddress
+        streetAddress={contact.streetAddress}
+        city={contact.city}
+        province={contact.province}
+        postalCode={contact.postalCode}
+      />
     )
-      .then((res) => {
-        const totalCountHeader = res.headers.get("X-Total-Count");
-        setTotalCount(parseInt(totalCountHeader, 10) || 0);
-
-        return res.json();
-      })
-      .then((data) => {
-        setVehicles(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching vehicles:", error);
-      });
-  };
+  }));
+  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -51,65 +59,65 @@ const VehiclesTable = () => {
     document.body.style.overflow = "hidden";
   };
 
-  const handleEditClick = (vehicle) => {
-    setSelectedVehicle(vehicle);
-    document.body.style.overflow = "hidden";
-  };
-
-  const handleCloseEditPanel = () => {
-    setSelectedVehicle(null);
-    document.body.style.overflow = "auto";
-  };
-
   const handleCloseUploadPanel = () => {
     setUploadPanelOpen(false);
     document.body.style.overflow = "auto";
   };
 
+  if (loading) return <CircularProgress />;
+  if (error) return <Box>Error: {error}</Box>;
+
   return (
-    <div>
-      <Button color="secondary" onClick={handleImportClick}>
-        Import
-      </Button>
-
+    <Box sx={{ m: 3 }}>
+      {error && <Typography color="error">{error}</Typography>}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h4" sx={{ m: 2 }}>
+          Contacts
+        </Typography>
+        <Button variant="outlined" onClick={handleImportClick}>
+          Import
+        </Button>
+      </Box>
+      <Divider />
       <BasicTable
-        data={vehicles}
+        data={transformedData}
         columns={[
-          { field: "modelMake", header: "Make" },
-          { field: "modelModel", header: "Model" },
-          { field: "vin", header: "VIN" },
-          { field: "kms", header: "KMs" },
-          { field: "dmsID", header: "Current Owner" },
+          { field: "fullName", header: "Last Name" },
+          { field: "primaryEmail", header: "Email" },
+          { field: "phoneNumbers", header: "Phone Numbers"},
+          { field: "address", header: "Home Address"},
         ]}
-        totalCount={totalCount}
-        onRowClick={handleEditClick}
+        action="View More"
+        baseNavigationUrl="/contacts"
       />
-
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50, 100]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-
-      <Vehicle
-        vehicle={selectedVehicle}
-        showPanel={!!selectedVehicle}
-        onClose={handleCloseEditPanel}
-      />
+      <Paper sx={{ mt: 2, mb: 2 }}>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          component="div"
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{ mr: 5 }}
+        />
+      </Paper>
       <UploadData
         showPanel={uploadPanelOpen}
         onClose={handleCloseUploadPanel}
-        updateData={fetchVehicles}
-        uploadUrl="http://localhost:8000/vehicles"
+        updateData={useFetchContacts}
+        uploadUrl="http://localhost:8000/contacts"
         uploadMethod="POST"
-        stepLabels={["Upload Vehicles"]}
+        stepLabels={["Upload Contacts"]}
       />
-    </div>
+    </Box>
   );
 };
 
-export default VehiclesTable;
+export default ContactTable;

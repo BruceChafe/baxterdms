@@ -66,13 +66,21 @@ const NewContact = ({ onCloseForm, onNewContactCreated }) => {
         console.error("Error creating new contact:", error);
       });
   };
- 
 
   return (
-    <Box sx={{m: 3}}>
-      <Typography variant="h4" mb={2}>
-        New Contact
-      </Typography>
+    <Box sx={{ mt: 3, mr: 8 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+        height={80}
+      >
+          <Typography variant="h4" sx={{ m: 2 }}>
+          New Contact
+        </Typography>
+      </Box>
       <Divider />
       <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
         <Box mb={1} mt={1} p={1}>

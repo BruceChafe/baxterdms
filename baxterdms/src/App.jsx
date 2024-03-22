@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { CssBaseline, Grid } from "@mui/material";
+import { Box, CssBaseline, Grid } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
@@ -16,8 +16,6 @@ import { AccountOverview, AccountTiles } from "./components/account/Overview";
 import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
 import UserProfile from "./components/account/PersonalInfo";
 import UpdatePassword from "./components/account/UpdatePassword";
-import Vehicles from "./components/vehicles/Vehicles";
-import AddVehicle from "./components/vehicles/AddVehicle";
 import LeadsTable from "./components/leads/Leads";
 import LeadComponent from "./components/leads/Lead";
 import NewLeadComponent from "./components/leads/NewLead";
@@ -27,15 +25,16 @@ import LeadsConfig from "./components/configuration/LeadsConfig";
 import Lead from "./components/leads/Lead";
 import LeadTaskConfig from "./components/configuration/LeadTaskConfig";
 import WeeklyCalendar from "./components/calendar/WeeklyCalendar";
+import Inventory from "./components/inventory/Invventory";
 
 const App = () => {
   return (
     <AuthProvider>
       <ThemeProvider>
-      <CssBaseline />
-      <Router>
-        <AppRoutes />
-      </Router>
+        <CssBaseline />
+        <Router>
+          <AppRoutes />
+        </Router>
       </ThemeProvider>
     </AuthProvider>
   );
@@ -49,11 +48,11 @@ const AppRoutes = () => {
   }
 
   return user ? (
-    <Grid container>
-      <Grid item xs={2}>
-        <SidebarSwitcher />
-      </Grid>
-      <Grid item xs={10}>
+<Grid container>
+  <Grid item xs={12} md={3} lg={2}> {/* Sidebar */}
+    <SidebarSwitcher />
+  </Grid>
+  <Grid item xs={12} md={9} lg={10} > 
         <Routes>
           <Route path="/home" element={<WeeklyCalendar />} />
           <Route
@@ -73,8 +72,6 @@ const AppRoutes = () => {
           <Route path="/account/theme" element={<ThemeSelection />} />
           <Route path="/account/userprofile" element={<UserProfile />} />
           <Route path="/account/updatepassword" element={<UpdatePassword />} />
-          <Route path="/vehicles/*" element={<Vehicles />} />
-          <Route path="/vehicles/add" element={<AddVehicle />} />
           <Route path="/leads" element={<LeadsTable />} />
           <Route path="/leads/newlead" element={<NewLeadComponent />} />
           <Route path="/leads/lead/:leadId" element={<LeadComponent />} />
@@ -83,11 +80,7 @@ const AppRoutes = () => {
           <Route path="/configuration/leadtasks" element={<LeadTaskConfig />} />
           <Route path="/contacts/:contactId" element={<Contact />} />
           <Route path="/leads/:leadNumber" element={<Lead />} />
-
-          {/* <Route
-                          path="/vehicleinventory/add"
-                          element={<Vehicle />}
-                        /> */}
+          <Route path="/inventory" element={<Inventory />} />
         </Routes>
       </Grid>
     </Grid>

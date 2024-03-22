@@ -13,6 +13,16 @@ import { useFetchLeads } from "../../hooks/FetchLeads";
 import SortingTable from "../tables/SortingTable";
 import { Link } from "react-router-dom";
 
+const columns = [
+  { field: "action", header: "Actions" },
+  { field: "createdDate", header: "Created Date" },
+  { field: "leadStatus", header: "Lead Status" },
+  { field: "leadDetails", header: "Details" },
+  { field: "leadVehicles", header: "Vehicle" },
+  { field: "leadVehicles", header: "Employee" },
+  { field: "leadDealership", header: "Details" },
+];
+
 const ContactLeads = ({ contact }) => {
   const { leads, loading, error } = useFetchLeads(contact?.leadNumbers || []);
 
@@ -24,7 +34,7 @@ const ContactLeads = ({ contact }) => {
       <Tooltip title="Open Lead">
         <IconButton
           component={Link}
-          to={`/leads/${lead.leadNumber}`} // Adjust the URL as needed
+          to={`/leads/${lead.leadNumber}`}
           color="primary"
         >
           <LaunchIcon />
@@ -57,16 +67,6 @@ const ContactLeads = ({ contact }) => {
     leadDealership: lead.leadDealership,
     leadNumber: lead.leadNumber,
   }));
-
-  const columns = [
-    { field: "action", header: "Actions" },
-    { field: "createdDate", header: "Created Date" },
-    { field: "leadStatus", header: "Lead Status" },
-    { field: "leadDetails", header: "Details" },
-    { field: "leadVehicles", header: "Vehicle" },
-    { field: "leadVehicles", header: "Employee" },
-    { field: "leadDealership", header: "Details" },
-  ];
 
   return (
     <Paper sx={{ p: 3, mb: 2 }}>

@@ -23,7 +23,7 @@ import CreateLeadTask from "./CreateLeadTask";
 import { EmailOutlined } from "@mui/icons-material";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 
-import { useFetchLeadAndContact } from "../../hooks/FetchLeadAndContact";
+import { useFetchLeadAndContact } from "../../hooks/FetchLeadAndContact.jsx";
 
 const Lead = () => {
   const { leadNumber } = useParams();
@@ -133,7 +133,7 @@ const Lead = () => {
   };
 
   return (
-    <Box m={3}>
+    <Box sx={{ mt: 3, mr: 8 }}>
       <Box
         sx={{
           display: "flex",
@@ -231,6 +231,7 @@ const Lead = () => {
         </Tooltip>
       </BottomNavigation>
       <EmailContact
+      key={primaryEmail}
         id={id}
         primaryEmail={primaryEmail}
         open={sendEmailOpen}
