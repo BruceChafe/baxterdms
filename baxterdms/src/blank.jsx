@@ -1,119 +1,177 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
-  Typography,
+  Box,
   Paper,
+  Typography,
   CircularProgress,
+  Divider,
   Alert,
-  Tooltip,
+  Grid,
   IconButton,
-} from "@mui/material";
-import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
-import SortingTable from "../tables/SortingTable";
-import { useFetchLeadTasks } from "../../hooks/FetchLeadTasks";
-import { useFetchLeadEmails } from "../../hooks/FetchLeadEmails";
-import UseSentEmailDialog from "../../hooks/SentEmailDialog";
+  TextField,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+} from '@mui/material';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import PhoneIcon from '@mui/icons-material/Phone';
+import EmailIcon from '@mui/icons-material/Email';
+import EventIcon from '@mui/icons-material/Event';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import { useFetchLeadVehicle } from '../../hooks/FetchLeadVehicle';
 
+const LeadVehicle = ({ leadData }) => {
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [openDialog, setOpenDialog] = useState(false);
+  const leadStockNumber = leadData?.stock;
+  const { vehicle, loading: vehicleLoading, error: vehicleError } = useFetchLeadVehicle(leadStockNumber);
 
-const LeadHistory = ({ leadData }) => {
-  const leadNumber = leadData?.leadNumber;
-  const {
-    tasks,
-    loading: tasksLoading,
-    error: tasksError,
-  } = useFetchLeadTasks(leadNumber);
-  const {
-    emails,
-    loading: emailsLoading,
-    error: emailsError,
-  } = useFetchLeadEmails(leadNumber);
-  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
-  const [currentEmailData, setCurrentEmailData] = useState({});
+  if (vehicleLoading) return <CircularProgress />;
+  if (vehicleError) return <Alert severity="error">{vehicleError}</Alert>;
 
-  const formatTimestamp = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
-  };
+  const photos = vehicle[0].photo.split(",");
 
-  const handleEmailClick = (emailData) => {
-    setCurrentEmailData(emailData);
-    setEmailDialogOpen(true);
-  };
+  const handlePrev = () => setActiveImageIndex((prevIndex) => prevIndex > 0 ? prevIndex - 1 : photos.length - 1);
+  const handleNext = () => setActiveImageIndex((prevIndex) => prevIndex < photos.length - 1 ? prevIndex + 1 : 0);
+  const handleOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => setOpenDialog(false);
 
-  const leadHistoryRows = leadData.history.map((history) => ({
-    timestamp: formatTimestamp(history.timestamp),
-    activity: history.activity,
-  }));
+  const options = vehicle?.[0].option.split(",");
 
-  const leadTasksRows = tasks.map((task) => ({
-    timestamp: formatTimestamp(task.timestamp),
-    activity: task.activity + " - " + task.type,
-    activityDetails: `Priority: ${
-      task.priority
-    }\nFollow Up Date: ${formatTimestamp(task.followUpDate)}\nStatus: ${
-      task.status
-    }`,
-    subject: task.subject,
-    additionalInfo: task.additionalInfo,
-    status: task.status,
-  }));
+  const chunkedOptions = [];
+  for (let i = 0; i < options.length; i += 25) {
+    chunkedOptions.push(options.slice(i, i + 25));
+  }
 
-  const leadEmailsRows = emails.map((email) => ({
-    timestamp: formatTimestamp(email.timestamp),
-    activity: email.activityType,
-    activityDetails: (
-      <>
-        <Typography variant="body2" component="div">
-          From: {email.from}
-        </Typography>
-        <Typography variant="body2" component="div">
-          To: {email.to}
-        </Typography>
-        <Typography variant="body2" component="div">
-          Subject: {email.subject}
-        </Typography>
-
-        <Tooltip title="View Sent Email">
-          <IconButton onClick={() => handleEmailClick(email)} color="primary">
-            <MarkEmailReadIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-    ),
-  }));
-
-  const combinedRows = [
-    ...leadHistoryRows,
-    ...leadTasksRows,
-    ...leadEmailsRows,
+  // Defining columns for vehicle details
+  const detailsColumns = [
+    [
+      ["Dealer", vehicle[0].dealer_name],
+      ["Stock #", vehicle[0].stock],
+      ["VIN", vehicle[0].vin],
+      ["Status", vehicle[0].status],
+    ],
+    [
+      ["Body", vehicle[0].body],
+      ["Drive", vehicle[0].drive],
+      ["Transmission", vehicle[0].transmission],
+      ["Fuel", vehicle[0].fuel],
+    ],
+    [
+      ["Engine", vehicle[0].eng_desc],
+      ["Exterior Color", vehicle[0].extcolour],
+      ["Interior Color", vehicle[0].intcolour],
+      ["Odometer", `${vehicle[0].odometer} km`],
+      ["Price", `$${vehicle[0].sale_price}`],
+    ],
   ];
-
-  const columns = [
-    { field: "timestamp", header: "" },
-    { field: "activity", header: "Timestamp" },
-    { field: "activityDetails", header: "Details" },
-  ];
-
-  if (tasksLoading || emailsLoading) return <CircularProgress />;
-  if (tasksError) return <Alert severity="error">{tasksError}</Alert>;
-  if (emailsError) return <Alert severity="error">{emailsError}</Alert>;
 
   return (
-    <>
-      <Paper sx={{ p: 3, mb: 2 }}>
-        <SortingTable
-          data={combinedRows}
-          columns={columns}
-          defaultSortKey="timestamp"
-          defaultSortDirection="descending"
-        />
-      </Paper>
-      <UseSentEmailDialog
-        open={emailDialogOpen}
-        onClose={() => setEmailDialogOpen(false)}
-        emailData={currentEmailData}
-      />
-    </>
+    <Paper sx={{ p: 3, mb: 2 }}>
+      {vehicle && (
+        <>
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            {`${vehicle[0].year} ${vehicle[0].make} ${vehicle[0].model} - ${vehicle[0].trim}`}
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Box mt={2}>
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={5}>
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '100%',
+                    height: 'auto',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                  }}
+                  onClick={handleOpenDialog}
+                >
+                  <img
+                    src={photos[activeImageIndex]}
+                    alt={`Vehicle Image ${activeImageIndex + 1}`}
+                    style={{ width: '100%', height: 'auto' }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mt: 1,
+                  }}
+                >
+                  <IconButton onClick={handlePrev}><ArrowBackIosNewIcon /></IconButton>
+                  <Typography>{`${activeImageIndex + 1} of ${photos.length}`}</Typography>
+                  <IconButton onClick={handleNext}><ArrowForwardIosIcon /></IconButton>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={7}>
+                <Grid container spacing={2}>
+                  {detailsColumns.flat().map(([label, value], idx) => (
+                    <Grid item xs={4} key={idx}>
+                      <TextField
+                        key={idx}
+                        label={label}
+                        value={value || ''}
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        InputProps={{ readOnly: true }}
+                        disabled
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+            </Grid>
+            <Typography variant="h6" sx={{ mb: 2, mt: 4 }}>Options</Typography>
+            <Divider />
+            <Grid container spacing={2}>
+              {chunkedOptions.map((optionGroup, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <ul>
+                    {optionGroup.map((option, idx) => <li key={idx}>{option}</li>)}
+                  </ul>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+          <Dialog
+            open={openDialog}
+            onClose={handleCloseDialog}
+            maxWidth="lg"
+            aria-labelledby="image-view-dialog"
+          >
+            <DialogTitle>{`Vehicle Image ${activeImageIndex + 1}`}</DialogTitle>
+            <DialogContent>
+              <img
+                src={photos[activeImageIndex]}
+                alt={`Vehicle Image ${activeImageIndex + 1}`}
+                style={{ width: '100%', maxHeight: '75vh', objectFit: 'contain' }}
+              />
+                              <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mt: 1,
+                  }}
+                >
+                  <IconButton onClick={handlePrev}><ArrowBackIosNewIcon /></IconButton>
+                  <Typography>{`${activeImageIndex + 1} of ${photos.length}`}</Typography>
+                  <IconButton onClick={handleNext}><ArrowForwardIosIcon /></IconButton>
+                </Box>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
+    </Paper>
   );
 };
 
-export default LeadHistory;
+export default LeadVehicle;

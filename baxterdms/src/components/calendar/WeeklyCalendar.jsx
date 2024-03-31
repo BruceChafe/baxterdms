@@ -1,27 +1,28 @@
 import React, { useState, useMemo } from "react";
 import {
   Box,
-  Divider,
-  Typography,
-  Paper,
+  CircularProgress,
   IconButton,
+  Paper,
+  Switch,
+  FormControlLabel,
+  Tooltip,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  CircularProgress,
-  Switch,
-  FormControlLabel,
-  Tooltip,
+  Typography,
 } from "@mui/material";
-import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import ArrowForward from "@mui/icons-material/ArrowForward";
+import LaunchIcon from "@mui/icons-material/Launch";
+import { Link } from "react-router-dom";
+import CenteredTitleLayout from "../layouts/CenteredTitleLayout";
 import { getWeekDates } from "./WeekDates";
 import TaskDialog from "./TaskDialog";
 import { useFetchTasksForWeek } from "../../hooks/FetchTasksForWeek";
-import LaunchIcon from "@mui/icons-material/Launch";
-import { Link } from "react-router-dom";
 
 const WeeklyCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -50,31 +51,29 @@ const WeeklyCalendar = () => {
     setShowCancelledTasks(!showCancelledTasks);
   };
 
-  if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">{error}</Typography>;
+  const leftActions = (
+    <>
+      <IconButton onClick={() => navigateWeek(-7)}>
+        <ArrowBack />
+      </IconButton>
+    </>
+  );
+
+  const rightActions = (
+    <>
+      <IconButton onClick={() => navigateWeek(7)}>
+        <ArrowForward />
+      </IconButton>
+    </>
+  );
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
-      {error && <Typography color="error">{error}</Typography>}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <IconButton onClick={() => navigateWeek(-7)}>
-          <ArrowBack />
-        </IconButton>
-        <Typography variant="h4" sx={{ m: 2 }}>
-          Weekly Tasks
-        </Typography>
-        <IconButton onClick={() => navigateWeek(7)}>
-          <ArrowForward />
-        </IconButton>
-      </Box>
-      <Divider />
-
+      <CenteredTitleLayout
+        title="Weekly Tasks"
+        leftActions={leftActions}
+        rightActions={rightActions}
+      />
       <Paper sx={{ mt: 2, mb: 2 }}>
         <FormControlLabel
           control={

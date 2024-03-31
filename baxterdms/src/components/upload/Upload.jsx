@@ -3,24 +3,16 @@ import Papa from "papaparse";
 import { Paper, IconButton, Box, Stepper, Step, StepLabel, Typography, Button, Toolbar } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-// Improved UploadData component with structured and optimized code
 const UploadData = ({ showPanel, onClose, updateData, uploadUrl, uploadMethod, stepLabels }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [csvData, setCSVData] = useState([]);
-
-  // Proceed to the next step
   const handleNext = () => setActiveStep((prevStep) => prevStep + 1);
-
-  // Go back to the previous step
   const handleBack = () => setActiveStep((prevStep) => prevStep - 1);
-
-  // Reset the steps and clear CSV data
   const handleReset = () => {
     setActiveStep(0);
     setCSVData([]);
   };
 
-  // Handle CSV file upload and parse the file
   const handleFileUpload = (file) => {
     Papa.parse(file, {
       complete: (result) => {
@@ -30,7 +22,6 @@ const UploadData = ({ showPanel, onClose, updateData, uploadUrl, uploadMethod, s
     });
   };
 
-  // Handle the final step and upload data
   const handleFinish = () => {
     Promise.all(csvData.map((data) =>
       fetch(uploadUrl, {
@@ -49,7 +40,6 @@ const UploadData = ({ showPanel, onClose, updateData, uploadUrl, uploadMethod, s
     });
   };
 
-  // Render the component UI
   return (
     <>
       {showPanel && (

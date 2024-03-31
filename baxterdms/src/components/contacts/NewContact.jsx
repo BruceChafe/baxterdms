@@ -19,6 +19,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import TitleLayout from "../layouts/TitleLayout";
 
 const NewContact = ({ onCloseForm, onNewContactCreated }) => {
   const [formData, setFormData] = useState({
@@ -69,98 +70,90 @@ const NewContact = ({ onCloseForm, onNewContactCreated }) => {
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-        height={80}
-      >
-          <Typography variant="h4" sx={{ m: 2 }}>
-          New Contact
-        </Typography>
-      </Box>
-      <Divider />
-      <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-        <Box mb={1} mt={1} p={1}>
-          <Typography variant="h5" mb={2}>
-            Identity
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <TextField
-                onChange={handleInputChange}
-                fullWidth
-                label="First Name"
-                name="firstName"
-                variant="outlined"
-                required
-                error={firstNameError}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                onChange={handleInputChange}
-                fullWidth
-                label="Middle Name"
-                name="middleName"
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                onChange={handleInputChange}
-                fullWidth
-                label="Last Name"
-                name="lastName"
-                variant="outlined"
-                required
-                error={lastNameError}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} md={4}>
-              <FormControl fullWidth>
-                <InputLabel id="contact-gender-select">Gender</InputLabel>
-                <Select
-                  value={formData.gender}
+      <TitleLayout title={<Typography variant="h4">New Contact</Typography>} />
+      <Box sx={{ mt: 3 }}>
+        <Paper sx={{ pl: 1, pr: 1, mt: 2 }}>
+          <Box mb={1} mt={1} p={1}>
+            <Typography variant="h5" mb={2}>
+              Identity
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <TextField
                   onChange={handleInputChange}
-                  labelId="contact-gender-select"
-                  label="Gender"
-                  name="gender"
+                  fullWidth
+                  label="First Name"
+                  name="firstName"
                   variant="outlined"
-                >
-                  <MenuItem value="male">Male</MenuItem>
-                  <MenuItem value="female">Female</MenuItem>
-                  <MenuItem value="na">Prefer not to say</MenuItem>
-                  <MenuItem value="other">Other</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="EN"
-              >
-                <DatePicker
-                  label="Date of Birth"
-                  inputVariant="outlined"
-                  value={formData.dob}
-                  onChange={(date) =>
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      dob: date,
-                    }))
-                  }
-                  renderInput={(params) => <TextField {...params} fullWidth />}
+                  required
+                  error={firstNameError}
                 />
-              </LocalizationProvider>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  onChange={handleInputChange}
+                  fullWidth
+                  label="Middle Name"
+                  name="middleName"
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  onChange={handleInputChange}
+                  fullWidth
+                  label="Last Name"
+                  name="lastName"
+                  variant="outlined"
+                  required
+                  error={lastNameError}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
-      </Paper>
+            <Grid container spacing={2} sx={{ mt: 1 }}>
+              <Grid item xs={12} md={4}>
+                <FormControl fullWidth>
+                  <InputLabel id="contact-gender-select">Gender</InputLabel>
+                  <Select
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    labelId="contact-gender-select"
+                    label="Gender"
+                    name="gender"
+                    variant="outlined"
+                  >
+                    <MenuItem value="male">Male</MenuItem>
+                    <MenuItem value="female">Female</MenuItem>
+                    <MenuItem value="na">Prefer not to say</MenuItem>
+                    <MenuItem value="other">Other</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale="EN"
+                >
+                  <DatePicker
+                    label="Date of Birth"
+                    inputVariant="outlined"
+                    value={formData.dob}
+                    onChange={(date) =>
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        dob: date,
+                      }))
+                    }
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Grid>
+            </Grid>
+          </Box>
+        </Paper>
+      </Box>
       <Divider />
       <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
         <Box mb={1} mt={1} p={1}>

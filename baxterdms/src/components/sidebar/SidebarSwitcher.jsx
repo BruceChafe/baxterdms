@@ -17,9 +17,9 @@ const SidebarItems = {
     pageName: "Account",
     navigationLinks: [
       { text: "Overview", to: "/account/overview", color: "white" },
-      { text: "Personal Info", to: "/account/userprofile"},
-      { text: "Theme", to: "/account/theme"},
-      { text: "Update Password", to: "/account/updatepassword" },
+      // { text: "Personal Info", to: "/account/userprofile"},
+      // { text: "Theme", to: "/account/theme"},
+      // { text: "Update Password", to: "/account/updatepassword" },
     ],
   },
   contacts: {
@@ -39,10 +39,7 @@ const SidebarItems = {
   configuration: {
     pageName: "Configuration",
     navigationLinks: [
-      { text: "Leads", to: "/configuration/leads"},
-      { text: "Personal Info", to: "/account/userprofile"},
-      { text: "Theme", to: "/account/theme"},
-      { text: "Update Password", to: "/account/updatepassword" },
+      { text: "Configuration", to: "/configuration"},
     ],
   },
   inventory: {

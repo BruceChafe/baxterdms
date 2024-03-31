@@ -2,28 +2,23 @@ import React, { useState, useEffect } from "react";
 import {
   Typography,
   Box,
-  Divider,
-  Tab,
-  Paper,
   CircularProgress,
   Button,
   BottomNavigation,
   Backdrop,
 } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useParams } from "react-router-dom";
 import ContactInfo from "./ContactInfo";
 import ContactLeads from "./ContactLeads";
 import { EmailOutlined } from "@mui/icons-material";
 import EmailContact from "./EmailCustomer";
-import CustomSnackbar from "../snackbar/CustomSnackbar";
-import CustomBreadcrumbs from "../breadcrumbs/CustomBreadcrumbs";
+import TabbedLayout from "../layouts/TabbedLayout";
+import TitleLayout from "../layouts/TitleLayout";
 
 const Contact = () => {
   const { contactId } = useParams();
   const [contact, setContact] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [value, setValue] = useState("1");
+  const [loading, setLoading] = useState(null);
   const [editedContact, setEditedContact] = useState(null);
   const [isEmailPaperOpen, setIsEmailPaperOpen] = useState(null);
   const [primaryEmail, setPrimaryEmail] = useState("");
@@ -47,7 +42,12 @@ const Contact = () => {
     setValue(newValue);
   };
 
+  useEffect(() => {
+    fetchContactData();
+  }, [contactId]);
+
   const fetchContactData = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         `http://localhost:8000/Contacts/${contactId}`
@@ -56,13 +56,7 @@ const Contact = () => {
         throw new Error("Failed to fetch contact data");
       }
       const data = await response.json();
-      if (data) {
-        setContact(data);
-        setEditedContact(data);
-        setPrimaryEmail(data.email);
-      } else {
-        throw new Error("Contact not found");
-      }
+      setContact(data);
     } catch (error) {
       console.error("Error fetching contact data:", error);
     } finally {
@@ -70,9 +64,13 @@ const Contact = () => {
     }
   };
 
-  useEffect(() => {
-    fetchContactData();
-  }, [contactId]);
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (!contact) {
+    return <Typography>No contact found</Typography>;
+  }
 
   const handleSave = async () => {
     try {
@@ -108,67 +106,36 @@ const Contact = () => {
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        {contact ? (
-          <Typography variant="h4" sx={{ m: 2 }}>
-            <CustomBreadcrumbs
-              title={`${contact.firstName} ${contact.lastName}`}
-            />
-          </Typography>
-        ) : (
-          <CircularProgress sx={{ m: 2 }} />
-        )}
-        <Button
-          onClick={handleSave}
-          variant="outlined"
-          disabled={!contactInfoChanged}
-        >
-          Save
-        </Button>
-        <CustomSnackbar
-          open={snackbarOpen}
-          message={snackbarMessage}
-          handleClose={handleSnackbarClose}
-        />
-      </Box>
-      <Divider />
-      <TabContext value={value}>
-        <Paper sx={{ pl: 1, pr: 1, mt: 2 }}>
-          <Box mb={1} mt={1} p={1}>
-            <TabList
-              onChange={handleChange}
-              textColor="secondary"
-              indicatorColor="secondary"
-            >
-              <Tab label="Basic Information" value="1" />
-              <Tab label="Leads" value="2" />
-              <Tab label="History" value="3" />
-              <Tab label="Vehicles" value="4" variant="disabled" />
-            </TabList>
+      <TitleLayout
+        title={
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography variant="h4">Contacts</Typography>
+            <Typography variant="h5">
+              - {`${contact.firstName} ${contact.lastName}`}
+            </Typography>
           </Box>
-        </Paper>
-        <TabPanel value="1">
-          {contact && (
-            <Box>
+        }
+        onSave={handleSave}
+        saveDisabled={!contactInfoChanged}
+      />
+      <TabbedLayout
+        tabs={[
+          {
+            label: "Basic Information",
+            component: () => (
               <ContactInfo
                 contact={contact}
                 onSaveContactInfo={setEditedContact}
                 onInfoChange={handleContactInfoChange}
               />
-            </Box>
-          )}
-        </TabPanel>
-        <TabPanel value="2">
-          {contact && <ContactLeads contact={contact} />}
-        </TabPanel>
-        <TabPanel value="3">Item Three</TabPanel>
-      </TabContext>
+            ),
+          },
+          {
+            label: "Leads",
+            component: () => <ContactLeads contact={contact} />,
+          }
+        ]}
+      />
       <BottomNavigation
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
       >

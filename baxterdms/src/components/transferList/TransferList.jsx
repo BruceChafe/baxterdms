@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import {
   Grid,
   List,
@@ -11,9 +11,9 @@ import {
   Typography,
   Box,
   TextField,
-  styled,
   Tooltip,
-  IconButton
+  IconButton,
+  styled,
 } from "@mui/material";
 import {
   KeyboardDoubleArrowRight,
@@ -26,14 +26,18 @@ import {
 const ScrollableList = styled(List)({
   height: 220,
   overflowY: "auto",
-  lineHeight: 5,
 });
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
 }
 
-const TransferList = ({ leftItems, rightItems, setLeftItems, setRightItems }) => {
+const TransferList = ({
+  leftItems,
+  rightItems,
+  setLeftItems,
+  setRightItems,
+}) => {
   const [checked, setChecked] = useState([]);
   const [newItem, setNewItem] = useState("");
 
@@ -123,13 +127,16 @@ const TransferList = ({ leftItems, rightItems, setLeftItems, setRightItems }) =>
         color="primary"
         onClick={handleAddNewItem}
         disabled={!newItem}
-        sx={{ ml:2 }}
+        sx={{ ml: 2 }}
       >
         Add
       </Button>
       <Grid container spacing={4} alignItems="center">
         <Grid item>
-          <Paper variant="outlined" sx={{ height: "100%", minWidth: '200px', p: 2 }}>
+          <Paper
+            variant="outlined"
+            sx={{ height: "100%", minWidth: "200px", p: 2 }}
+          >
             <CustomList items={leftItems} />
           </Paper>
         </Grid>
@@ -174,7 +181,10 @@ const TransferList = ({ leftItems, rightItems, setLeftItems, setRightItems }) =>
           </Box>
         </Grid>
         <Grid item>
-          <Paper variant="outlined" sx={{ height: "100%", minWidth: '200px', p: 2 }}>
+          <Paper
+            variant="outlined"
+            sx={{ height: "100%", minWidth: "200px", p: 2 }}
+          >
             <CustomList items={rightItems} />
           </Paper>
         </Grid>

@@ -10,7 +10,7 @@
       "companyName": "Skeezer Motors",
       "primaryEmail": "brucechafe@skeezermotors.ca",
       "companyNumber": "709.700.6182",
-      "theme": "deepGreenDarkTheme"
+      "theme": "Default Dark Theme"
     },
     {
       "UID": "cay7knM7AsVkg7VvpGXS1t31rDa2",
@@ -22,7 +22,7 @@
       "companyName": "Skeezer Motors",
       "primaryEmail": "danahawco@skeezermotors.ca",
       "companyNumber": "709.700.6182",
-      "theme": "deepGreenDarkTheme"
+      "theme": "Dark Green"
     }
   ],
   "contacts": [
@@ -116,28 +116,29 @@
       ]
     },
     {
-      "firstName": "Joe",
+      "firstName": "Bruce",
       "middleName": "Test",
-      "lastName": "Lake",
+      "lastName": "Chafe",
       "gender": "",
       "dob": null,
-      "streetAddress": "",
-      "postalCode": "",
-      "city": "",
-      "province": "",
+      "streetAddress": "18 Colonial Street",
+      "postalCode": "A1C 3M8",
+      "city": "St. John's",
+      "province": "NL",
       "country": "",
       "preferredLanguage": "",
       "preferredContact": "",
-      "mobilePhone": "7091234567",
+      "mobilePhone": "7097706182",
       "homePhone": "7091234567",
       "workPhone": "7091234567",
-      "primaryEmail": "joeldaniellake@gmail.com",
+      "primaryEmail": "brucechafe@gmail.com",
       "notes": "",
       "id": 5,
       "leadNumbers": [
         1127,
         1747
-      ]
+      ],
+      "workEmail": "brucechafe@gmail.com"
     }
   ],
   "leads": [
@@ -150,6 +151,7 @@
       "leadType": "TypeTest",
       "leadStatus": "Contacted",
       "id": 1,
+      "stock": "CT12152A",
       "history": []
     },
     {
@@ -294,6 +296,60 @@
       "timestamp": "2024-03-21T20:47:13.823Z",
       "activityType": "Email Sent",
       "id": 3
+    },
+    {
+      "from": "baxterdms@outlook.com",
+      "to": "brucechafe@gmail.com",
+      "subject": "Test",
+      "body": "Test",
+      "leadNumber": 1747,
+      "timestamp": "2024-03-31T15:32:55.093Z",
+      "activityType": "Email Sent",
+      "id": 4
+    },
+    {
+      "from": "baxterdms@outlook.com",
+      "to": "brucechafe@gmail.com",
+      "subject": "Test2",
+      "body": "Test2",
+      "leadNumber": 1747,
+      "timestamp": "2024-03-31T15:35:29.730Z",
+      "activityType": "Email Sent",
+      "id": 5
+    },
+    {
+      "from": "baxterdms@outlook.com",
+      "to": "brucechafe@gmail.com",
+      "subject": "Test",
+      "body": "Test",
+      "leadNumber": 1747,
+      "timestamp": "2024-03-31T15:46:59.138Z",
+      "activityType": "Email Sent",
+      "id": 6
+    },
+    {
+      "from": "baxterdms@outlook.com",
+      "to": "brucechafe@gmail.com",
+      "subject": "Test",
+      "body": "Test",
+      "leadNumber": 1747,
+      "timestamp": "2024-03-31T15:50:00.095Z",
+      "activityType": "Email Sent",
+      "id": 7
+    },
+    {
+      "from": "baxterdms@outlook.com",
+      "to": "brucechafe@gmail.com",
+      "subject": "Test",
+      "body": "Test",
+      "config": {
+        "emailUser": "baxterdms@outlook.com",
+        "emailPass": "Diet1989Coke!"
+      },
+      "leadNumber": 1747,
+      "timestamp": "2024-03-31T16:17:09.248Z",
+      "activityType": "Email Sent",
+      "id": 8
     }
   ],
   "configLeads": [
@@ -376,6 +432,10 @@
       ]
     }
   ],
+  "emailConfig": {
+    "emailUser": "baxterdms@outlook.com",
+    "emailPass": "Diet1989Coke!"
+  },
   "inventory": [
     {
       "d_id": "3761",
@@ -808,41 +868,6 @@
       "regular_price": "24999",
       "sale_price": "24999",
       "id": 12
-    },
-    {
-      "d_id": "3761",
-      "dealer_name": "Capital Subaru",
-      "stock": "CT12152A",
-      "vin": "5XYPGDA50LG622723",
-      "status": "FOR_SALE",
-      "year": "2020",
-      "make": "Kia",
-      "model": "Sorento",
-      "trim": "LX+ V6",
-      "body": "SUV",
-      "doors": "4",
-      "drive": "All Wheel Drive",
-      "transmission": "Automatic",
-      "fuel": "Gasoline",
-      "eng_cyl": "V6",
-      "eng_desc": "V6 Cylinder Engine 3.3L",
-      "extcolour": "Ebony Black",
-      "intcolour": "Black",
-      "is_certified": "FALSE",
-      "is_demo": "FALSE",
-      "is_new": "FALSE",
-      "category": "CAR",
-      "odometer": "53100",
-      "warranty": "",
-      "passenger": "7",
-      "standard_price": "27998",
-      "option": "Driver Air Bag,Passenger Air Bag,Front Side Air Bag,Front Head Air Bag,Rear Head Air Bag,Climate Control,Multi-Zone A/C,A/C,Rear A/C,Security System,AM/FM Stereo,ABS,4-Wheel Disc Brakes,Cruise Control,Rear Defrost,Child Safety Locks,Daytime Running Lights,Keyless Entry,Power Door Locks,Heated Mirrors,Power Mirror(s),3rd Row Seat,Power Driver Seat,Pass-Through Rear Seat,Cloth Seats,Bucket Seats,Power Steering,Adjustable Steering Wheel,Temporary Spare Tire,Traction Control,Aluminum Wheels,Power Windows,Intermittent Wipers,MP3 Player,Heated Front Seat(s),Privacy Glass,Variable Speed Intermittent Wipers,Steering Wheel Audio Controls,Immobilizer,Automatic Headlights,Integrated Turn Signal Mirrors,Driver Vanity Mirror,Passenger Vanity Mirror,Driver Illuminated Vanity Mirror,Passenger Illuminated Visor Mirror,Driver Adjustable Lumbar,Leather Steering Wheel,Trip Computer,Bluetooth Connection,Back-Up Camera,Stability Control,Brake Assist,Keyless Start,Auxiliary Audio Input,Rear Bench Seat,Passenger Air Bag Sensor,Blind Spot Monitor,Heated Steering Wheel,Cross-Traffic Alert,Smart Device Integration,Front Collision Mitigation",
-      "special_mentions": "Sale Price includes a $1000 finance credit when financed at Capital Subaru. Capital Subaru is pleased to offer the Capital Verified Pre-Owned Program. This program is designed to offer you confidence and peace of mind throughout your buying journey. When you choose a Capital Verified vehicle, you can expect not only superior quality but also an extensive range of benefits to ensure your complete satisfaction. What’s included with your Capital Verified Program Vehicle? - 7-Day/500km Exchange Privilege (equal or greater value) - Lifetime Powertrain Warranty - 160 Multi-Point Inspection & Report - CARFAX Report - 3-Month Sirius XM Subscription - Professional Detailing with Fluid Top-up + Gas - 10% Off Set of Tires (discount applied at the time of purchase, up to a maximum of $100) - Seasonal Tire Storage (1 season)",
-      "in_service_date": "",
-      "external_url": "https://www.capitalsubaru.ca/en/inventory/used/vehicle/2020/kia/sorento/lx-v6/31876363",
-      "regular_price": "29998",
-      "sale_price": "27998",
-      "id": 13
     },
     {
       "d_id": "3761",

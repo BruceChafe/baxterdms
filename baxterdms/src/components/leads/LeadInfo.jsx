@@ -30,54 +30,52 @@ const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
   return (
     <>
       {editedLead && (
-        <Box>
-          <Paper sx={{ p: 1, mb: 2 }}>
-            <Box mb={1} mt={1} p={1}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <DropdownMenu
-                    label="Lead Source"
-                    value={editedLead?.leadSource || ""}
-                    options={sourceOptions}
-                    onChange={(e) =>
-                      handleDropdownChange("leadSource", e.target.value)
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <DropdownMenu
-                    label="Lead Dealership"
-                    value={editedLead?.leadDealership || ""}
-                    options={dealershipOptions}
-                    onChange={(e) =>
-                      handleDropdownChange("leadDealership", e.target.value)
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <DropdownMenu
-                    label="Lead Type"
-                    value={editedLead?.leadType || ""}
-                    options={typeOptions}
-                    onChange={(e) =>
-                      handleDropdownChange("leadType", e.target.value)
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <DropdownMenu
-                    label="Lead Status"
-                    value={editedLead?.leadStatus || ""}
-                    options={statusOptions}
-                    onChange={(e) =>
-                      handleDropdownChange("leadStatus", e.target.value)
-                    }
-                  />
-                </Grid>
+        <Paper sx={{ p: 3, mb: 2 }}>
+          <Box mb={1} mt={1} p={1}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <DropdownMenu
+                  label="Lead Source"
+                  value={editedLead?.leadSource || ""}
+                  options={sourceOptions}
+                  onChange={(e) =>
+                    handleDropdownChange("leadSource", e.target.value)
+                  }
+                />
               </Grid>
-            </Box>
-          </Paper>
-        </Box>
+              <Grid item xs={12} sm={6}>
+                <DropdownMenu
+                  label="Lead Dealership"
+                  value={editedLead?.leadDealership || ""}
+                  options={dealershipOptions}
+                  onChange={(e) =>
+                    handleDropdownChange("leadDealership", e.target.value)
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <DropdownMenu
+                  label="Lead Type"
+                  value={editedLead?.leadType || ""}
+                  options={typeOptions}
+                  onChange={(e) =>
+                    handleDropdownChange("leadType", e.target.value)
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <DropdownMenu
+                  label="Lead Status"
+                  value={editedLead?.leadStatus || ""}
+                  options={statusOptions}
+                  onChange={(e) =>
+                    handleDropdownChange("leadStatus", e.target.value)
+                  }
+                />
+              </Grid>
+            </Grid>
+          </Box>
+        </Paper>
       )}
     </>
   );

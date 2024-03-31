@@ -3,12 +3,12 @@ import {
   CircularProgress,
   Box,
   Typography,
-  Divider,
   TablePagination,
   Paper,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchLeadsAndContacts } from "../../hooks/FechLeadsandContacts";
+import TitleLayout from "../layouts/TitleLayout";
 
 const LeadsTable = () => {
   const [page, setPage] = useState(0);
@@ -44,19 +44,9 @@ const LeadsTable = () => {
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
-      {error && <Typography color="error">{error}</Typography>}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h4" sx={{ m: 2 }}>
-          Leads
-        </Typography>
-      </Box>
-      <Divider />
+       <TitleLayout
+        title={<Typography variant="h4">Leads</Typography>}
+      />
       <BasicTable
         data={transformedData}
         columns={[
@@ -67,6 +57,8 @@ const LeadsTable = () => {
         ]}
         action="View More"
         baseNavigationUrl="/leads"
+        page={page}
+        rowsPerPage={rowsPerPage}
       />
 
       <Paper sx={{ mt: 2, mb: 2 }}>

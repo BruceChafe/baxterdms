@@ -43,7 +43,8 @@ const LeadsSection = ({
   };
 
   return (
-    <Box mb={4} sx={{ maxWidth: 700 }}>
+    <Box sx={{ mb: 2 }}>
+      <Paper sx={{ p: 3, mb: 2 }}>
       <Typography variant="h5" mb={2}>
         {label}
       </Typography>
@@ -62,7 +63,6 @@ const LeadsSection = ({
       >
         {saveStatus === "pending" ? "Saving..." : "Save"}
       </Button>
-
       {saveStatus && (
         <Typography
           variant="body2"
@@ -74,6 +74,7 @@ const LeadsSection = ({
             : "Failed to save changes. Please try again."}
         </Typography>
       )}
+      </Paper>
     </Box>
   );
 };
@@ -127,17 +128,14 @@ const LeadTaskConfig = () => {
   }, []);
 
   return (
-    <Box m={3}>
-      <Typography variant="h4" mb={2}>
-        Lead Configuration
-      </Typography>
-      <Divider />
+    <>
       {configFields.map((configField, index) => (
-        <Paper sx={{ p: 3, mt: 3 }} key={index}>
+        <Box key={index}>
           <LeadsSection {...configField} />
-        </Paper>
+          <Divider sx={{ mt: 2, mb: 2 }} />
+        </Box>
       ))}
-    </Box>
+    </>
   );
 };
 

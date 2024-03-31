@@ -58,7 +58,7 @@ const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange }) => {
   const renderSection = (sectionLabel, fields) => (
     <Box sx={{ mb: 2 }}>
       <Paper sx={{ p: 3, mb: 2 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+      <Typography variant="h5" mb={2}>
           {sectionLabel}
         </Typography>
         <Grid container spacing={2}>

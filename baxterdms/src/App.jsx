@@ -11,8 +11,8 @@ import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
 import NewContact from "./components/contacts/NewContact";
 import ContactTable from "./components/contacts/Contacts";
-import ThemeSelection from "./components/account/Theme";
-import { AccountOverview, AccountTiles } from "./components/account/Overview";
+import UserThemeSelection from "./components/account/UserThemeSelection";
+import AccountOverview from "./components/account/Overview";
 import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
 import UserProfile from "./components/account/PersonalInfo";
 import UpdatePassword from "./components/account/UpdatePassword";
@@ -25,7 +25,8 @@ import LeadsConfig from "./components/configuration/LeadsConfig";
 import Lead from "./components/leads/Lead";
 import LeadTaskConfig from "./components/configuration/LeadTaskConfig";
 import WeeklyCalendar from "./components/calendar/WeeklyCalendar";
-import Inventory from "./components/inventory/Invventory";
+import InventoryDashboard from "./components/inventory/InventoryDashboard";
+import Inventory from "./components/inventory/Inventory";
 
 const App = () => {
   return (
@@ -64,12 +65,10 @@ const AppRoutes = () => {
           <Route
             path="/account/overview"
             element={
-              <AccountOverview
-                navigationLinks={AccountTiles.userDetails.navigationLinks}
-              />
+              <AccountOverview />
             }
           />
-          <Route path="/account/theme" element={<ThemeSelection />} />
+          <Route path="/account/theme" element={<UserThemeSelection />} />
           <Route path="/account/userprofile" element={<UserProfile />} />
           <Route path="/account/updatepassword" element={<UpdatePassword />} />
           <Route path="/leads" element={<LeadsTable />} />
@@ -80,7 +79,9 @@ const AppRoutes = () => {
           <Route path="/configuration/leadtasks" element={<LeadTaskConfig />} />
           <Route path="/contacts/:contactId" element={<Contact />} />
           <Route path="/leads/:leadNumber" element={<Lead />} />
-          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/inventory" element={<InventoryDashboard />} />
+          <Route path="/inventory/:inventoryId" element={<Inventory />} />
+
         </Routes>
       </Grid>
     </Grid>

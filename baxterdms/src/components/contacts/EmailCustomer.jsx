@@ -11,6 +11,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useFetchEmailConfig } from "../../hooks/FetchEmailConfig";
 
 const EmailContact = ({
   id,
@@ -21,6 +22,8 @@ const EmailContact = ({
   onSaveSuccess,
 }) => {
   console.log(primaryEmail)
+  const { emailConfig, loading: configLoading, error: configError } = useFetchEmailConfig();
+  console.log(emailConfig)
   const [emailData, setEmailData] = useState({
     from: "baxterdms@outlook.com",
     to: primaryEmail,
@@ -54,55 +57,67 @@ const EmailContact = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isFormValid) return;
-
-    setLoading(true);
+    if (!isFormValid || configLoading) return; // Ensure form is valid and config is not loading
+  
+    setLoading(true); // Indicate the start of an async operation
     try {
+      // Construct the request payload to include both email data and configuration
+      const emailRequestData = {
+        ...emailData, // Existing email data: from, to, subject, body
+        config: emailConfig, // Include the fetched email configuration
+      };
+  
+      // Make a POST request to your server endpoint with the email data and configuration
       const sendEmailResponse = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(emailData),
+        body: JSON.stringify(emailRequestData),
       });
-
+  
+      // Check if the server responded with an error
       if (!sendEmailResponse.ok) {
         throw new Error("Failed to send email");
       }
-
-      const sendEmailData = await sendEmailResponse.json();
-      const timestamp = new Date().toISOString();
-      const leadNumber = lead.leadNumber;
-      const activityType = "Email Sent"
-
+  
+      const sendEmailData = await sendEmailResponse.json(); // Assuming the server responds with JSON
+      const timestamp = new Date().toISOString(); // Capture the current timestamp for logging or UI purposes
+      const leadNumber = lead.leadNumber; // Use the lead number, if applicable to your application logic
+      const activityType = "Email Sent"; // Define the activity type for logging or further processing
+  
+      // If the email was sent successfully, you might want to log this event
       if (sendEmailData.success) {
-        const logEmailData = { ...emailData, leadNumber, timestamp, activityType };
-        const logEmailResponse = await fetch("http://localhost:8000/emails", {
+        const logEmailData = { ...emailRequestData, leadNumber, timestamp, activityType };
+        const logEmailResponse = await fetch("http://localhost:8000/emails", { // Adjust URL as necessary
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(logEmailData),
         });
-
+  
         if (!logEmailResponse.ok) {
-          throw new Error("Failed to log email");
+          throw new Error("Failed to log email activity");
         }
-
+  
+        // Update the UI to reflect the successful operation
         setSnackbarMessage("Email sent and logged successfully!");
-        onSaveSuccess();
+        onSaveSuccess(); // Callback function to notify parent component or perform further actions
       } else {
-        setSnackbarMessage(
-          `Error: ${sendEmailData.message || "Email sending failed"}`
-        );
+        // Handle cases where email sending fails but the server responds
+        setSnackbarMessage(`Error: ${sendEmailData.message || "Email sending failed"}`);
       }
     } catch (error) {
+      // Handle any errors that occur during the fetch operation
       setSnackbarMessage(`Error: ${error.message}`);
     } finally {
-      setSnackbarOpen(true);
+      // Reset loading state and show the snackbar with the result message
       setLoading(false);
+      setSnackbarOpen(true);
     }
   };
+  
 
   return (
     <Dialog onClose={onClose} open={open}>

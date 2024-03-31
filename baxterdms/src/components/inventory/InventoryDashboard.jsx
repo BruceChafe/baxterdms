@@ -3,34 +3,28 @@ import {
   CircularProgress,
   Box,
   Typography,
-  Divider,
   TablePagination,
   Paper,
-  Button,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchInventory } from "../../hooks/FetchInventory";
 import UploadData from "../upload/Upload";
+import SearchComponent from "../../hooks/search/SearchComponent";
+import { useDebounce } from "../../hooks/search/DebouncedValue";
+import TitleLayout from "../layouts/TitleLayout";
 
-const Inventory = () => {
+const InventoryDashboard = () => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const { inventory, totalCount, loading, error } = useFetchInventory(
+  const { inventory, loading, error, totalCount } = useFetchInventory(
+    debouncedSearchQuery,
     page,
     rowsPerPage
   );
-
-  const transformedData = inventory.map((inventory) => ({
-    ...inventory,
-    dealerName: `${inventory.dealer_name}`,
-    stockNumber: `${inventory.stock}`,
-    modelYear: `${inventory.year}`,
-    modelMake: `${inventory.make}`,
-    modelModel: `${inventory.model}`,
-  }));
-  console.log(inventory);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -55,36 +49,37 @@ const Inventory = () => {
   if (error) return <Box>Error: {error}</Box>;
 
   return (
-    <Box sx={{ mt: 3, mr: 8 }} height={80}>
-      {error && <Typography color="error">{error}</Typography>}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-        height={80}
-      >
-        <Typography variant="h4" sx={{ m: 2 }}>
-          Inventory
-        </Typography>
-        <Button variant="outlined" onClick={handleImportClick}>
-          Import
-        </Button>
-      </Box>
-      <Divider />
+    <Box sx={{ mt: 3, mr: 8 }}>
+      <TitleLayout
+        title={<Typography variant="h4">Inventory</Typography>}
+        actionButtons={[
+          {
+            label: "Import",
+            onClick: handleImportClick,
+          },
+        ]}
+      />
+      <Paper sx={{ mt: 2, mb: 2 }}>
+        <Paper sx={{ mt: 2, mb: 2, p: 1 }}>
+          <SearchComponent
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+        </Paper>
+      </Paper>
       <BasicTable
-        data={transformedData}
+        data={inventory}
         columns={[
-          { field: "dealerName", header: "Dealership" },
-          { field: "stockNumber", header: "Stock No." },
-          { field: "modelYear", header: "Year" },
-          { field: "modelMake", header: "Make" },
-          { field: "modelModel", header: "Model" },
-
+          { field: "dealer_name", header: "Dealership" },
+          { field: "stock", header: "Stock No." },
+          { field: "year", header: "Year" },
+          { field: "make", header: "Make" },
+          { field: "model", header: "Model" },
         ]}
         action="View More"
         baseNavigationUrl="/inventory"
+        page={page}
+        rowsPerPage={rowsPerPage}
       />
       <Paper sx={{ mt: 2, mb: 2 }}>
         <TablePagination
@@ -101,7 +96,6 @@ const Inventory = () => {
       <UploadData
         showPanel={uploadPanelOpen}
         onClose={handleCloseUploadPanel}
-        updateData={useFetchInventory}
         uploadUrl="http://localhost:8000/inventory"
         uploadMethod="POST"
         stepLabels={["Upload Inventory"]}
@@ -110,4 +104,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default InventoryDashboard;

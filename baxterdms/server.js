@@ -6,38 +6,41 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(cors());
-
 app.use(express.json());
 
-// API endpoint for sending emails
 app.post('/send-email', async (req, res) => {
-  const { to, from, body, subject } = req.body;
+  console.log("Received request to send email");
+  // Extract email configuration and email data from the request body
+  const { to, from, body, subject, config } = req.body;
 
-  // Set up your nodemailer transporter and mailOptions here
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.office365.com',
-        port: 587,
-        secure: false,
-        auth: {
-            user: 'baxterdms@outlook.com',
-            pass: 'Diet1989Coke!',
-        },
-  });
-
-  const mailOptions = {
-    from,
-    to,
-    // cc: ccc,
-    // bcc,
-    subject: subject,
-    text: body,
-  };
+  // Make sure that the email configuration is provided
+  if (!config || !config.emailUser || !config.emailPass) {
+    return res.status(400).send({ success: false, error: "Email configuration is missing." });
+  }
 
   try {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: config.emailUser, // Use the emailUser from the request body
+        pass: config.emailPass, // Use the emailPass from the request body
+      },
+    });
+
+    const mailOptions = {
+      from, // Sender address
+      to, // List of recipients
+      subject, // Subject line
+      text: body, // Plain text body
+    };
+
+    // Send email with defined transport object
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent successfully!');
     console.log('Message ID:', info.messageId);
-    res.send({ success: true });
+    res.send({ success: true, messageId: info.messageId });
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).send({ success: false, error: error.message });

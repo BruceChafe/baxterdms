@@ -3,16 +3,15 @@ import {
   CircularProgress,
   Box,
   Typography,
-  Divider,
   TablePagination,
   Paper,
-  Button,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchContacts } from "../../hooks/FetchContacts";
 import UploadData from "../upload/Upload";
 import FormatPhoneNumber from "../../hooks/FormatPhoneNumber";
 import FormatAddress from "../../hooks/FormatAddress";
+import TitleLayout from "../layouts/TitleLayout";
 
 const ContactTable = () => {
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
@@ -67,24 +66,16 @@ const ContactTable = () => {
   if (error) return <Box>Error: {error}</Box>;
 
   return (
-    <Box sx={{ mt: 3, mr: 8 }} height={80}>
-      {error && <Typography color="error">{error}</Typography>}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-        height={80}
-      >
-        <Typography variant="h4" sx={{ m: 2 }}>
-          Contacts
-        </Typography>
-        <Button variant="outlined" onClick={handleImportClick}>
-          Import
-        </Button>
-      </Box>
-      <Divider />
+    <Box sx={{ mt: 3, mr: 8 }}>
+      <TitleLayout
+        title={<Typography variant="h4">Contacts</Typography>}
+        actionButtons={[
+          {
+            label: "Import",
+            onClick: handleImportClick,
+          },
+        ]}
+      />
       <BasicTable
         data={transformedData}
         columns={[
@@ -95,6 +86,8 @@ const ContactTable = () => {
         ]}
         action="View More"
         baseNavigationUrl="/contacts"
+        page={page}
+        rowsPerPage={rowsPerPage}
       />
       <Paper sx={{ mt: 2, mb: 2 }}>
         <TablePagination

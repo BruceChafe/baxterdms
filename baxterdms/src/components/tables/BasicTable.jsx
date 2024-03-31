@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -13,15 +13,23 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const BasicTable = ({ data, columns, action, baseNavigationUrl }) => {
-  const [error, setError] = useState("");
+const BasicTable = ({
+  data,
+  columns,
+  action,
+  baseNavigationUrl,
+  page,
+  rowsPerPage,
+}) => {
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const paginatedData = data.slice(startIndex, endIndex);
 
   const cellWidth = `${100 / (columns.length + 1)}%`;
 
   return (
-    <Box>
-      {error && <Typography color="error">{error}</Typography>}
-      <Paper elevation={3} sx={{ mt: 2, mb: 2 }}>
+    <Box sx={{ mt: 3 }}>
+      <Paper sx={{ mt: 2, mb: 2 }}>
         <TableContainer component={Paper}>
           <Table
             sx={{
@@ -56,7 +64,7 @@ const BasicTable = ({ data, columns, action, baseNavigationUrl }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row) => (
+              {paginatedData.map((row) => (
                 <TableRow key={row.id} hover>
                   {" "}
                   <TableCell

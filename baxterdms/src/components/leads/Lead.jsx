@@ -1,29 +1,24 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   CircularProgress,
-  Button,
   Typography,
-  Divider,
   BottomNavigation,
-  Paper,
-  Tab,
-  Snackbar,
   Tooltip,
   IconButton,
 } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { useParams } from "react-router-dom";
 import LeadInfo from "./LeadInfo";
 import ContactInfo from "../contacts/ContactInfo";
 import EmailContact from "../contacts/EmailCustomer";
-import CustomBreadcrumbs from "../breadcrumbs/CustomBreadcrumbs";
 import LeadHistory from "./LeadHistory";
+import LeadVehicle from "./LeadVehicle";
 import CreateLeadTask from "./CreateLeadTask";
 import { EmailOutlined } from "@mui/icons-material";
 import AddTaskIcon from "@mui/icons-material/AddTask";
-
 import { useFetchLeadAndContact } from "../../hooks/FetchLeadAndContact.jsx";
+import TabbedLayout from "../layouts/TabbedLayout";
+import TitleLayout from "../layouts/TitleLayout";
 
 const Lead = () => {
   const { leadNumber } = useParams();
@@ -134,87 +129,56 @@ const Lead = () => {
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        {contact ? (
-          <Typography variant="h4" sx={{ m: 2 }}>
-            <CustomBreadcrumbs
-              title={`${contact.firstName} ${contact.lastName} - ${
-                lead?.leadStatus || ""
-              } `}
-            />
-          </Typography>
-        ) : (
-          <CircularProgress sx={{ m: 2 }} />
-        )}
-        <Button
-          onClick={handleSave}
-          variant="outlined"
-          disabled={!leadInfoChanged && !contactInfoChanged}
-        >
-          Save
-        </Button>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          message={snackbarMessage}
-          action={
-            <Button color="inherit" size="small" onClick={handleSnackbarClose}>
-              Close
-            </Button>
+      {contact ? (
+        <TitleLayout
+          title={
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Typography variant="h4">Leads</Typography>
+              <Typography variant="h5">
+                - {`${contact.firstName} ${contact.lastName}`}
+              </Typography>
+            </Box>
           }
+          onSave={handleSave}
+          saveDisabled={!contactInfoChanged}
+        />
+      ) : (
+        <CircularProgress sx={{ m: 2 }} />
+      )}
+      <Box>
+        <TabbedLayout
+          tabs={[
+            {
+              label: "Summary",
+              component: () => (
+                <LeadInfo
+                  lead={lead}
+                  onSaveLeadInfo={setEditedLead}
+                  onInfoChange={handleLeadInfoChange}
+                />
+              ),
+            },
+            {
+              label: "Contact",
+              component: () => (
+                <ContactInfo
+                  contact={contact}
+                  onSaveContactInfo={setEditedContact}
+                  onInfoChange={handleContactInfoChange}
+                />
+              ),
+            },
+            {
+              label: "History",
+              component: () => <LeadHistory leadData={lead} />,
+            },
+            {
+              label: "Vehicle",
+              component: () => <LeadVehicle leadData={lead} />,
+            },
+          ]}
         />
       </Box>
-
-      <Divider />
-      <Box>
-        <TabContext value={tabValue}>
-          <Paper sx={{ pl: 1, pr: 1, mt: 2 }}>
-            <Box mb={1} mt={1} p={1}>
-              <TabList
-                onChange={handleChangeTab}
-                textColor="secondary"
-                indicatorColor="secondary"
-              >
-                <Tab label="Summary" value="1" />
-                <Tab label="Contact " value="2" />
-                <Tab label="History" value="3" />
-                <Tab label="Trade-In" value="4" disabled />
-              </TabList>
-            </Box>
-          </Paper>
-          <TabPanel value="1">
-            {lead && (
-              <LeadInfo
-                lead={lead}
-                onSaveLeadInfo={setEditedLead}
-                onInfoChange={handleLeadInfoChange}
-              />
-            )}
-          </TabPanel>
-          <TabPanel value="2">
-            {contact && (
-              <ContactInfo
-                contact={contact}
-                onSaveContactInfo={setEditedContact}
-                onInfoChange={handleContactInfoChange}
-              />
-            )}
-          </TabPanel>
-          <TabPanel value="3">
-            {lead && <LeadHistory leadData={lead} />}
-          </TabPanel>
-
-          <TabPanel value="4">Item Four</TabPanel>
-        </TabContext>
-      </Box>
-      <Box></Box>
       <BottomNavigation
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
       >
@@ -231,7 +195,7 @@ const Lead = () => {
         </Tooltip>
       </BottomNavigation>
       <EmailContact
-      key={primaryEmail}
+        key={primaryEmail}
         id={id}
         primaryEmail={primaryEmail}
         open={sendEmailOpen}
