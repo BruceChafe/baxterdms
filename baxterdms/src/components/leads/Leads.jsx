@@ -50,6 +50,7 @@ const LeadsTable = () => {
       <BasicTable
         data={transformedData}
         columns={[
+          { field: "leadType", header: "Lead Type"},
           { field: "leadStatus", header: "Status" },
           { field: "fullName", header: "Full Name" },
           { field: "email", header: "Email Address" },

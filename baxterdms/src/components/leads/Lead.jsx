@@ -38,6 +38,7 @@ const Lead = () => {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [isEditable, setIsEditable] = useState(false);
 
   const handleSendEmailClick = () => {
     setSendEmailOpen(true);
@@ -55,6 +56,13 @@ const Lead = () => {
     setEditedLead(lead);
     setEditedContact(contact);
   }, [lead, contact, primaryEmail]);
+
+  const toggleEdit = () => {
+    setIsEditable(!isEditable);
+    if (isEditable) {
+      handleSave();
+    }
+  };
 
   const handleSave = async () => {
     try {
@@ -139,7 +147,8 @@ const Lead = () => {
               </Typography>
             </Box>
           }
-          onSave={handleSave}
+          isEditable={isEditable}
+          onToggleEdit={toggleEdit}
           saveDisabled={!contactInfoChanged}
         />
       ) : (
@@ -165,6 +174,7 @@ const Lead = () => {
                   contact={contact}
                   onSaveContactInfo={setEditedContact}
                   onInfoChange={handleContactInfoChange}
+                  isEditable={isEditable}
                 />
               ),
             },
@@ -203,7 +213,6 @@ const Lead = () => {
         lead={lead}
         onSaveSuccess={handleSaveSuccess}
       />
-
       <CreateLeadTask
         lead={lead}
         id={leadId}

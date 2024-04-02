@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Typography, TextField, Divider, Box, Grid, Paper } from "@mui/material";
+import {
+  Typography,
+  TextField,
+  Divider,
+  Box,
+  Grid,
+  Paper,
+} from "@mui/material";
 
-const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange }) => {
+const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange, isEditable }) => {
   const [editedContact, setEditedContact] = useState({ ...contact });
 
   useEffect(() => {
@@ -52,19 +59,24 @@ const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange }) => {
       value={value}
       onChange={(e) => handleFieldChange(key, e.target.value)}
       fullWidth
+      disabled={!isEditable}
     />
   );
 
   const renderSection = (sectionLabel, fields) => (
     <Box sx={{ mb: 2 }}>
       <Paper sx={{ p: 3, mb: 2 }}>
-      <Typography variant="h5" mb={2}>
+        <Typography variant="h5" mb={2}>
           {sectionLabel}
         </Typography>
         <Grid container spacing={2}>
           {fields.map((field) => (
             <Grid item xs={12} sm={6} key={field.label}>
-              {renderTextField(field.label, field.key, editedContact[field.key])}
+              {renderTextField(
+                field.label,
+                field.key,
+                editedContact[field.key]
+              )}
             </Grid>
           ))}
         </Grid>
@@ -72,16 +84,15 @@ const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange }) => {
     </Box>
   );
 
-    return (
-      <Box>
-        {renderSection("Basic Information", basicInformationFields)}
-        <Divider sx={{ mt: 2, mb: 2 }} />
-        {renderSection("Location", locationFields)}
-        <Divider sx={{ mt: 2, mb: 2 }} />
-        {renderSection("Contact Information", contactInformationFields)}
-      </Box>
-    );
-
+  return (
+    <Box sx={{ mb: 5}}>
+      {renderSection("Basic Information", basicInformationFields)}
+      <Divider sx={{ mt: 2, mb: 2 }} />
+      {renderSection("Location", locationFields)}
+      <Divider sx={{ mt: 2, mb: 2 }} />
+      {renderSection("Contact Information", contactInformationFields)}
+    </Box>
+  );
 };
 
 export default ContactInfo;

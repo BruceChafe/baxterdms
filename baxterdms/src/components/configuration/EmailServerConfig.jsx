@@ -4,6 +4,7 @@ import { Box } from "@mui/system";
 import { useFetchEmailConfig } from "../../hooks/FetchEmailConfig";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import SaveEditButton from "../utilities/SaveEditButton";
 
 const EmailServerConfig = () => {
   const { emailConfig, setEmailConfig } = useFetchEmailConfig();
@@ -94,9 +95,7 @@ const EmailServerConfig = () => {
             ),
           }}
         />
-        <Button variant="contained" onClick={handleEditClick} sx={{ mt: 2 }}>
-          {isEditable ? "Save" : "Edit"}
-        </Button>
+        <SaveEditButton isEditable={isEditable} onToggleEdit={handleEditClick} />
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}

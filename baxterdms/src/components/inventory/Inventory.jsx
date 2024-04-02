@@ -155,6 +155,7 @@ const Inventory = () => {
               </Grid>
             </Grid>
             </Grid>
+            
           </Paper>
           </Box>
         </>

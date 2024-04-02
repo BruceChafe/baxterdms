@@ -27,7 +27,7 @@
   ],
   "contacts": [
     {
-      "firstName": "James",
+      "firstName": "Jamie",
       "middleName": "",
       "lastName": "Fondue",
       "gender": "",
@@ -139,6 +139,46 @@
         1747
       ],
       "workEmail": "brucechafe@gmail.com"
+    },
+    {
+      "firstName": "",
+      "middleName": "",
+      "lastName": "",
+      "gender": "",
+      "dob": null,
+      "streetAddress": "",
+      "postalCode": "",
+      "city": "",
+      "province": "",
+      "country": "",
+      "preferredLanguage": "",
+      "preferredContact": "",
+      "mobilePhone": "",
+      "homePhone": "",
+      "workPhone": "",
+      "email": "",
+      "notes": "",
+      "id": 6
+    },
+    {
+      "firstName": "",
+      "middleName": "",
+      "lastName": "",
+      "gender": "",
+      "dob": null,
+      "streetAddress": "",
+      "postalCode": "",
+      "city": "",
+      "province": "",
+      "country": "",
+      "preferredLanguage": "",
+      "preferredContact": "",
+      "mobilePhone": "",
+      "homePhone": "",
+      "workPhone": "",
+      "email": "",
+      "notes": "",
+      "id": 7
     }
   ],
   "leads": [

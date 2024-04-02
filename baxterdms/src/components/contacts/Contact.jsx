@@ -25,6 +25,7 @@ const Contact = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [contactInfoChanged, setContactInfoChanged] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -72,6 +73,13 @@ const Contact = () => {
     return <Typography>No contact found</Typography>;
   }
 
+  const toggleEdit = () => {
+    setIsEditable(!isEditable);
+    if (isEditable) {
+      handleSave();
+    }
+  };
+
   const handleSave = async () => {
     try {
       const response = await fetch(
@@ -115,9 +123,11 @@ const Contact = () => {
             </Typography>
           </Box>
         }
-        onSave={handleSave}
+        isEditable={isEditable}
+        onToggleEdit={toggleEdit}
         saveDisabled={!contactInfoChanged}
       />
+
       <TabbedLayout
         tabs={[
           {
@@ -127,13 +137,14 @@ const Contact = () => {
                 contact={contact}
                 onSaveContactInfo={setEditedContact}
                 onInfoChange={handleContactInfoChange}
+                isEditable={isEditable}
               />
             ),
           },
           {
             label: "Leads",
             component: () => <ContactLeads contact={contact} />,
-          }
+          },
         ]}
       />
       <BottomNavigation

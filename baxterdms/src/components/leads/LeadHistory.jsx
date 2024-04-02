@@ -6,6 +6,7 @@ import {
   Alert,
   Tooltip,
   IconButton,
+  Box
 } from "@mui/material";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import SortingTable from "../tables/SortingTable";
@@ -98,8 +99,8 @@ const LeadHistory = ({ leadData }) => {
   if (emailsError) return <Alert severity="error">{emailsError}</Alert>;
 
   return (
-    <>
-      <Paper sx={{ p: 3, mb: 2 }}>
+    <Box sx={{ mb: 5 }}>
+      <Paper sx={{ p: 3 }}>
         <SortingTable
           data={combinedRows}
           columns={columns}
@@ -112,7 +113,7 @@ const LeadHistory = ({ leadData }) => {
         onClose={() => setEmailDialogOpen(false)}
         emailData={currentEmailData}
       />
-    </>
+    </Box>
   );
 };
 

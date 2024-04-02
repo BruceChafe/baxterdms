@@ -1,3 +1,5 @@
+// TitleLayout.js
+
 import React from 'react';
 import { Box, Typography, Button, Divider } from '@mui/material';
 
@@ -6,6 +8,8 @@ const TitleLayout = ({
   onSave,
   saveDisabled,
   actionButtons = [],
+  isEditable,
+  onToggleEdit,
 }) => {
   return (
     <Box>
@@ -21,11 +25,12 @@ const TitleLayout = ({
           {title}
         </Box>
         <Box>
-          {onSave && (
-            <Button onClick={onSave} variant="outlined" disabled={saveDisabled}>
-              Save
+          {onToggleEdit && (
+            <Button onClick={onToggleEdit} variant="outlined" sx={{ mt: 2 }}>
+              {isEditable ? "Save" : "Edit"} {/* Toggling label based on isEditable */}
             </Button>
           )}
+          {/* Rest of the action buttons */}
           {actionButtons.map((button, index) => (
             <Button key={index} onClick={button.onClick} variant={button.variant || 'outlined'}>
               {button.label}
