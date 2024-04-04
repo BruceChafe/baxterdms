@@ -5,6 +5,7 @@ import {
   Typography,
   TablePagination,
   Paper,
+  Alert,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchContacts } from "../../hooks/FetchContacts";
@@ -18,10 +19,7 @@ const ContactTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const { contacts, totalCount, loading, error } = useFetchContacts(
-    page,
-    rowsPerPage
-  );
+  const { contacts, totalCount, loading, error } = useFetchContacts(page, rowsPerPage);
 
   const transformedData = contacts.map((contact) => ({
     ...contact,
@@ -62,9 +60,6 @@ const ContactTable = () => {
     document.body.style.overflow = "auto";
   };
 
-  if (loading) return <CircularProgress />;
-  if (error) return <Box>Error: {error}</Box>;
-
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
@@ -76,31 +71,42 @@ const ContactTable = () => {
           },
         ]}
       />
-      <BasicTable
-        data={transformedData}
-        columns={[
-          { field: "fullName", header: "Last Name" },
-          { field: "primaryEmail", header: "Email" },
-          { field: "phoneNumbers", header: "Phone Numbers" },
-          { field: "address", header: "Home Address" },
-        ]}
-        action="View More"
-        baseNavigationUrl="/contacts"
-        page={page}
-        rowsPerPage={rowsPerPage}
-      />
-      <Paper sx={{ mt: 2, mb: 2 }}>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
-          component="div"
-          count={totalCount}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{ mr: 5 }}
-        />
-      </Paper>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          Error: {error}
+        </Alert>
+      )}
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <BasicTable
+            data={transformedData}
+            columns={[
+              { field: "fullName", header: "Name" },
+              { field: "primaryEmail", header: "Email" },
+              { field: "phoneNumbers", header: "Phone Numbers" },
+              { field: "address", header: "Home Address" },
+            ]}
+            action="View More"
+            baseNavigationUrl="/contacts"
+            page={page}
+            rowsPerPage={rowsPerPage}
+          />
+          <Paper sx={{ mt: 2, mb: 2 }}>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25, 50, 100]}
+              component="div"
+              count={totalCount}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{ mr: 5 }}
+            />
+          </Paper>
+        </>
+      )}
       <UploadData
         showPanel={uploadPanelOpen}
         onClose={handleCloseUploadPanel}

@@ -24,8 +24,8 @@ const useFetchContacts = (page, rowsPerPage) => {
 
         setContacts(contactsData);
       } catch (error) {
-        console.error("Error fetching leads:", error);
-        setError("Failed to fetch leads");
+        console.error("Error fetching contacts:", error);
+        setError("Failed to fetch contacts");
       } finally {
         setLoading(false);
       }
