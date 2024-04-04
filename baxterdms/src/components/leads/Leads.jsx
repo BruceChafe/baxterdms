@@ -5,6 +5,7 @@ import {
   Typography,
   TablePagination,
   Paper,
+  Alert,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchLeadsAndContacts } from "../../hooks/FechLeadsandContacts";
@@ -39,41 +40,46 @@ const LeadsTable = () => {
     };
   });
 
-  if (loading) return <CircularProgress />;
-  if (error) return <Box>Error: {error}</Box>;
-
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
-       <TitleLayout
-        title={<Typography variant="h4">Leads</Typography>}
-      />
-      <BasicTable
-        data={transformedData}
-        columns={[
-          { field: "leadType", header: "Lead Type"},
-          { field: "leadStatus", header: "Status" },
-          { field: "fullName", header: "Full Name" },
-          { field: "email", header: "Email Address" },
-          { field: "leadDealership", header: "Dealership" },
-        ]}
-        action="View More"
-        baseNavigationUrl="/leads"
-        page={page}
-        rowsPerPage={rowsPerPage}
-      />
-
-      <Paper sx={{ mt: 2, mb: 2 }}>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
-          component="div"
-          count={totalCount}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{ mr: 5 }}
-        />
-      </Paper>
+      <TitleLayout title={<Typography variant="h4">Leads</Typography>} />
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <BasicTable
+            data={transformedData}
+            columns={[
+              { field: "leadType", header: "Lead Type" },
+              { field: "leadStatus", header: "Status" },
+              { field: "fullName", header: "Full Name" },
+              { field: "email", header: "Email Address" },
+              { field: "leadDealership", header: "Dealership" },
+            ]}
+            action="View More"
+            baseNavigationUrl="/leads"
+            page={page}
+            rowsPerPage={rowsPerPage}
+          />
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              Error: {error}
+            </Alert>
+          )}
+          <Paper sx={{ mt: 2, mb: 2 }}>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25, 50, 100]}
+              component="div"
+              count={totalCount}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{ mr: 5 }}
+            />
+          </Paper>
+        </>
+      )}
     </Box>
   );
 };
