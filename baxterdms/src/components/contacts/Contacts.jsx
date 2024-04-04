@@ -19,7 +19,10 @@ const ContactTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const { contacts, totalCount, loading, error } = useFetchContacts(page, rowsPerPage);
+  const { contacts, totalCount, loading, error } = useFetchContacts(
+    page,
+    rowsPerPage
+  );
 
   const transformedData = contacts.map((contact) => ({
     ...contact,
@@ -71,11 +74,6 @@ const ContactTable = () => {
           },
         ]}
       />
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          Error: {error}
-        </Alert>
-      )}
       {loading ? (
         <CircularProgress />
       ) : (
@@ -93,6 +91,11 @@ const ContactTable = () => {
             page={page}
             rowsPerPage={rowsPerPage}
           />
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              Error: {error}
+            </Alert>
+          )}
           <Paper sx={{ mt: 2, mb: 2 }}>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
