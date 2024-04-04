@@ -6,14 +6,14 @@ import {
   Alert,
   Tooltip,
   IconButton,
-  Box
+  Box,
+  Stack,
 } from "@mui/material";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import SortingTable from "../tables/SortingTable";
 import { useFetchLeadTasks } from "../../hooks/FetchLeadTasks";
 import { useFetchLeadEmails } from "../../hooks/FetchLeadEmails";
 import UseSentEmailDialog from "../../hooks/SentEmailDialog";
-
 
 const LeadHistory = ({ leadData }) => {
   const leadNumber = leadData?.leadNumber;
@@ -32,7 +32,18 @@ const LeadHistory = ({ leadData }) => {
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleString();
+    const datePart = date.toLocaleString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    });
+    const timePart = date.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    return [datePart, timePart];
   };
 
   const handleEmailClick = (emailData) => {
@@ -58,29 +69,37 @@ const LeadHistory = ({ leadData }) => {
     status: task.status,
   }));
 
-  const leadEmailsRows = emails.map((email) => ({
-    timestamp: formatTimestamp(email.timestamp),
-    activity: email.activityType,
-    activityDetails: (
-      <>
-        <Typography variant="body2" component="div">
-          From: {email.from}
-        </Typography>
-        <Typography variant="body2" component="div">
-          To: {email.to}
-        </Typography>
-        <Typography variant="body2" component="div">
-          Subject: {email.subject}
-        </Typography>
+  const leadEmailsRows = emails.map((email) => {
+    const [datePart, timePart] = formatTimestamp(email.timestamp);
 
-        <Tooltip title="View Sent Email">
-          <IconButton onClick={() => handleEmailClick(email)} color="primary">
-            <MarkEmailReadIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-    ),
-  }));
+    return {
+      timestamp: (
+        <Stack>
+          <Typography variant="body2">{datePart}</Typography>
+          <Typography variant="body2">{timePart}</Typography>
+        </Stack>
+      ),
+      activity: email.activityType,
+      activityDetails: (
+        <>
+          <Typography variant="body2" component="div">
+            From: {email.from}
+          </Typography>
+          <Typography variant="body2" component="div">
+            To: {email.to}
+          </Typography>
+          <Typography variant="body2" component="div">
+            Subject: {email.subject}
+          </Typography>
+          <Tooltip title="View Sent Email">
+            <IconButton onClick={() => handleEmailClick(email)} color="primary">
+              <MarkEmailReadIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
+    };
+  });
 
   const combinedRows = [
     ...leadHistoryRows,

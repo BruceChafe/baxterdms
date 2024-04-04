@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const TaskDialog = ({ open, onClose, taskDetails }) => {
+const TaskDialog = ({ open, onClose, taskDetails, refetchTasks }) => {
   const [selectedTask, setSelectedTask] = useState(taskDetails ? { ...taskDetails } : {});
   const [loading, setLoading] = useState(false);
 
@@ -29,13 +29,13 @@ const TaskDialog = ({ open, onClose, taskDetails }) => {
   
 
   const handleSave = async () => {
+    console.log("handleSave called");
     setLoading(true);
     try {
       const payload = {
         ...selectedTask,
-        followUpDate: selectedTask.followUpDate.toISOString(),
       };
-
+  
       const response = await fetch(`http://localhost:8000/tasks/${selectedTask.id}`, {
         method: "PATCH",
         headers: {
@@ -43,20 +43,22 @@ const TaskDialog = ({ open, onClose, taskDetails }) => {
         },
         body: JSON.stringify(payload),
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to update task");
       }
-
+  
       const updatedTask = await response.json();
       console.log("Task updated:", updatedTask);
+      refetchTasks();
     } catch (error) {
       console.error("Error updating task:", error);
     } finally {
       setLoading(false);
-      onClose(true);
+      onClose(true); 
     }
   };
+  
 
   return (
     <Dialog
@@ -123,8 +125,9 @@ const TaskDialog = ({ open, onClose, taskDetails }) => {
           Cancel
         </Button>
         <Button onClick={handleSave} color="primary" disabled={loading}>
-          Save
-        </Button>
+  Save
+</Button>
+
       </DialogActions>
     </Dialog>
   );

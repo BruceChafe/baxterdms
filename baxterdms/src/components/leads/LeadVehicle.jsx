@@ -153,8 +153,8 @@ const LeadVehicle = ({ leadData }) => {
                         <TextField
                           key={idx}
                           label={label}
-                          value={value || ""}
-                          variant="outlined"
+                          value={value}
+                          variant="standard"
                           fullWidth
                           margin="dense"
                           InputProps={{ readOnly: true }}

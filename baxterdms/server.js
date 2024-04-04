@@ -10,10 +10,8 @@ app.use(express.json());
 
 app.post('/send-email', async (req, res) => {
   console.log("Received request to send email");
-  // Extract email configuration and email data from the request body
   const { to, from, body, subject, config } = req.body;
 
-  // Make sure that the email configuration is provided
   if (!config || !config.emailUser || !config.emailPass) {
     return res.status(400).send({ success: false, error: "Email configuration is missing." });
   }
@@ -24,8 +22,8 @@ app.post('/send-email', async (req, res) => {
       port: 587,
       secure: false,
       auth: {
-        user: config.emailUser, // Use the emailUser from the request body
-        pass: config.emailPass, // Use the emailPass from the request body
+        user: config.emailUser,
+        pass: config.emailPass,
       },
     });
 

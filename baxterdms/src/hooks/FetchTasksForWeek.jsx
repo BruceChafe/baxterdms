@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useFetchTasksForWeek = (dates) => {
+const useFetchTasksForWeek = (dates, refetchTrigger) => {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -35,7 +35,7 @@ const useFetchTasksForWeek = (dates) => {
       };
   
       fetchTasksForWeek();
-    }, [dates]);
+    }, [dates, refetchTrigger]);
   
     return { tasks, loading, error };
   };
