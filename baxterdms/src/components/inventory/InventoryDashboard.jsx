@@ -5,6 +5,7 @@ import {
   Typography,
   TablePagination,
   Paper,
+  Alert,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchInventory } from "../../hooks/FetchInventory";
@@ -45,9 +46,6 @@ const InventoryDashboard = () => {
     document.body.style.overflow = "auto";
   };
 
-  if (loading) return <CircularProgress />;
-  if (error) return <Box>Error: {error}</Box>;
-
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
@@ -59,40 +57,51 @@ const InventoryDashboard = () => {
           },
         ]}
       />
-      <Paper sx={{ mt: 2, mb: 2 }}>
-        <Paper sx={{ mt: 2, mb: 2, p: 1 }}>
-          <SearchComponent
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <Paper sx={{ mt: 2, mb: 2 }}>
+            <Paper sx={{ mt: 2, mb: 2, p: 1 }}>
+              <SearchComponent
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            </Paper>
+          </Paper>
+          <BasicTable
+            data={inventory}
+            columns={[
+              { field: "dealer_name", header: "Dealership" },
+              { field: "stock", header: "Stock No." },
+              { field: "year", header: "Year" },
+              { field: "make", header: "Make" },
+              { field: "model", header: "Model" },
+            ]}
+            action="View More"
+            baseNavigationUrl="/inventory"
+            page={page}
+            rowsPerPage={rowsPerPage}
           />
-        </Paper>
-      </Paper>
-      <BasicTable
-        data={inventory}
-        columns={[
-          { field: "dealer_name", header: "Dealership" },
-          { field: "stock", header: "Stock No." },
-          { field: "year", header: "Year" },
-          { field: "make", header: "Make" },
-          { field: "model", header: "Model" },
-        ]}
-        action="View More"
-        baseNavigationUrl="/inventory"
-        page={page}
-        rowsPerPage={rowsPerPage}
-      />
-      <Paper sx={{ mt: 2, mb: 2 }}>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
-          component="div"
-          count={totalCount}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{ mr: 5 }}
-        />
-      </Paper>
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              Error: {error}
+            </Alert>
+          )}
+          <Paper sx={{ mt: 2, mb: 2 }}>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25, 50, 100]}
+              component="div"
+              count={totalCount}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{ mr: 5 }}
+            />
+          </Paper>
+        </>
+      )}
       <UploadData
         showPanel={uploadPanelOpen}
         onClose={handleCloseUploadPanel}
