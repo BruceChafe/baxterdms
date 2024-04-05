@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"npm run dev-vite\" \"npm run dev-server\"",
     "dev-vite": "vite",
-    "dev-server": "concurrently \"node server.js\" \"json-server --watch /Users/brucechafe/Documents/GitHub/baxterdms/baxterdms/data/db.json --port 8000\"",
+    "dev-server": "concurrently \"node server.js\" \"json-server --watch /Users/brucechafe/Documents/GitHub/baxterdms/data/db.json --port 8000\"",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
