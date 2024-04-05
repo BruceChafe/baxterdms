@@ -42,8 +42,11 @@ const App = () => {
 };
 
 const AppRoutes = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
+  if (loading) {
+    return <div>Loading...</div>; 
+  }
   if (user === undefined) {
     return null;
   }
