@@ -75,7 +75,6 @@ const AppRoutes = () => {
           <Route path="/account/updatepassword" element={<UpdatePassword />} />
           <Route path="/leads" element={<LeadsTable />} />
           <Route path="/leads/newlead" element={<NewLeadComponent />} />
-          <Route path="/leads/lead/:leadId" element={<LeadComponent />} />
           <Route path="/configuration" element={<ConfigLanding />} />
           <Route path="/configuration/leads" element={<LeadsConfig />} />
           <Route path="/configuration/leadtasks" element={<LeadTaskConfig />} />
