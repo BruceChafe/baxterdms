@@ -48,7 +48,7 @@ const SidebarComponent = ({ pageName, navigationLinks }) => {
           <Typography
             variant="h6"
             component={Link}
-            to="/home"
+            to="/*"
             sx={{ color: "white", textDecoration: "none" }}
           >
             baxter.

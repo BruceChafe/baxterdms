@@ -91,7 +91,7 @@ const AppRoutes = () => {
   ) : (
     <Routes>
       <Route path="/signin" element={<SignIn />} />
-      <Route path="*" element={<Navigate to="/signin" />} />
+      {/* <Route path="*" element={<Navigate to="/signin" />} /> */}
     </Routes>
   );
 };
