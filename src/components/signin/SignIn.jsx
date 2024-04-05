@@ -30,7 +30,7 @@ const SignIn = () => {
     setError(''); 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/home');
+      navigate('/*');
     } catch (error) {
       setError('Failed to log in');
 
