@@ -17,7 +17,6 @@ import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
 import UserProfile from "./components/account/PersonalInfo";
 import UpdatePassword from "./components/account/UpdatePassword";
 import LeadsTable from "./components/leads/Leads";
-import LeadComponent from "./components/leads/Lead";
 import NewLeadComponent from "./components/leads/NewLead";
 import { ThemeProvider } from "./context/ThemeContext";
 import ConfigLanding from "./components/configuration/ConfigLanding";
@@ -91,7 +90,7 @@ const AppRoutes = () => {
   ) : (
     <Routes>
       <Route path="/signin" element={<SignIn />} />
-      {/* <Route path="*" element={<Navigate to="/signin" />} /> */}
+      <Route path="*" element={<Navigate to="/signin" />} />
     </Routes>
   );
 };
