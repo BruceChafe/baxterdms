@@ -57,7 +57,7 @@ const AppRoutes = () => {
   </Grid>
   <Grid item xs={12} md={9} lg={10} > 
         <Routes>
-          <Route path="/*" element={<WeeklyCalendar />} />
+          <Route path="/home" element={<WeeklyCalendar />} />
           <Route
             path="/contacts/:contactId/*"
             element={<Navigate to={`/contacts/:contactId`} target="_blank" />}
