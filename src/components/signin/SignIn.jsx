@@ -30,7 +30,7 @@ const SignIn = () => {
     setError(''); 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/*');
+      navigate('/home*');
     } catch (error) {
       setError('Failed to log in');
 
@@ -95,7 +95,6 @@ const SignIn = () => {
                 Sign In
               </Button>
 
-              {/* Show ForgotPassword link when showForgotPassword is false */}
               {!showForgotPassword && (
                 <Grid container>
                   <Grid item xs>
