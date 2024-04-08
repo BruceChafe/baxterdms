@@ -6,6 +6,7 @@ import {
   TablePagination,
   Paper,
   Alert,
+  Container,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchLeadsAndContacts } from "../../hooks/FechLeadsandContacts";
@@ -44,7 +45,20 @@ const LeadsTable = () => {
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout title={<Typography variant="h4">Leads</Typography>} />
       {loading ? (
-        <CircularProgress />
+        <Container>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="300px"
+            flexDirection="column"
+          >
+            <CircularProgress color="primary" />
+            <Typography variant="subtitle1" sx={{ mt: 2 }}>
+              Fetching data, please wait...
+            </Typography>
+          </Box>
+        </Container>
       ) : (
         <>
           <BasicTable

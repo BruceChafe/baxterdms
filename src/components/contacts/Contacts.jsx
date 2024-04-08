@@ -6,6 +6,7 @@ import {
   TablePagination,
   Paper,
   Alert,
+  Container,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchContacts } from "../../hooks/FetchContacts";
@@ -17,32 +18,10 @@ import TitleLayout from "../layouts/TitleLayout";
 const ContactTable = () => {
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { data, totalCount } = useFetchContacts(page, rowsPerPage);
 
-  const { contacts, totalCount, loading, error } = useFetchContacts(
-    page,
-    rowsPerPage
-  );
-
-  const transformedData = contacts.map((contact) => ({
-    ...contact,
-    fullName: `${contact.firstName || ""} ${contact.lastName || ""}`.trim(),
-    phoneNumbers: (
-      <>
-        <FormatPhoneNumber type="mobile" number={contact.mobilePhone} />
-        <FormatPhoneNumber type="home" number={contact.homePhone} />
-        <FormatPhoneNumber type="work" number={contact.workPhone} />
-      </>
-    ),
-    address: (
-      <FormatAddress
-        streetAddress={contact.streetAddress}
-        city={contact.city}
-        province={contact.province}
-        postalCode={contact.postalCode}
-      />
-    ),
-  }));
+  const { contacts, loading, error } = data;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -63,6 +42,31 @@ const ContactTable = () => {
     document.body.style.overflow = "auto";
   };
 
+  const transformedData = contacts.map((contact) => {
+    const fullName = `${contact.firstName || ""} ${contact.lastName || ""}`.trim();
+    const phoneNumbers = (
+      <>
+        <FormatPhoneNumber type="mobile" number={contact.mobilePhone} />
+        <FormatPhoneNumber type="home" number={contact.homePhone} />
+        <FormatPhoneNumber type="work" number={contact.workPhone} />
+      </>
+    );
+    const address = (
+      <FormatAddress
+        streetAddress={contact.streetAddress}
+        city={contact.city}
+        province={contact.province}
+        postalCode={contact.postalCode}
+      />
+    );
+    return {
+      ...contact,
+      fullName,
+      phoneNumbers,
+      address,
+    };
+  }) || [];
+
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
@@ -75,7 +79,20 @@ const ContactTable = () => {
         ]}
       />
       {loading ? (
-        <CircularProgress />
+        <Container>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="300px"
+            flexDirection="column"
+          >
+            <CircularProgress color="primary" />
+            <Typography variant="subtitle1" sx={{ mt: 2 }}>
+              Fetching data, please wait...
+            </Typography>
+          </Box>
+        </Container>
       ) : (
         <>
           <BasicTable

@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { Box, CssBaseline, Grid } from "@mui/material";
+import { CssBaseline, Grid } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";

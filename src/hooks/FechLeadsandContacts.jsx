@@ -12,22 +12,32 @@ const useFetchLeadsAndContacts = (page, rowsPerPage) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const startIndex = page * rowsPerPage;
-      const endIndex = startIndex + rowsPerPage;
       try {
-        const leadsResponse = await fetch(`http://localhost:8000/leads?_start=${startIndex}&_end=${endIndex}`);
-        const totalCountHeader = leadsResponse.headers.get("X-Total-Count");
-        setTotalCount(parseInt(totalCountHeader, 10) || 0);
-        
-        
-        const contactsResponse = await fetch(`http://localhost:8000/contacts`);
-        if (!leadsResponse.ok || !contactsResponse.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        const leadsData = await leadsResponse.json();
-        const contactsData = await contactsResponse.json();
+        const leadsResponse = await fetch(`https://api.jsonbin.io/v3/b/66118931e41b4d34e4e046b7`, {
+          headers: {
+            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
+          }
+        });
+        const contactsResponse = await fetch(`https://api.jsonbin.io/v3/b/66118912acd3cb34a8346f91`, {
+          headers: {
+            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu' 
+          }
+        });
 
-        const combinedData = leadsData.map((lead) => {
+        if (!leadsResponse.ok || !contactsResponse.ok) {
+          throw new Error("Failed to fetch data from JSONBin");
+        }
+
+        const leadsResult = await leadsResponse.json();
+        const contactsResult = await contactsResponse.json();
+
+        const leadsData = leadsResult.record.leads;
+        const contactsData = contactsResult.record.contacts;
+
+        const startIndex = page * rowsPerPage;
+        const paginatedLeads = leadsData.slice(startIndex, startIndex + rowsPerPage);
+        
+        const combinedData = paginatedLeads.map((lead) => {
           const leadContacts = contactsData.filter((contact) =>
             contact.leadNumbers?.includes(lead.leadNumber)
           );
@@ -35,12 +45,13 @@ const useFetchLeadsAndContacts = (page, rowsPerPage) => {
         });
 
         setData({
-          leads: leadsData,
+          leads: paginatedLeads,
           contacts: contactsData,
           combinedData,
           loading: false,
           error: null,
         });
+        setTotalCount(leadsData.length);
       } catch (error) {
         setData((prevState) => ({
           ...prevState,
@@ -53,7 +64,7 @@ const useFetchLeadsAndContacts = (page, rowsPerPage) => {
     fetchData();
   }, [page, rowsPerPage]);
 
-  return {data, totalCount};
+  return { data, totalCount };
 };
 
 export { useFetchLeadsAndContacts };

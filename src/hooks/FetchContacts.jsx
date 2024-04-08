@@ -1,40 +1,49 @@
 import { useState, useEffect } from "react";
 
 const useFetchContacts = (page, rowsPerPage) => {
-  const [contacts, setContacts] = useState([]);
+  const [data, setData] = useState({
+    contacts: [],
+    loading: true,
+    error: null,
+  });
   const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchContacts = async () => {
-      const startIndex = page * rowsPerPage;
-      const endIndex = startIndex + rowsPerPage;
+    const fetchData = async () => {
       try {
-        setLoading(true);
-        setError("");
+        const contactsResponse = await fetch(`https://api.jsonbin.io/v3/b/66118912acd3cb34a8346f91`, {
+          headers: {
+            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu' 
+          }
+        });
 
-        const response = await fetch(
-          `http://localhost:8000/Contacts?_start=${startIndex}&_end=${endIndex}`
-        );
-        const totalCountHeader = response.headers.get("X-Total-Count");
-        setTotalCount(parseInt(totalCountHeader, 10) || 0);
+        const contactsResult = await contactsResponse.json();
 
-        const contactsData = await response.json();
+        const contactsData = contactsResult.record.contacts;
 
-        setContacts(contactsData);
+        const startIndex = page * rowsPerPage;
+        const paginatedContacts = contactsData.slice(startIndex, startIndex + rowsPerPage);
+  
+
+        setData({
+          contacts: paginatedContacts,
+          loading: false,
+          error: null,
+        });
+        setTotalCount(contactsData.length);
       } catch (error) {
-        console.error("Error fetching contacts:", error);
-        setError("Failed to fetch contacts");
-      } finally {
-        setLoading(false);
+        setData((prevState) => ({
+          ...prevState,
+          loading: false,
+          error: error.message,
+        }));
       }
     };
 
-    fetchContacts();
+    fetchData();
   }, [page, rowsPerPage]);
 
-  return { contacts, totalCount, loading, error };
+  return { data, totalCount };
 };
 
 export { useFetchContacts };
