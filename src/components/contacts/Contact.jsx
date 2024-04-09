@@ -6,6 +6,7 @@ import {
   Button,
   BottomNavigation,
   Backdrop,
+  Container,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import ContactInfo from "./ContactInfo";
@@ -14,11 +15,11 @@ import { EmailOutlined } from "@mui/icons-material";
 import EmailContact from "./EmailCustomer";
 import TabbedLayout from "../layouts/TabbedLayout";
 import TitleLayout from "../layouts/TitleLayout";
+import { useFetchContact } from "../../hooks/FetchContact";
 
 const Contact = () => {
   const { contactId } = useParams();
-  const [contact, setContact] = useState(null);
-  const [loading, setLoading] = useState(null);
+  const { contact, loading, error } = useFetchContact(contactId);
   const [editedContact, setEditedContact] = useState(null);
   const [isEmailPaperOpen, setIsEmailPaperOpen] = useState(null);
   const [primaryEmail, setPrimaryEmail] = useState("");
@@ -42,44 +43,6 @@ const Contact = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
-  useEffect(() => {
-    fetchContactData();
-  }, [contactId]);
-
-  const fetchContactData = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `https://api.jsonbin.io/v3/b/66118912acd3cb34a8346f91/${contactId}`,
-        {
-          headers: {
-            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
-          }
-        }
-      );
-      if (!response.ok) {
-        throw new Error('Failed to fetch contact data');
-      }
-      const data = await response.json();
-      const contactData = data.record;
-      setContact(contactData);
-      console.log(contactData)
-    } catch (error) {
-      console.error('Error fetching contact data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-
-  if (loading) {
-    return <CircularProgress />;
-  }
-
-  if (!contact) {
-    return <Typography>No contact found</Typography>;
-  }
 
   const toggleEdit = () => {
     setIsEditable(!isEditable);
@@ -116,6 +79,60 @@ const Contact = () => {
   //   }
   // };
 
+  const handleSave = async () => {
+    try {
+      // Fetch current data
+      const fetchResponse = await fetch(`https://api.jsonbin.io/v3/b/6615a21dacd3cb34a835f9c3`, {
+        method: "GET", // Explicitly stating the method for clarity
+        headers: {
+          'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu' 
+        }
+      });
+  
+      if (!fetchResponse.ok) {
+        throw new Error('Failed to fetch current contacts for update');
+      }
+  
+      const currentData = await fetchResponse.json();
+      let contacts = currentData.record.contacts;
+  
+      const contactIndex = contacts.findIndex(contact => contact.id === parseInt(contactId, 10));
+      if (contactIndex === -1) {
+        throw new Error(`Contact with id=${contactId} not found`);
+      }
+      console.log(editedContact)
+  
+      // Apply the edited fields to the contact
+      contacts[contactIndex] = { ...contacts[contactIndex], ...editedContact };
+  
+      // Update the contacts data
+      const updateResponse = await fetch(`https://api.jsonbin.io/v3/b/6615a21dacd3cb34a835f9c3`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu' 
+        },
+        body: JSON.stringify({contacts}), // Ensure the entire contacts array is sent
+      });
+  
+      if (!updateResponse.ok) {
+        const errorData = await updateResponse.json();
+        throw new Error(`Error: Failed to save. ${errorData.message}`);
+      }
+  
+      // Update local UI state
+      setContact(contacts[contactIndex]);
+      setSnackbarMessage("Save successful");
+  
+    } catch (error) {
+      console.error('Error saving contact data:', error);
+      setSnackbarMessage(`Error: ${error.toString()}`);
+    } finally {
+      setSnackbarOpen(true);
+      setIsEmailPaperOpen(false);
+    }
+  };
+  
   const handleContactInfoChange = (changed) => {
     setContactInfoChanged(changed);
   };
@@ -126,35 +143,60 @@ const Contact = () => {
         title={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Typography variant="h4">Contacts</Typography>
-            <Typography variant="h5">
-              - {`${contact.firstName} ${contact.lastName}`}
-            </Typography>
+            {loading ? (
+              <CircularProgress color="primary" />
+            ) : (
+              <Typography variant="h5">
+                -{" "}
+                {contact
+                  ? `${contact.firstName} ${contact.lastName}`
+                  : "Contact not found"}
+              </Typography>
+            )}
           </Box>
         }
         isEditable={isEditable}
         onToggleEdit={toggleEdit}
         saveDisabled={!contactInfoChanged}
       />
-
-      <TabbedLayout
-        tabs={[
-          {
-            label: "Basic Information",
-            component: () => (
-              <ContactInfo
-                contact={contact}
-                onSaveContactInfo={setEditedContact}
-                onInfoChange={handleContactInfoChange}
-                isEditable={isEditable}
-              />
-            ),
-          },
-          {
-            label: "Leads",
-            component: () => <ContactLeads contact={contact} />,
-          },
-        ]}
-      />
+      {loading ? (
+        <Container>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="300px"
+            flexDirection="column"
+          >
+            <CircularProgress color="primary" />
+            <Typography variant="subtitle1" sx={{ mt: 2 }}>
+              Fetching data, please wait...
+            </Typography>
+          </Box>
+        </Container>
+      ) : (
+        <>
+          <TabbedLayout
+            tabs={[
+              {
+                label: "Basic Information",
+                component: () => (
+                  <ContactInfo
+                    contact={contact}
+                    onSaveContactInfo={setEditedContact}
+                    onInfoChange={handleContactInfoChange}
+                    isEditable={isEditable}
+                  />
+                ),
+              },
+              {
+                label: "Leads",
+                component: () => <ContactLeads contact={contact} />,
+              },
+            ]}
+          />
+        </>
+      )}
       <BottomNavigation
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
       >

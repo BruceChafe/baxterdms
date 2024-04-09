@@ -31,7 +31,6 @@ const useFetchLeads = (leadNumbers) => {
           }
 
           const data = await response.json();
-          // Assuming the API returns the lead data directly; adjust if nested
           fetchedLeads.push(data.record);
         } catch (error) {
           console.error('Error fetching lead:', error);

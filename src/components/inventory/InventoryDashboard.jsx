@@ -6,6 +6,7 @@ import {
   TablePagination,
   Paper,
   Alert,
+  Container
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchInventory } from "../../hooks/FetchInventory";
@@ -58,8 +59,20 @@ const InventoryDashboard = () => {
         ]}
       />
       {loading ? (
-        <CircularProgress />
-      ) : (
+        <Container>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="300px"
+          flexDirection="column"
+        >
+          <CircularProgress color="primary" />
+          <Typography variant="subtitle1" sx={{ mt: 2 }}>
+            Fetching data, please wait...
+          </Typography>
+        </Box>
+      </Container>      ) : (
         <>
           <Paper sx={{ mt: 2, mb: 2 }}>
             <Paper sx={{ mt: 2, mb: 2, p: 1 }}>
