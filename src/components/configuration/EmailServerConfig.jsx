@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Paper, TextField, Typography, Button, IconButton, InputAdornment, Snackbar } from "@mui/material";
+import {
+  Paper,
+  TextField,
+  Typography,
+  IconButton,
+  InputAdornment,
+  Snackbar,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { useFetchEmailConfig } from "../../hooks/FetchEmailConfig";
 import Visibility from "@mui/icons-material/Visibility";
@@ -7,18 +14,18 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import SaveEditButton from "../utilities/SaveEditButton";
 
 const EmailServerConfig = () => {
-  const { emailConfig, setEmailConfig } = useFetchEmailConfig();
+  const { data, refetch } = useFetchEmailConfig();
   const [isEditable, setIsEditable] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [editableEmail, setEditableEmail] = useState('');
-  const [editablePassword, setEditablePassword] = useState('');
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [editableEmail, setEditableEmail] = useState("");
+  const [editablePassword, setEditablePassword] = useState("");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
-    setEditableEmail(emailConfig?.emailUser || '');
-    setEditablePassword(emailConfig?.emailPass || '');
-  }, [emailConfig]);
+    setEditableEmail(data.emailConfig?.emailUser || "");
+    setEditablePassword(data.emailConfig?.emailPass || "");
+  }, [data.emailConfig]);
 
   const handleEditClick = () => {
     if (isEditable) {
@@ -37,18 +44,24 @@ const EmailServerConfig = () => {
         emailUser: editableEmail,
         emailPass: editablePassword,
       };
-      const response = await fetch(`http://localhost:8000/emailconfig`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedConfig),
-      });
+
+      const response = await fetch(
+        `https://api.jsonbin.io/v3/b/661189e4ad19ca34f855fc43`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key":
+              "$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu",
+          },
+          body: JSON.stringify(updatedConfig),
+        }
+      );
 
       if (response.ok) {
         setSnackbarMessage("Save successful");
-        setEmailConfig(updatedConfig);
-        setShowPassword(false); 
+        refetch();
+        setShowPassword(false);
         setIsEditable(false);
       } else {
         throw new Error("Failed to save");
@@ -60,11 +73,12 @@ const EmailServerConfig = () => {
     }
   };
 
-
   return (
     <Box sx={{ mb: 2 }}>
       <Paper sx={{ p: 3, mb: 2 }}>
-        <Typography variant="h5" mb={2}>Email Server Configuration</Typography>
+        <Typography variant="h5" mb={2}>
+          Email Server Configuration
+        </Typography>
         <TextField
           label="Email"
           value={editableEmail}
@@ -95,7 +109,10 @@ const EmailServerConfig = () => {
             ),
           }}
         />
-        <SaveEditButton isEditable={isEditable} onToggleEdit={handleEditClick} />
+        <SaveEditButton
+          isEditable={isEditable}
+          onToggleEdit={handleEditClick}
+        />
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}

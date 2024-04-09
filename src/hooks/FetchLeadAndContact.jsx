@@ -11,11 +11,15 @@ function useFetchLeadAndContact(leadNumber) {
   const [trigger, setTrigger] = useState(0);
 
   const fetchData = useCallback(async () => {
-    setData(prev => ({ ...prev, loading: true }));
+    setData((prev) => ({ ...prev, loading: true }));
     try {
-      const leadRes = await fetch(`http://localhost:8000/Leads/?leadNumber=${leadNumber}`);
+      const leadRes = await fetch(
+        `http://localhost:8000/Leads/?leadNumber=${leadNumber}`
+      );
       const leadData = await leadRes.json();
-      const contactRes = await fetch(`http://localhost:8000/contacts?leadNumbers_like=${leadNumber}`);
+      const contactRes = await fetch(
+        `http://localhost:8000/contacts?leadNumbers_like=${leadNumber}`
+      );
       const contactData = await contactRes.json();
       setData({
         lead: leadData[0] || null,
@@ -25,16 +29,16 @@ function useFetchLeadAndContact(leadNumber) {
         error: null,
       });
     } catch (error) {
-      setData(prev => ({ ...prev, loading: false, error: error.toString() }));
+      setData((prev) => ({ ...prev, loading: false, error: error.toString() }));
     }
   }, [leadNumber]);
 
   useEffect(() => {
     fetchData();
-  }, [leadNumber, trigger, fetchData]); 
+  }, [leadNumber, trigger, fetchData]);
 
   const refetch = useCallback(() => {
-    setTrigger(prev => prev + 1);
+    setTrigger((prev) => prev + 1);
   }, []);
 
   return { ...data, refetch };

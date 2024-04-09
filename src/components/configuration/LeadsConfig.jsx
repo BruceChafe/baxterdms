@@ -12,35 +12,35 @@ const LeadsSection = ({
 }) => {
   const [saveStatus, setSaveStatus] = useState(null);
 
-  const handleSave = (field) => {
-    const dataToSend = {
-      [`lead${field}Unactive`]: unactiveData,
-      [`lead${field}Active`]: activeData,
-    };
+  // const handleSave = (field) => {
+  //   const dataToSend = {
+  //     [`lead${field}Unactive`]: unactiveData,
+  //     [`lead${field}Active`]: activeData,
+  //   };
 
-    fetch(`http://localhost:8000/configLeads/1/`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataToSend),
-    })
-      .then((response) => {
-        if (response.ok) {
-          setSaveStatus("success");
-        } else {
-          setSaveStatus("error");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Update successful:", data);
-      })
-      .catch((error) => {
-        console.error("Error updating configuration:", error);
-        setSaveStatus("error");
-      });
-  };
+  //   fetch(`http://localhost:8000/configLeads/1/`, {
+  //     method: "PATCH",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(dataToSend),
+  //   })
+  //     .then((response) => {
+  //       if (response.ok) {
+  //         setSaveStatus("success");
+  //       } else {
+  //         setSaveStatus("error");
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       console.log("Update successful:", data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error updating configuration:", error);
+  //       setSaveStatus("error");
+  //     });
+  // };
 
   return (
     <Box sx={{ mb: 2 }}>
@@ -85,15 +85,15 @@ const LeadsConfig = () => {
   const [leadSourceActive, setLeadSourceActive] = useState([]);
   const [leadTypeUnactive, setLeadTypeUnactive] = useState([]);
   const [leadTypeActive, setLeadTypeActive] = useState([]);
-  const [leadDealershipUnactive, setLeadDealershipUnactive] = useState([]); // New state
-  const [leadDealershipActive, setLeadDealershipActive] = useState([]); // New state
+  const [leadDealershipUnactive, setLeadDealershipUnactive] = useState([]); 
+  const [leadDealershipActive, setLeadDealershipActive] = useState([]); 
   const [leadSalesConsultantUnactive, setLeadSalesConsultantUnactive] =
     useState([]);
   const [leadSalesConsultantActive, setLeadSalesConsultantActive] = useState(
     []
   );
-  const [leadStatusUnactive, setLeadStatusUnactive] = useState([]); // New state
-  const [leadStatusActive, setLeadStatusActive] = useState([]); // New state
+  const [leadStatusUnactive, setLeadStatusUnactive] = useState([]); 
+  const [leadStatusActive, setLeadStatusActive] = useState([]); 
 
   const configFields = [
     {
@@ -141,12 +141,12 @@ const LeadsConfig = () => {
         setLeadSourceActive(data.leadSourceActive || []);
         setLeadTypeUnactive(data.leadTypeUnactive || []);
         setLeadTypeActive(data.leadTypeActive || []);
-        setLeadDealershipUnactive(data.leadDealershipUnactive || []); // Set new state
-        setLeadDealershipActive(data.leadDealershipActive || []); // Set new state
-        setLeadSalesConsultantUnactive(data.leadSalesConsultantUnactive || []); // Set new state
-        setLeadSalesConsultantActive(data.leadSalesConsultantActive || []); // Set new state
-        setLeadStatusUnactive(data.leadStatusUnactive || []); // Set new state
-        setLeadStatusActive(data.leadStatusActive || []); // Set new state
+        setLeadDealershipUnactive(data.leadDealershipUnactive || []); 
+        setLeadDealershipActive(data.leadDealershipActive || []); 
+        setLeadSalesConsultantUnactive(data.leadSalesConsultantUnactive || []); 
+        setLeadSalesConsultantActive(data.leadSalesConsultantActive || []); 
+        setLeadStatusUnactive(data.leadStatusUnactive || []); 
+        setLeadStatusActive(data.leadStatusActive || []); 
       })
       .catch((error) => {
         console.error("Error fetching configuration:", error);

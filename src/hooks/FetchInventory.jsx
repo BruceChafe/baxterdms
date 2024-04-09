@@ -1,46 +1,63 @@
 import { useState, useEffect } from "react";
 
-const useFetchInventory = (searchQuery = '') => {
-  const [inventory, setInventory] = useState([]);
-  const [filteredInventory, setFilteredInventory] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+const useFetchInventory = (searchQuery = '', page, rowsPerPage) => {
+  const [data, setData] = useState({
+    inventory: [],
+    filteredInventory: [],
+    loading: true,
+    error: null,
+  });
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchData = async () => {
       try {
-        setLoading(true);
-        setError("");
+        const inventoryResponse = await fetch(`https://api.jsonbin.io/v3/b/661189f7e41b4d34e4e04720`, {
+          headers: {
+            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu' 
+          }
+        });
 
-        const response = await fetch('http://localhost:8000/inventory');
-        if (!response.ok) throw new Error('Network response was not ok');
-
-        const data = await response.json();
-        setInventory(data);
-        setTotalCount(data.length);
+        const inventoryResult = await inventoryResponse.json();
+        const inventoryData = inventoryResult.record.inventory;
+        const startIndex = page * rowsPerPage;
+        const paginatedInventory = inventoryData.slice(startIndex, startIndex + rowsPerPage);
+  
+        setData({
+          inventory: paginatedInventory,
+          filteredInventory: paginatedInventory,
+          loading: false,
+          error: null,
+        });
+        setTotalCount(inventoryData.length);
       } catch (error) {
-        console.error("Error fetching inventory:", error);
-        setError("Failed to fetch inventory");
-      } finally {
-        setLoading(false);
+        setData((prevState) => ({
+          ...prevState,
+          loading: false,
+          error: error.message,
+        }));
       }
     };
 
-    fetchInventory();
-  }, []);
+    fetchData();
+  }, [page, rowsPerPage]);
 
   useEffect(() => {
     const query = typeof searchQuery === 'string' ? searchQuery.toLowerCase() : '';
-    const filtered = inventory.filter(item =>
+    const filtered = data.inventory.filter(item =>
       item.make.toLowerCase().includes(query) ||
       item.model.toLowerCase().includes(query)
     );
-    setFilteredInventory(filtered);
+    setData(prevState => ({
+      ...prevState,
+      filteredInventory: filtered,
+      loading: false,
+      error: null
+    }));
     setTotalCount(filtered.length);
-  }, [searchQuery, inventory]);
+  }, [searchQuery, data.inventory]);
 
-  return { inventory: filteredInventory, loading, error, totalCount };
+  return { inventory: data.filteredInventory, loading: data.loading, error: data.error, totalCount };
 };
 
 export { useFetchInventory };

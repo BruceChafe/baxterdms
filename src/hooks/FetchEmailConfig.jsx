@@ -1,35 +1,42 @@
 import { useState, useEffect } from "react";
 
-const useFetchEmailConfig = (leadNumber) => {
-  const [emailConfig, setEmailConfig] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+const useFetchEmailConfig = () => {
+  const [data, setData] = useState({
+    emailConfig: {},
+    loading: true,
+    error: null,
+  });
+
+  const fetchData = async () => {
+    try {
+      const emailConfigResponse = await fetch(`https://api.jsonbin.io/v3/b/661189e4ad19ca34f855fc43`, {
+        headers: {
+          'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
+        }
+      });
+
+      const json = await emailConfigResponse.json();
+      const emailConfig = json.record;
+
+      setData({
+        emailConfig: emailConfig,
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      setData((prevState) => ({
+        ...prevState,
+        loading: false,
+        error: error.message,
+      }));
+    }
+  };
 
   useEffect(() => {
-    const fetchEmailConfig = async () => {
-      try {
-        setLoading(true);   
-        setError("");
+    fetchData();
+  }, []); 
 
-        const response = await fetch(
-          `http://localhost:8000/emailconfig`
-        );
-
-        const emailConfigData = await response.json();
-
-        setEmailConfig(emailConfigData);
-      } catch (error) {
-        console.error("Error fetching email config:", error);
-        setError("Failed to fetch email config");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEmailConfig();
-  }, []);
-
-  return { emailConfig, setEmailConfig, loading, error };
+  return { data, refetch: fetchData };
 };
 
 export { useFetchEmailConfig };

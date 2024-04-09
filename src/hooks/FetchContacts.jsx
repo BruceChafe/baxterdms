@@ -18,12 +18,9 @@ const useFetchContacts = (page, rowsPerPage) => {
         });
 
         const contactsResult = await contactsResponse.json();
-
         const contactsData = contactsResult.record.contacts;
-
         const startIndex = page * rowsPerPage;
         const paginatedContacts = contactsData.slice(startIndex, startIndex + rowsPerPage);
-  
 
         setData({
           contacts: paginatedContacts,

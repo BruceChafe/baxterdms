@@ -6,17 +6,19 @@ const useFetchLeadConfig = () => {
     typeOptions: [],
     dealershipOptions: [],
     statusOptions: [],
+    loading: true,
+    error: null,
   });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchConfig = async () => {
+    const fetchData = async () => {
       try {
-        setLoading(true);
-        setError("");
+        const response = await fetch("https://api.jsonbin.io/v3/b/6611899dacd3cb34a8346fe2", {
+          headers: {
+            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
+          }
+        });
 
-        const response = await fetch("http://localhost:8000/configLeads/1");
         if (!response.ok) {
           throw new Error("Failed to fetch configuration data");
         }
@@ -24,23 +26,27 @@ const useFetchLeadConfig = () => {
         const configData = await response.json();
 
         setConfig({
-          sourceOptions: configData.leadSourceActive || [],
-          typeOptions: configData.leadTypeActive || [],
-          dealershipOptions: configData.leadDealershipActive || [],
-          statusOptions: configData.leadStatusActive || [],
+          sourceOptions: configData.record.leadSourceActive || [],
+          typeOptions: configData.record.leadTypeActive || [],
+          dealershipOptions: configData.record.leadDealershipActive || [],
+          statusOptions: configData.record.leadStatusActive || [],
+          loading: false,
+          error: null,
         });
       } catch (error) {
         console.error("Error fetching config:", error.message);
-        setError("Failed to fetch configuration");
-      } finally {
-        setLoading(false);
+        setConfig((prevState) => ({
+          ...prevState,
+          loading: false,
+          error: "Failed to fetch configuration",
+        }));
       }
     };
 
-    fetchConfig();
+    fetchData();
   }, []);
 
-  return { ...config, loading, error };
+  return { config };
 };
 
 export { useFetchLeadConfig };

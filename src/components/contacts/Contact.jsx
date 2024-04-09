@@ -51,19 +51,27 @@ const Contact = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/Contacts/${contactId}`
+        `https://api.jsonbin.io/v3/b/66118912acd3cb34a8346f91/${contactId}`,
+        {
+          headers: {
+            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
+          }
+        }
       );
       if (!response.ok) {
-        throw new Error("Failed to fetch contact data");
+        throw new Error('Failed to fetch contact data');
       }
       const data = await response.json();
-      setContact(data);
+      const contactData = data.record;
+      setContact(contactData);
+      console.log(contactData)
     } catch (error) {
-      console.error("Error fetching contact data:", error);
+      console.error('Error fetching contact data:', error);
     } finally {
       setLoading(false);
     }
   };
+  
 
   if (loading) {
     return <CircularProgress />;
@@ -80,33 +88,33 @@ const Contact = () => {
     }
   };
 
-  const handleSave = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/contacts/${contact.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify(editedContact),
-        }
-      );
+  // const handleSave = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:8000/contacts/${contact.id}`,
+  //       {
+  //         method: "PATCH",
+  //         headers: {
+  //           "Content-type": "application/json",
+  //         },
+  //         body: JSON.stringify(editedContact),
+  //       }
+  //     );
 
-      if (response.ok) {
-        setSnackbarMessage("Save successful");
-        fetchContactData();
-      } else {
-        setSnackbarMessage("Error: Failed to save");
-      }
+  //     if (response.ok) {
+  //       setSnackbarMessage("Save successful");
+  //       fetchContactData();
+  //     } else {
+  //       setSnackbarMessage("Error: Failed to save");
+  //     }
 
-      setSnackbarOpen(true);
-      setIsEmailPaperOpen(false);
-    } catch (error) {
-      setSnackbarMessage(`Error: ${error.message}`);
-      setSnackbarOpen(true);
-    }
-  };
+  //     setSnackbarOpen(true);
+  //     setIsEmailPaperOpen(false);
+  //   } catch (error) {
+  //     setSnackbarMessage(`Error: ${error.message}`);
+  //     setSnackbarOpen(true);
+  //   }
+  // };
 
   const handleContactInfoChange = (changed) => {
     setContactInfoChanged(changed);
