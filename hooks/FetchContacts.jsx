@@ -11,14 +11,12 @@ const useFetchContacts = () => {
     const fetchData = async () => {
       try {
         const url = `/api/contacts`;
-        const contactsResponse = await fetch(url);
-
-        if (!contactsResponse.ok) {
-          throw new Error('Failed to fetch data');
-        }
-
-        const contactsResult = await contactsResponse.json();
-        console.log("results", contactsResult)
+        const response = await fetch(url);
+        const text = await response.text(); // Get the full response body as text
+        console.log("Full response text:", text);
+  
+        // Try to parse JSON only after logging the text
+        const contactsResult = JSON.parse(text);
         setData({
           contacts: contactsResult.contacts,
           loading: false,
@@ -30,11 +28,13 @@ const useFetchContacts = () => {
           loading: false,
           error: error.message,
         }));
+        console.error("Error parsing JSON:", error);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   return { data };
 };
