@@ -11,7 +11,7 @@ const useFetchContacts = (page, rowsPerPage) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = `/api/contacts?page=${page}&limit=${rowsPerPage}`;
+        const url = `/api/contacts`;
         const contactsResponse = await fetch(url);
 
         if (!contactsResponse.ok) {
