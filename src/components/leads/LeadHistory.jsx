@@ -11,9 +11,9 @@ import {
 } from "@mui/material";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import SortingTable from "../tables/SortingTable";
-import { useFetchLeadTasks } from "../../hooks/FetchLeadTasks";
-import { useFetchLeadEmails } from "../../hooks/FetchLeadEmails";
-import UseSentEmailDialog from "../../hooks/SentEmailDialog";
+import { useFetchLeadTasks } from "../../../hooks/FetchLeadTasks";
+import { useFetchLeadEmails } from "../../../hooks/FetchLeadEmails";
+import UseSentEmailDialog from "../../../hooks/SentEmailDialog";
 
 const LeadHistory = ({ leadData }) => {
   const leadNumber = leadData?.leadNumber;

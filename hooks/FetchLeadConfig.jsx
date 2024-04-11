@@ -24,12 +24,13 @@ const useFetchLeadConfig = () => {
         }
 
         const configData = await response.json();
+        const leadConfig = configData.record.configLeads[0];
 
         setConfig({
-          sourceOptions: configData.record.leadSourceActive || [],
-          typeOptions: configData.record.leadTypeActive || [],
-          dealershipOptions: configData.record.leadDealershipActive || [],
-          statusOptions: configData.record.leadStatusActive || [],
+          sourceOptions: leadConfig.leadSourceActive || [],
+          typeOptions: leadConfig.leadTypeActive || [],
+          dealershipOptions: leadConfig.leadDealershipActive || [],
+          statusOptions: leadConfig.leadStatusActive || [],
           loading: false,
           error: null,
         });
@@ -46,7 +47,7 @@ const useFetchLeadConfig = () => {
     fetchData();
   }, []);
 
-  return { config };
+  return { ...config };
 };
 
 export { useFetchLeadConfig };

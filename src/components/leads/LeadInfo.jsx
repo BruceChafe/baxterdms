@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Box, Grid, Paper } from "@mui/material";
 import DropdownMenu from "../fields/renderDropdownMenu";
-import { useFetchLeadConfig } from "../../hooks/FetchLeadConfig";
+import { useFetchLeadConfig } from "../../../hooks/FetchLeadConfig";
 
 const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
-  const { sourceOptions, typeOptions, dealershipOptions, statusOptions } =
+  const { sourceOptions, typeOptions, dealershipOptions, statusOptions, loading, error } =
     useFetchLeadConfig();
 
   const [editedLead, setEditedLead] = useState(null);

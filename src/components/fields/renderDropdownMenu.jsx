@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextField, MenuItem } from '@mui/material';
 
-const DropdownMenu = ({ label, value, options, onChange, isDisabled = false }) => (
+const DropdownMenu = ({ label, value, options = [], onChange, isDisabled = false }) => (
   <TextField
     select
     label={label}
@@ -17,5 +17,6 @@ const DropdownMenu = ({ label, value, options, onChange, isDisabled = false }) =
     ))}
   </TextField>
 );
+
 
 export default DropdownMenu;

@@ -9,7 +9,7 @@ import {
   Container,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
-import { useFetchLeadsAndContacts } from "../../hooks/FechLeadsandContacts";
+import { useFetchLeadsAndContacts } from "../../../hooks/FechLeadsandContacts";
 import TitleLayout from "../layouts/TitleLayout";
 
 const LeadsTable = () => {

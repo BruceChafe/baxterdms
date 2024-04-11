@@ -11,7 +11,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useFetchEmailConfig } from "../../hooks/FetchEmailConfig";
+import { useFetchEmailConfig } from "../../../hooks/FetchEmailConfig";
 
 const EmailContact = ({
   id,

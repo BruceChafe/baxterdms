@@ -9,10 +9,10 @@ import {
   Container,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
-import { useFetchContacts } from "../../hooks/FetchContacts";
+import { useFetchContacts } from "../../../hooks/FetchContacts";
 import UploadData from "../upload/Upload";
-import FormatPhoneNumber from "../../hooks/FormatPhoneNumber";
-import FormatAddress from "../../hooks/FormatAddress";
+import FormatPhoneNumber from "../../../hooks/FormatPhoneNumber";
+import FormatAddress from "../../../hooks/FormatAddress";
 import TitleLayout from "../layouts/TitleLayout";
 
 const ContactTable = () => {
@@ -20,6 +20,7 @@ const ContactTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { data, totalCount } = useFetchContacts(page, rowsPerPage);
+  console.log(data)
 
   const { contacts, loading, error } = data;
 

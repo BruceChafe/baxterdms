@@ -8,7 +8,7 @@ import {
   Snackbar,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { useFetchEmailConfig } from "../../hooks/FetchEmailConfig";
+import { useFetchEmailConfig } from "../../../hooks/FetchEmailConfig";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import SaveEditButton from "../utilities/SaveEditButton";

@@ -16,13 +16,13 @@ import LeadVehicle from "./LeadVehicle";
 import CreateLeadTask from "./CreateLeadTask";
 import { EmailOutlined } from "@mui/icons-material";
 import AddTaskIcon from "@mui/icons-material/AddTask";
-import { useFetchLeadAndContact } from "../../hooks/FetchLeadAndContact.jsx";
+import { useFetchLeadAndContact } from "../../../hooks/FetchLeadAndContact.jsx";
 import TabbedLayout from "../layouts/TabbedLayout";
 import TitleLayout from "../layouts/TitleLayout";
 
 const Lead = () => {
   const { leadNumber } = useParams();
-  const { lead, contact, primaryEmail, loading, error, refetch } =
+  const { lead, contact, primaryEmail, loading, error } =
     useFetchLeadAndContact(leadNumber);
   const [tabValue, setTabValue] = useState("1");
   const [editedLead, setEditedLead] = useState(null);
@@ -64,60 +64,60 @@ const Lead = () => {
     }
   };
 
-  const handleSave = async () => {
-    try {
-      const leadResponse = await fetch(
-        `http://localhost:8000/leads/${lead?.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify(editedLead),
-        }
-      );
+  // const handleSave = async () => {
+  //   try {
+  //     const leadResponse = await fetch(
+  //       `http://localhost:8000/leads/${lead?.id}`,
+  //       {
+  //         method: "PATCH",
+  //         headers: {
+  //           "Content-type": "application/json",
+  //         },
+  //         body: JSON.stringify(editedLead),
+  //       }
+  //     );
 
-      const contactResponse = await fetch(
-        `http://localhost:8000/contacts/${contact?.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify(editedContact),
-        }
-      );
+  //     const contactResponse = await fetch(
+  //       `http://localhost:8000/contacts/${contact?.id}`,
+  //       {
+  //         method: "PATCH",
+  //         headers: {
+  //           "Content-type": "application/json",
+  //         },
+  //         body: JSON.stringify(editedContact),
+  //       }
+  //     );
 
-      const timestamp = new Date().toISOString();
+  //     const timestamp = new Date().toISOString();
 
-      if (leadResponse.ok && contactResponse.ok) {
-        setSnackbarMessage("Save successful");
-        setLeadInfoChanged(false);
-        setContactInfoChanged(false);
-        refetch();
-      } else {
-        setSnackbarMessage("Error: Failed to save");
-      }
+  //     if (leadResponse.ok && contactResponse.ok) {
+  //       setSnackbarMessage("Save successful");
+  //       setLeadInfoChanged(false);
+  //       setContactInfoChanged(false);
+  //       refetch();
+  //     } else {
+  //       setSnackbarMessage("Error: Failed to save");
+  //     }
 
-      const leadData = await leadResponse.json();
+  //     const leadData = await leadResponse.json();
 
-      const updatedHistory = [...leadData.history, [timestamp]];
+  //     const updatedHistory = [...leadData.history, [timestamp]];
 
-      await fetch(`http://localhost:8000/leads/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          history: updatedHistory,
-        }),
-      });
+  //     await fetch(`http://localhost:8000/leads/${id}`, {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         history: updatedHistory,
+  //       }),
+  //     });
 
-      setSnackbarOpen(true);
-    } catch (error) {
-      setSnackbarOpen(true);
-    }
-  };
+  //     setSnackbarOpen(true);
+  //   } catch (error) {
+  //     setSnackbarOpen(true);
+  //   }
+  // };
 
   const handleSaveSuccess = () => {
     setReloadLeadHistory((prevState) => !prevState);

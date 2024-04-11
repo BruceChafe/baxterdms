@@ -24,7 +24,7 @@ import { Link } from "react-router-dom";
 import CenteredTitleLayout from "../layouts/CenteredTitleLayout";
 import { getWeekDates } from "./WeekDates";
 import TaskDialog from "./TaskDialog";
-import { useFetchTasksForWeek } from "../../hooks/FetchTasksForWeek";
+import { useFetchTasksForWeek } from "../../../hooks/FetchTasksForWeek";
 
 const WeeklyCalendar = () => {
   const [refetchTrigger, setRefetchTrigger] = useState(false);

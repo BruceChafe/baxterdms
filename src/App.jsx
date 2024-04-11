@@ -52,7 +52,7 @@ const AppRoutes = () => {
 
   return user ? (
 <Grid container>
-  <Grid item xs={12} md={3} lg={2}> {/* Sidebar */}
+  <Grid item xs={12} md={3} lg={2}>
     <SidebarSwitcher />
   </Grid>
   <Grid item xs={12} md={9} lg={10} > 

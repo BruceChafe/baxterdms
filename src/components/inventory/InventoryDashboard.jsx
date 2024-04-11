@@ -9,10 +9,10 @@ import {
   Container
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
-import { useFetchInventory } from "../../hooks/FetchInventory";
+import { useFetchInventory } from "../../../hooks/FetchInventory";
 import UploadData from "../upload/Upload";
-import SearchComponent from "../../hooks/search/SearchComponent";
-import { useDebounce } from "../../hooks/search/DebouncedValue";
+import SearchComponent from "../../../hooks/search/SearchComponent";
+import { useDebounce } from "../../../hooks/search/DebouncedValue";
 import TitleLayout from "../layouts/TitleLayout";
 
 const InventoryDashboard = () => {

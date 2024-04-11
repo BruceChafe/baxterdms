@@ -9,7 +9,7 @@ import {
   Stack,
 } from "@mui/material";
 import LaunchIcon from "@mui/icons-material/Launch";
-import { useFetchLeads } from "../../hooks/FetchLeads";
+import { useFetchLeads } from "../../../hooks/FetchLeads";
 import SortingTable from "../tables/SortingTable";
 import { Link } from "react-router-dom";
 

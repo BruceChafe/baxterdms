@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Typography,
   Box,
@@ -15,7 +15,7 @@ import { EmailOutlined } from "@mui/icons-material";
 import EmailContact from "./EmailCustomer";
 import TabbedLayout from "../layouts/TabbedLayout";
 import TitleLayout from "../layouts/TitleLayout";
-import { useFetchContact } from "../../hooks/FetchContact";
+import { useFetchContact } from "../../../hooks/FetchContact";
 
 const Contact = () => {
   const { contactId } = useParams();

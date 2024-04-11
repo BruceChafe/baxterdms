@@ -11,23 +11,20 @@ const useFetchContacts = (page, rowsPerPage) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const contactsResponse = await fetch(`https://api.jsonbin.io/v3/b/66118912acd3cb34a8346f91`, {
-          headers: {
-            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu' 
-          }
-        });
+        const url = `/api/contacts?page=${page}&limit=${rowsPerPage}`;
+        const contactsResponse = await fetch(url);
+
+        if (!contactsResponse.ok) {
+          throw new Error('Failed to fetch data');
+        }
 
         const contactsResult = await contactsResponse.json();
-        const contactsData = contactsResult.record.contacts;
-        const startIndex = page * rowsPerPage;
-        const paginatedContacts = contactsData.slice(startIndex, startIndex + rowsPerPage);
-
         setData({
-          contacts: paginatedContacts,
+          contacts: contactsResult.contacts,
           loading: false,
           error: null,
         });
-        setTotalCount(contactsData.length);
+        setTotalCount(contactsResult.totalCount);
       } catch (error) {
         setData((prevState) => ({
           ...prevState,
