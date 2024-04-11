@@ -19,7 +19,7 @@ const ContactTable = () => {
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { data, totalCount } = useFetchContacts(page, rowsPerPage);
+  const { data } = useFetchContacts();
   console.log(data)
 
   const { contacts, loading, error } = data;
@@ -115,7 +115,7 @@ const ContactTable = () => {
             </Alert>
           )}
           <Paper sx={{ mt: 2, mb: 2 }}>
-            <TablePagination
+            {/* <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
               count={totalCount}
@@ -124,7 +124,7 @@ const ContactTable = () => {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
               sx={{ mr: 5 }}
-            />
+            /> */}
           </Paper>
         </>
       )}

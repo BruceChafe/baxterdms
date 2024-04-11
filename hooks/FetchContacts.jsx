@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 
-const useFetchContacts = (page, rowsPerPage) => {
+const useFetchContacts = () => {
   const [data, setData] = useState({
     contacts: [],
     loading: true,
     error: null,
   });
-  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,12 +18,12 @@ const useFetchContacts = (page, rowsPerPage) => {
         }
 
         const contactsResult = await contactsResponse.json();
+        console.log("results", contactsResult)
         setData({
           contacts: contactsResult.contacts,
           loading: false,
           error: null,
         });
-        setTotalCount(contactsResult.totalCount);
       } catch (error) {
         setData((prevState) => ({
           ...prevState,
@@ -35,9 +34,9 @@ const useFetchContacts = (page, rowsPerPage) => {
     };
 
     fetchData();
-  }, [page, rowsPerPage]);
+  }, []);
 
-  return { data, totalCount };
+  return { data };
 };
 
 export { useFetchContacts };

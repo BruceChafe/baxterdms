@@ -6,6 +6,17 @@ const options = {};
 let client;
 let clientPromise;
 
+try {
+    if (!global._mongoClientPromise) {
+        const client = new MongoClient(uri, options);
+        global._mongoClientPromise = client.connect();
+    }
+    clientPromise = global._mongoClientPromise;
+} catch (error) {
+    console.error("Failed to connect to MongoDB", error);
+    throw new Error("Failed to connect to MongoDB");
+}
+
 if (!uri) {
     throw new Error('Please add your Mongo URI to .env.local');
 }
