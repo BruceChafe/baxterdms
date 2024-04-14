@@ -9,32 +9,48 @@ const useFetchContacts = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const url = 'https://data.mongodb-api.com/app/data-ohuxb/endpoint/data/v1/action/find';
+      const apiKey = 'oueAwOMlIrR7Au2cVdjSvMM9ey319c5GDzbNyTCIJT9E1GIZC7O2kRsiFKzkPgrN';
+      const requestBody = {
+        collection: "contacts",
+        database: "baxterdms",
+        dataSource: "baxterDMS"
+      };
+
       try {
-        const url = `/api/contacts`;
-        const response = await fetch(url);
-        const text = await response.text(); // Get the full response body as text
-        console.log("Full response text:", text);
-  
-        // Try to parse JSON only after logging the text
-        const contactsResult = JSON.parse(text);
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'api-key': apiKey
+          },
+          body: JSON.stringify(requestBody)
+        });
+
+        console.log(response)
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
         setData({
-          contacts: contactsResult.contacts,
+          contacts: result.documents,
           loading: false,
           error: null,
         });
       } catch (error) {
-        setData((prevState) => ({
-          ...prevState,
+        console.error("Error fetching contacts:", error);
+        setData({
+          contacts: [],
           loading: false,
           error: error.message,
-        }));
-        console.error("Error parsing JSON:", error);
+        });
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
   return { data };
 };
