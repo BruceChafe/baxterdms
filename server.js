@@ -1,7 +1,6 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
 import cors from 'cors';
-import { connectToDatabase } from './utilities/mongodb.js';
 import fetch from 'node-fetch'; // Ensure you have 'node-fetch' installed
 
 const app = express();
@@ -13,7 +12,7 @@ app.use(express.json());
 // Proxy endpoint to MongoDB Atlas Data API
 app.post('/api/data/contacts', async (req, res) => {
     const url = 'https://data.mongodb-api.com/app/data-ohuxb/endpoint/data/v1/action/find';
-    const apiKey = 'your_api_key_here'; // Be sure to secure your API key, ideally load from environment variables
+    const apiKey = 'oueAwOMlIrR7Au2cVdjSvMM9ey319c5GDzbNyTCIJT9E1GIZC7O2kRsiFKzkPgrN';
     const body = {
         collection: "contacts",
         database: "baxterdms",
@@ -72,7 +71,7 @@ app.post('/send-email', async (req, res) => {
         res.send({ success: true, messageId: info.messageId });
     } catch (error) {
         console.error('Error:', error.message);
-        res.status(500).send({ success: false, error: error.message });
+        res.status(500). send({ success: false, error: error.message });
     }
 });
 
