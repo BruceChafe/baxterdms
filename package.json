@@ -21,6 +21,7 @@
     "@mui/x-data-grid": "^6.19.2",
     "@mui/x-date-pickers": "^6.18.5",
     "@react-email/render": "^0.0.10",
+    "@vercel/kv": "^1.0.1",
     "axios": "^1.6.8",
     "cors": "^2.8.5",
     "dayjs": "^1.11.10",

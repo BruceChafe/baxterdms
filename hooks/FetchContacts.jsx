@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { collection, query, getDocs } from "firebase/firestore";
+import { db } from "../src/firebase";
 
 const useFetchContacts = () => {
   const [data, setData] = useState({
@@ -9,33 +11,16 @@ const useFetchContacts = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const url = 'https://data.mongodb-api.com/app/data-ohuxb/endpoint/data/v1/action/find';
-      const apiKey = 'oueAwOMlIrR7Au2cVdjSvMM9ey319c5GDzbNyTCIJT9E1GIZC7O2kRsiFKzkPgrN';
-      const requestBody = {
-        collection: "contacts",
-        database: "baxterdms",
-        dataSource: "baxterDMS"
-      };
-
       try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'api-key': apiKey
-          },
-          body: JSON.stringify(requestBody)
-        });
+        const q = query(collection(db, "contacts"));  // Define a query against the "contacts" collection
+        const querySnapshot = await getDocs(q);
+        const contactsArray = querySnapshot.docs.map(doc => ({
+          id: doc.id,  // Optionally include the document ID
+          ...doc.data()  // Spread all fields of the document data
+        }));
 
-        console.log(response)
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const result = await response.json();
         setData({
-          contacts: result.documents,
+          contacts: contactsArray,
           loading: false,
           error: null,
         });
