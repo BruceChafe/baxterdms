@@ -16,10 +16,9 @@ import LeadVehicle from "./LeadVehicle";
 import CreateLeadTask from "./CreateLeadTask";
 import { EmailOutlined } from "@mui/icons-material";
 import AddTaskIcon from "@mui/icons-material/AddTask";
-import { useFetchLeadAndContact } from "../../../hooks/FetchLeadAndContact.jsx";
 import TabbedLayout from "../layouts/TabbedLayout";
 import TitleLayout from "../layouts/TitleLayout";
-
+import { useFetchLeadAndContact } from "../../../hooks/FetchLeadAndContact";
 const Lead = () => {
   const { leadNumber } = useParams();
   const { lead, contact, primaryEmail, loading, error } =
@@ -40,6 +39,11 @@ const Lead = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isEditable, setIsEditable] = useState(false);
 
+  useEffect(() => {
+    setEditedLead(lead);
+    setEditedContact(contact);
+  }, [lead, contact, primaryEmail]);
+
   const handleSendEmailClick = () => {
     setSendEmailOpen(true);
   };
@@ -52,88 +56,21 @@ const Lead = () => {
     setTabValue(newValue);
   };
 
-  useEffect(() => {
-    setEditedLead(lead);
-    setEditedContact(contact);
-  }, [lead, contact, primaryEmail]);
-
   const toggleEdit = () => {
     setIsEditable(!isEditable);
-    if (isEditable) {
-      handleSave();
-    }
-  };
-
-  // const handleSave = async () => {
-  //   try {
-  //     const leadResponse = await fetch(
-  //       `http://localhost:8000/leads/${lead?.id}`,
-  //       {
-  //         method: "PATCH",
-  //         headers: {
-  //           "Content-type": "application/json",
-  //         },
-  //         body: JSON.stringify(editedLead),
-  //       }
-  //     );
-
-  //     const contactResponse = await fetch(
-  //       `http://localhost:8000/contacts/${contact?.id}`,
-  //       {
-  //         method: "PATCH",
-  //         headers: {
-  //           "Content-type": "application/json",
-  //         },
-  //         body: JSON.stringify(editedContact),
-  //       }
-  //     );
-
-  //     const timestamp = new Date().toISOString();
-
-  //     if (leadResponse.ok && contactResponse.ok) {
-  //       setSnackbarMessage("Save successful");
-  //       setLeadInfoChanged(false);
-  //       setContactInfoChanged(false);
-  //       refetch();
-  //     } else {
-  //       setSnackbarMessage("Error: Failed to save");
-  //     }
-
-  //     const leadData = await leadResponse.json();
-
-  //     const updatedHistory = [...leadData.history, [timestamp]];
-
-  //     await fetch(`http://localhost:8000/leads/${id}`, {
-  //       method: "PATCH",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         history: updatedHistory,
-  //       }),
-  //     });
-
-  //     setSnackbarOpen(true);
-  //   } catch (error) {
-  //     setSnackbarOpen(true);
-  //   }
-  // };
-
-  const handleSaveSuccess = () => {
-    setReloadLeadHistory((prevState) => !prevState);
-  };
-
-  const handleLeadInfoChange = (changed) => {
-    setLeadInfoChanged(changed);
-  };
-
-  const handleContactInfoChange = (changed) => {
-    setContactInfoChanged(changed);
   };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+
+  if (loading) {
+    return <CircularProgress sx={{ m: 2 }} />;
+  }
+
+  if (error) {
+    return <Typography color="error">Error: {error}</Typography>;
+  }
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
@@ -149,13 +86,13 @@ const Lead = () => {
           }
           isEditable={isEditable}
           onToggleEdit={toggleEdit}
-          saveDisabled={!contactInfoChanged}
+          saveDisabled={!contactInfoChanged && !leadInfoChanged}
         />
       ) : (
-        <CircularProgress sx={{ m: 2 }} />
+        <Typography>No contact data available</Typography>
       )}
       <Box>
-        <TabbedLayout
+        {/* <TabbedLayout
           tabs={[
             {
               label: "Summary",
@@ -187,7 +124,7 @@ const Lead = () => {
               component: () => <LeadVehicle leadData={lead} />,
             },
           ]}
-        />
+        /> */}
       </Box>
       <BottomNavigation
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
@@ -204,7 +141,7 @@ const Lead = () => {
           </IconButton>
         </Tooltip>
       </BottomNavigation>
-      <EmailContact
+      {/* <EmailContact
         key={primaryEmail}
         id={id}
         primaryEmail={primaryEmail}
@@ -212,14 +149,14 @@ const Lead = () => {
         onClose={() => setSendEmailOpen(false)}
         lead={lead}
         onSaveSuccess={handleSaveSuccess}
-      />
-      <CreateLeadTask
+      /> */}
+      {/* <CreateLeadTask
         lead={lead}
         id={leadId}
         open={createNewLeadOpen}
         onClose={() => setCreateNewLeadTaskOpen(false)}
         onSaveSuccess={handleSaveSuccess}
-      />
+      /> */}
     </Box>
   );
 };

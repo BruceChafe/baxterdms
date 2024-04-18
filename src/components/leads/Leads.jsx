@@ -9,14 +9,14 @@ import {
   Container,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
-import { useFetchLeadsAndContacts } from "../../../hooks/FechLeadsandContacts";
 import TitleLayout from "../layouts/TitleLayout";
+import { useFetchLeads } from "../../../hooks/FetchLeads";
 
 const LeadsTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { data, totalCount } = useFetchLeadsAndContacts(page, rowsPerPage);
-  const { combinedData, loading, error } = data;
+  const { data, reload } = useFetchLeads(); // Ensure to handle reload if needed
+  const { leads, loading, error } = data;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -27,12 +27,14 @@ const LeadsTable = () => {
     setPage(0);
   };
 
-  const transformedData = combinedData.map((lead) => {
-    const firstName = lead.contacts[0]?.firstName || "No contact";
-    const fullName = `${lead.contacts[0]?.firstName || ""} ${
-      lead.contacts[0]?.lastName || ""
-    }`.trim();
-    const email = lead.contacts[0]?.primaryEmail || "No email";
+  const transformedData = leads.map((lead) => {
+    const hasContacts = lead.contacts && lead.contacts.length > 0;
+    const firstName = hasContacts ? lead.contacts[0].firstName : "No contact";
+    const lastName = hasContacts ? lead.contacts[0].lastName : "";
+    const email = hasContacts ? lead.contacts[0].primaryEmail : "No email";
+  
+    const fullName = hasContacts ? `${firstName} ${lastName}`.trim() : "No contact details";
+  
     return {
       ...lead,
       contactFirstName: firstName,
@@ -40,6 +42,7 @@ const LeadsTable = () => {
       email,
     };
   });
+  
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
@@ -59,6 +62,14 @@ const LeadsTable = () => {
             </Typography>
           </Box>
         </Container>
+      ) : error ? (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          Error: {error}
+        </Alert>
+      ) : leads.length === 0 ? (
+        <Typography sx={{ mt: 2, textAlign: "center" }}>
+          No leads found.
+        </Typography>
       ) : (
         <>
           <BasicTable
@@ -75,16 +86,11 @@ const LeadsTable = () => {
             page={page}
             rowsPerPage={rowsPerPage}
           />
-          {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              Error: {error}
-            </Alert>
-          )}
           <Paper sx={{ mt: 2, mb: 2 }}>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
-              count={totalCount}
+              count={leads.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

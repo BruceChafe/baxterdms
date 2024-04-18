@@ -1,16 +1,22 @@
 import React, { useState } from "react";
+import { db } from "../../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import {
   Box,
   TextField,
   Typography,
   Button,
-  TablePagination,
-  Divider,
-  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Paper,
+  Grid,
+  Divider,
 } from "@mui/material";
 import NewLeadForm from "./NewLeadForm";
-import BasicTable from "../tables/BasicTable";
 import NewContact from "../contacts/NewContact";
 
 const NewLeadComponent = () => {
@@ -22,66 +28,47 @@ const NewLeadComponent = () => {
   });
   const [searchResults, setSearchResults] = useState([]);
   const [noResults, setNoResults] = useState(false);
+  const [searchPerformed, setSearchPerformed] = useState(false);
   const [showNewLeadForm, setShowNewLeadForm] = useState(false);
   const [contactIdForNewLead, setContactIdForNewLead] = useState(null);
-  const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [showNewContactForm, setShowNewContactForm] = useState(false);
-  const [newContactSubmitted, setNewContactSubmitted] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setSearchData((prevSearchData) => ({
-      ...prevSearchData,
+    setSearchData((prev) => ({
+      ...prev,
       [name]: value,
     }));
+    setSearchPerformed(false);
   };
 
-  const handleSearch = () => {
-    const queryParams = new URLSearchParams();
+  const handleSearch = async () => {
+    setSearchPerformed(true);
+    try {
+      const contactQuery = query(
+        collection(db, "contacts"),
+        ...Object.entries(searchData)
+          .filter(([_, value]) => value.trim() !== "")
+          .map(([key, value]) => where(key, "==", value.trim()))
+      );
 
-    Object.entries(searchData).forEach(([key, value]) => {
-      if (value.trim() !== "") {
-        queryParams.append(key, value);
-      }
-    });
-
-    fetch(`http://localhost:8000/Contacts?${queryParams.toString()}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setSearchResults(data);
-        setNoResults(data.length === 0);
-        setTotalCount(data.length);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setNoResults(true);
-      });
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+      const querySnapshot = await getDocs(contactQuery);
+      setSearchResults(
+        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      );
+      setNoResults(querySnapshot.empty);
+    } catch (error) {
+      console.error("Error searching contacts:", error);
+      setNoResults(true);
+    }
   };
 
   const handleNewLeadClick = (contactId) => {
     setContactIdForNewLead(contactId);
     setShowNewLeadForm(true);
-  };
-
-  const handleNewContactClick = () => {
-    setShowNewContactForm(true);
-  };
-
-  const handleNewContactCreated = (newContactId) => {
-    setContactIdForNewLead(newContactId);
     setShowNewContactForm(false);
-    setShowNewLeadForm(true);
   };
 
   const handleCloseForm = () => {
@@ -89,11 +76,15 @@ const NewLeadComponent = () => {
     setShowNewContactForm(false);
   };
 
+  const handleNewContactClick = () => {
+    setShowNewContactForm(true);
+    setShowNewLeadForm(false);
+  };
+
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
-      {!showNewLeadForm && !showNewContactForm && !newContactSubmitted && (
+      {!showNewLeadForm && !showNewContactForm && (
         <>
-
           <Typography variant="h4" mb={2}>
             New Lead
           </Typography>
@@ -104,143 +95,119 @@ const NewLeadComponent = () => {
                 Search Existing Contacts
               </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="First Name"
-                    name="firstName"
-                    variant="outlined"
-                    mb={2}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSearch();
+                {Object.keys(searchData).map((key) => (
+                  <Grid item xs={12} md={6} key={key}>
+                    <TextField
+                      onChange={handleInputChange}
+                      fullWidth
+                      label={
+                        key.charAt(0).toUpperCase() +
+                        key
+                          .slice(1)
+                          .replace(/([A-Z])/g, " $1")
+                          .trim()
                       }
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Last Name"
-                    name="lastName"
-                    variant="outlined"
-                    mb={2}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSearch();
-                      }
-                    }}
-                  />
-                </Grid>
+                      name={key}
+                      variant="outlined"
+                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    />
+                  </Grid>
+                ))}
               </Grid>
-              <Grid container spacing={2} mt={1}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Email"
-                    name="primaryEmail"
-                    variant="outlined"
-                    mb={2}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSearch();
-                      }
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Phone Number"
-                    name="mobilePhone"
-                    variant="outlined"
-                    mb={2}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSearch();
-                      }
-                    }}
-                  />
-                </Grid>
-              </Grid>
-
               <Button variant="contained" onClick={handleSearch} sx={{ mt: 2 }}>
                 Search
               </Button>
             </Box>
           </Paper>
-          <Divider />
 
-          {noResults ? (
-            <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-              <Box mb={1} mt={1} p={1}>
-                {" "}
-                <Box>
-                  <Typography variant="body">No results found.</Typography>
-                </Box>
-                <Box>
-                  {" "}
-                  <Button
-                    variant={"contained"}
-                    onClick={handleNewContactClick}
-                    sx={{ mt: 2 }}
-                  >
-                    New Contact
-                  </Button>
-                </Box>
-              </Box>
-            </Paper>
-          ) : (
-            searchResults.length > 0 && (
-              <>
-                <Paper sx={{ pt: 1, pl: 1, pr: 1, mt: 2, mb: 2 }}>
-                  <Box mb={1} mt={1} p={1}>
-                    <BasicTable
-                      title="Results"
-                      data={searchResults.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )}
-                      columns={[
-                        { field: "firstName", header: "First Name" },
-                        { field: "lastName", header: "Last Name" },
-                        { field: "primaryEmail", header: "Email" },
-                        { field: "mobilePhone", header: "Phone" },
-                      ]}
-                      onRowClick={(row) => handleNewLeadClick(row.id)}
-                      action={"Create Lead"}
-                    />
-
-                    <TablePagination
-                      rowsPerPageOptions={[5, 10, 25, 50, 100]}
-                      component="div"
-                      count={totalCount}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                  </Box>
-                </Paper>
-
-                <Divider />
-
-                <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-                  <Box mb={1} mt={1} p={1} j>
-                    <Button
-                      variant={"contained"}
-                      onClick={handleNewContactClick}
+          {searchPerformed && (
+            <>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell
+                      align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
                     >
-                      New Contact
-                    </Button>
-                  </Box>
-                </Paper>
-              </>
-            )
+                      First Name
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
+                    >
+                      Last Name
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
+                    >
+                      Email
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
+                    >
+                      Phone
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
+                    >
+                      Actions
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {searchResults.map((row) => (
+                    <TableRow key={row.id} hover>
+                      <TableCell align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }} component="th" scope="row">
+                        {row.firstName}
+                      </TableCell>
+                      <TableCell align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }} >{row.lastName}</TableCell>
+                      <TableCell align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}>{row.primaryEmail}</TableCell>
+                      <TableCell align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}>{row.mobilePhone}</TableCell>
+                      <TableCell align="center"
+                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}>
+                        <Button
+                          variant="outlined"
+                          onClick={() => handleNewLeadClick(row.id)}
+                        >
+                          Create Lead
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Button
+            variant="contained"
+            onClick={handleNewContactClick}
+            sx={{ mt: 2 }}
+          >
+            New Contact
+          </Button>
+          </>
+          )}
+
+          {noResults && (
+            <Paper sx={{ p: 1, mt: 2, mb: 2, textAlign: "center" }}>
+              <Typography>
+                No results found. You may want to create a new contact.
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={handleNewContactClick}
+                sx={{ mt: 2 }}
+              >
+                New Contact
+              </Button>
+            </Paper>
           )}
         </>
       )}
@@ -251,11 +218,12 @@ const NewLeadComponent = () => {
           contactId={contactIdForNewLead}
         />
       )}
-
       {showNewContactForm && (
         <NewContact
           onCloseForm={handleCloseForm}
-          onNewContactCreated={handleNewContactCreated}
+          onNewContactCreated={setContactIdForNewLead}
+          navigateTo="leads"
+          leadId={contactIdForNewLead}
         />
       )}
     </Box>

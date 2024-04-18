@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import { collection, query, getDocs } from "firebase/firestore";
+import { db } from "../src/firebase";
 
-const useFetchLeads = (leadNumbers) => {
+const useFetchLeads = () => {
   const [data, setData] = useState({
     leads: [],
     loading: true,
@@ -9,36 +11,31 @@ const useFetchLeads = (leadNumbers) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setData(prev => ({ ...prev, loading: true })); // Start loading
       try {
-        const leadsResponse = await fetch(`https://api.jsonbin.io/v3/b/66107703acd3cb34a8340b68/`, {
-          headers: {
-            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
-          }
-        });
+        const q = query(collection(db, "leads"));
+        const querySnapshot = await getDocs(q);
+        const leadsArray = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
-        if (!leadsResponse.ok) {
-          throw new Error(`Failed to fetch leads`);
-        }
-
-        const leadsResult = await leadsResponse.json();
-        const leadsData = leadsResult.record.leads;
-
-        // If you need to filter leads by leadNumbers
-        // const filteredLeads = leadsData.filter(lead => leadNumbers.includes(lead.leadNumber));
-
-        setData({ 
-          leads: leadsData, // or filteredLeads if filtering
+        setData({
+          leads: leadsArray,
           loading: false,
-          error: null
+          error: null,
         });
       } catch (error) {
-        setData({ leads: [], loading: false, error: error.message });
+        console.error("Error fetching leads:", error);
+        setData({
+          leads: [],
+          loading: false,
+          error: error.message,
+        });
       }
     };
 
     fetchData();
-  }, [leadNumbers]); // Ensure leadNumbers is stable, consider memoization if it's derived
+  }, []);
 
   return { data };
 };

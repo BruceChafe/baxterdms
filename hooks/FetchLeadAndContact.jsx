@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { db } from "../src/firebase";
+ import { doc, getDoc, query, where, getDocs, collection } from "firebase/firestore";
 
-function useFetchLeadAndContact(leadNumber) {
+const useFetchLeadAndContact = (leadId) => {
   const [data, setData] = useState({
-    lead: null, // Assuming these should be singular entities based on usage
+    lead: null,
     contact: null,
     primaryEmail: null,
     loading: true,
@@ -11,54 +13,59 @@ function useFetchLeadAndContact(leadNumber) {
 
   useEffect(() => {
     const fetchData = async () => {
-      setData(prev => ({ ...prev, loading: true })); // Explicitly set loading to true at the start of a fetch operation
-      try{
-        const leadResponse = await fetch(
-          `https://api.jsonbin.io/v3/b/66118931e41b4d34e4e046b7`,
-          {
-            headers: {
-              'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
-            }
-          });
-        const contactResponse = await fetch(
-          `https://api.jsonbin.io/v3/b/66118912acd3cb34a8346f91`,
-          {
-            headers: {
-              'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
-            }
-          });
+      if (!leadId) {
+        setData({ ...data, loading: false, error: "No lead ID provided" });
+        return;
+      }
 
-        if (!leadResponse.ok || !contactResponse.ok) {
-          throw new Error("Failed to fetch data from JSONBin");
+      setData(prev => ({ ...prev, loading: true }));
+
+      try {
+        // Fetch lead data
+        const leadRef = doc(db, "leads", leadId);
+        const leadSnap = await getDoc(leadRef);
+
+        if (!leadSnap.exists()) {
+          throw new Error("Lead not found");
         }
 
-        const leadResult = await leadResponse.json();
-        console.log("leadResult", leadResult)
-        const contactResult = await contactResponse.json();
-        console.log("contactResult", contactResult)
+        const leadData = leadSnap.data();
 
+        // Fetch contact data based on leadId
+        const contactQuery = query(
+          collection(db, "contacts"),
+          where("leadIDs", "array-contains", leadId)
+        );
 
-        const leadData = leadResult.record.leads.find(lead => lead.leadNumber === parseInt(leadNumber, 10));
-        const contactData = contactResult.record.contacts.find(contact => contact.leadNumbers && contact.leadNumbers.includes(parseInt(leadNumber, 10)));
+        const contactSnapshot = await getDocs(contactQuery);
+
+        if (contactSnapshot.empty) {
+          throw new Error("Contact not found");
+        }
+
+        // Assuming there's only one contact per lead for simplicity
+        const contactData = contactSnapshot.docs[0].data();
+
+        // Set primaryEmail to null if it's not available
+        const primaryEmail = contactData.primaryEmail || null;
 
         setData({
-          lead: leadData || null,
-          contact: contactData || null,
-          primaryEmail: contactData?.primaryEmail || null,
+          lead: leadData,
+          contact: contactData,
+          primaryEmail: primaryEmail,
           loading: false,
           error: null,
         });
-        console.log("Lead Data", leadData),
-        console.log("Contact Data", contactData)
+
       } catch (error) {
-        setData((prev) => ({ ...prev, loading: false, error: error.message }));
+        setData(prev => ({ ...prev, loading: false, error: error.message }));
       }
     };
 
     fetchData();
-  }, [leadNumber]);
+  }, [leadId]);
 
   return { ...data };
-}
+};
 
 export { useFetchLeadAndContact };

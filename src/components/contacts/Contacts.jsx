@@ -17,9 +17,9 @@ import TitleLayout from "../layouts/TitleLayout";
 
 const ContactTable = () => {
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
+  const { data, reload } = useFetchContacts();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { data } = useFetchContacts();
   console.log(data)
 
   const { contacts, loading, error } = data;
@@ -115,26 +115,23 @@ const ContactTable = () => {
             </Alert>
           )}
           <Paper sx={{ mt: 2, mb: 2 }}>
-            {/* <TablePagination
+            <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
-              count={totalCount}
+              count={contacts.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
               sx={{ mr: 5 }}
-            /> */}
+            />
           </Paper>
         </>
       )}
       <UploadData
         showPanel={uploadPanelOpen}
         onClose={handleCloseUploadPanel}
-        updateData={useFetchContacts}
-        uploadUrl="http://localhost:8000/contacts"
-        uploadMethod="POST"
-        stepLabels={["Upload Contacts"]}
+        updateData={reload}
       />
     </Box>
   );

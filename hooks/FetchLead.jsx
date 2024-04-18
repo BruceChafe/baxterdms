@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { db } from '../path/to/your/firebase/config'; // Adjust the path as necessary
+import { doc, getDoc } from 'firebase/firestore';
 
 const useFetchLead = (leadId) => {
   const [lead, setLead] = useState(null);
@@ -16,28 +18,14 @@ const useFetchLead = (leadId) => {
       setError('');
 
       try {
-        const response = await fetch(
-          `https://api.jsonbin.io/v3/b/66118912acd3cb34a8346f91`,
-          {
-            headers: {
-              'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
-            }
-          }
-        );
+        const leadDocRef = doc(db, 'leads', leadId); // Specify the collection and document ID
+        const docSnapshot = await getDoc(leadDocRef);
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch lead data');
-        }
-
-        const data = await response.json();
-        const leads = data.record.leads;
-        const leadData = leads.find(lead => lead.id === parseInt(leadId, 10));
-
-        if (leadData) {
-          setLead(leadData);
-        } else {
+        if (!docSnapshot.exists()) {
           throw new Error(`Lead with id=${leadId} not found`);
         }
+
+        setLead(docSnapshot.data()); // Set the lead data from Firestore document
       } catch (error) {
         console.error('Error fetching lead data:', error);
         setError(`Failed to fetch lead. ${error.message}`);
