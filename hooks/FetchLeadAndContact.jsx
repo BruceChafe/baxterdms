@@ -21,7 +21,6 @@ const useFetchLeadAndContact = (leadId) => {
       setData(prev => ({ ...prev, loading: true }));
 
       try {
-        // Fetch lead data
         const leadRef = doc(db, "leads", leadId);
         const leadSnap = await getDoc(leadRef);
 
@@ -31,7 +30,6 @@ const useFetchLeadAndContact = (leadId) => {
 
         const leadData = leadSnap.data();
 
-        // Fetch contact data based on leadId
         const contactQuery = query(
           collection(db, "contacts"),
           where("leadIDs", "array-contains", leadId)
@@ -43,10 +41,8 @@ const useFetchLeadAndContact = (leadId) => {
           throw new Error("Contact not found");
         }
 
-        // Assuming there's only one contact per lead for simplicity
         const contactData = contactSnapshot.docs[0].data();
 
-        // Set primaryEmail to null if it's not available
         const primaryEmail = contactData.primaryEmail || null;
 
         setData({

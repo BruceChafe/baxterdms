@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { db } from '../path/to/your/firebase/config'; // Adjust the path as necessary
+import { db } from '../src/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 const useFetchLead = (leadId) => {

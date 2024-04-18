@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { db } from "../src/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const useFetchLeadConfig = () => {
   const [config, setConfig] = useState({
@@ -13,19 +15,14 @@ const useFetchLeadConfig = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://api.jsonbin.io/v3/b/6611899dacd3cb34a8346fe2", {
-          headers: {
-            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch configuration data");
+        const docRef = doc(db, 'leadConfig', 'configData');
+        const docSnap = await getDoc(docRef);
+  
+        if (!docSnap.exists()) {
+          throw new Error("Document does not exist!");
         }
-
-        const configData = await response.json();
-        const leadConfig = configData.record.configLeads[0];
-
+  
+        const leadConfig = docSnap.data();
         setConfig({
           sourceOptions: leadConfig.leadSourceActive || [],
           typeOptions: leadConfig.leadTypeActive || [],
@@ -35,17 +32,18 @@ const useFetchLeadConfig = () => {
           error: null,
         });
       } catch (error) {
-        console.error("Error fetching config:", error.message);
+        console.error("Error fetching config from Firestore:", error);
         setConfig((prevState) => ({
           ...prevState,
           loading: false,
-          error: "Failed to fetch configuration",
+          error: "Failed to fetch configuration from Firestore: " + error.message,
         }));
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   return { ...config };
 };

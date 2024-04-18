@@ -9,9 +9,8 @@ import {
   Stack,
 } from "@mui/material";
 import LaunchIcon from "@mui/icons-material/Launch";
-import { useFetchLeads } from "../../../hooks/FetchLeads";
-import SortingTable from "../tables/SortingTable";
 import { Link } from "react-router-dom";
+import SortingTable from "../tables/SortingTable";
 
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
@@ -25,7 +24,6 @@ const formatTimestamp = (timestamp) => {
     minute: "2-digit",
     hour12: true,
   });
-
   return [datePart, timePart];
 };
 
@@ -35,18 +33,18 @@ const columns = [
   { field: "leadStatus", header: "Lead Status" },
   { field: "leadDetails", header: "Details" },
   { field: "leadVehicles", header: "Vehicle" },
-  { field: "leadVehicles", header: "Employee" },
+  { field: "leadEmployee", header: "Employee" },  // Corrected from previous duplicate 'Vehicle' entry
   { field: "leadDealership", header: "Dealership" },
 ];
 
 const ContactLeads = ({ contact }) => {
-  const { leads, loading, error } = useFetchLeads(contact?.leadNumbers || []);
+  const { leads, loading, error } = useFetchLeads(contact?.leadIDs || []);
 
   if (loading) return <CircularProgress />;
   if (error) return <Alert severity="error">Error: {error}</Alert>;
 
   const leadsRows = leads.map((lead) => {
-    const [datePart, timePart] = formatTimestamp(lead.timestamp); // Call formatTimestamp here
+    const [datePart, timePart] = formatTimestamp(lead.timestamp);
 
     return {
       action: (
@@ -68,19 +66,17 @@ const ContactLeads = ({ contact }) => {
       ),
       leadStatus: lead.leadStatus,
       leadDetails: (
-        <>
-          <Stack>
-            <Typography variant="body2" component="div">
-              Lead No. {lead.leadNumber}
-            </Typography>
-            <Typography variant="body2" component="div">
-              Type: {lead.leadType}
-            </Typography>
-            <Typography variant="body2" component="div">
-              Source: {lead.leadSource}
-            </Typography>
-          </Stack>
-        </>
+        <Stack>
+          <Typography variant="body2" component="div">
+            Lead No. {lead.leadNumber}
+          </Typography>
+          <Typography variant="body2" component="div">
+            Type: {lead.leadType}
+          </Typography>
+          <Typography variant="body2" component="div">
+            Source: {lead.leadSource}
+          </Typography>
+        </Stack>
       ),
       leadDealership: lead.leadDealership,
       leadVehicles: (

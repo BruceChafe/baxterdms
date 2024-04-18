@@ -19,6 +19,7 @@ import AddTaskIcon from "@mui/icons-material/AddTask";
 import TabbedLayout from "../layouts/TabbedLayout";
 import TitleLayout from "../layouts/TitleLayout";
 import { useFetchLeadAndContact } from "../../../hooks/FetchLeadAndContact";
+
 const Lead = () => {
   const { leadNumber } = useParams();
   const { lead, contact, primaryEmail, loading, error } =
@@ -40,9 +41,19 @@ const Lead = () => {
   const [isEditable, setIsEditable] = useState(false);
 
   useEffect(() => {
+    console.log(lead);
     setEditedLead(lead);
     setEditedContact(contact);
   }, [lead, contact, primaryEmail]);
+  
+
+  const handleLeadInfoChange = (changed) => {
+    setLeadInfoChanged(changed);
+  };
+
+  const handleContactInfoChange = (changed) => {
+    setContactInfoChanged(changed);
+  };
 
   const handleSendEmailClick = () => {
     setSendEmailOpen(true);
@@ -92,7 +103,7 @@ const Lead = () => {
         <Typography>No contact data available</Typography>
       )}
       <Box>
-        {/* <TabbedLayout
+        <TabbedLayout
           tabs={[
             {
               label: "Summary",
@@ -115,16 +126,16 @@ const Lead = () => {
                 />
               ),
             },
-            {
-              label: "History",
-              component: () => <LeadHistory leadData={lead} />,
-            },
-            {
-              label: "Vehicle",
-              component: () => <LeadVehicle leadData={lead} />,
-            },
+            // {
+            //   label: "History",
+            //   component: () => <LeadHistory leadData={lead} />,
+            // },
+            // {
+            //   label: "Vehicle",
+            //   component: () => <LeadVehicle leadData={lead} />,
+            // },
           ]}
-        /> */}
+        />
       </Box>
       <BottomNavigation
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}

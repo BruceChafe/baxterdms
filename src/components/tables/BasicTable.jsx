@@ -66,7 +66,6 @@ const BasicTable = ({
             <TableBody>
               {paginatedData.map((row) => (
                 <TableRow key={row.id} hover>
-                  {" "}
                   <TableCell
                     align="center"
                     sx={{ borderRight: 1, borderColor: "divider" }}

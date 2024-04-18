@@ -1,83 +1,62 @@
-import React, { useState, useEffect } from "react";
-import { Box, Grid, Paper } from "@mui/material";
-import DropdownMenu from "../fields/renderDropdownMenu";
-import { useFetchLeadConfig } from "../../../hooks/FetchLeadConfig";
+import React, { useState, useEffect } from 'react';
+import { Box, Grid, Paper } from '@mui/material';
+import DropdownMenu from '../fields/renderDropdownMenu';
+import { useFetchLeadConfig } from '../../../hooks/FetchLeadConfig';
 
 const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
   const { sourceOptions, typeOptions, dealershipOptions, statusOptions, loading, error } =
     useFetchLeadConfig();
 
-  const [editedLead, setEditedLead] = useState(null);
+  // Update the initial state with a function to prevent undefined values
+  const [editedLead, setEditedLead] = useState(() => ({
+    leadSource: lead?.leadSource || '',
+    leadDealership: lead?.leadDealership || '',
+    leadType: lead?.leadType || '',
+    leadStatus: lead?.leadStatus || ''
+  }));
 
   useEffect(() => {
-    setEditedLead({ ...lead });
+    // Ensure the component reacts properly to changes in lead props
+    setEditedLead({
+      leadSource: lead?.leadSource || '',
+      leadDealership: lead?.leadDealership || '',
+      leadType: lead?.leadType || '',
+      leadStatus: lead?.leadStatus || ''
+    });
   }, [lead]);
 
   const handleDropdownChange = (key, value) => {
-    setEditedLead({
-      ...editedLead,
-      [key]: value,
-    });
+    const updatedLead = { ...editedLead, [key]: value };
+    setEditedLead(updatedLead);
     onInfoChange(true);
+    onSaveLeadInfo(updatedLead);
   };
 
-  useEffect(() => {
-    if (editedLead) {
-      onSaveLeadInfo(editedLead);
-    }
-  }, [editedLead, onSaveLeadInfo]);
+  if (loading) return <Box>Loading...</Box>;
+  if (error) return <Box>Error: {error}</Box>;
 
   return (
-    <>
-      {editedLead && (
-        <Paper sx={{ p: 3, mb: 2 }}>
-          <Box mb={1} mt={1} p={1}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <DropdownMenu
-                  label="Lead Source"
-                  value={editedLead?.leadSource || ""}
-                  options={sourceOptions}
-                  onChange={(e) =>
-                    handleDropdownChange("leadSource", e.target.value)
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <DropdownMenu
-                  label="Lead Dealership"
-                  value={editedLead?.leadDealership || ""}
-                  options={dealershipOptions}
-                  onChange={(e) =>
-                    handleDropdownChange("leadDealership", e.target.value)
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <DropdownMenu
-                  label="Lead Type"
-                  value={editedLead?.leadType || ""}
-                  options={typeOptions}
-                  onChange={(e) =>
-                    handleDropdownChange("leadType", e.target.value)
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <DropdownMenu
-                  label="Lead Status"
-                  value={editedLead?.leadStatus || ""}
-                  options={statusOptions}
-                  onChange={(e) =>
-                    handleDropdownChange("leadStatus", e.target.value)
-                  }
-                />
-              </Grid>
+    <Paper sx={{ p: 3, mb: 2 }}>
+      <Box mb={1} mt={1} p={1}>
+        <Grid container spacing={2}>
+          {[
+            { label: 'Lead Source', key: 'leadSource', options: sourceOptions },
+            { label: 'Lead Dealership', key: 'leadDealership', options: dealershipOptions },
+            { label: 'Lead Type', key: 'leadType', options: typeOptions },
+            { label: 'Lead Status', key: 'leadStatus', options: statusOptions }
+          ].map(field => (
+            <Grid item xs={12} sm={6} key={field.key}>
+              <DropdownMenu
+                label={field.label}
+                value={editedLead[field.key] || ''}
+                options={field.options}
+                onChange={(e) => handleDropdownChange(field.key, e.target.value)}
+              />
             </Grid>
-          </Box>
-        </Paper>
-      )}
-    </>
+          ))}
+        </Grid>
+      </Box>
+    </Paper>
   );
 };
 
