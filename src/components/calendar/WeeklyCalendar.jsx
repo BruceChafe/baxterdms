@@ -83,24 +83,26 @@ const WeeklyCalendar = () => {
       />
       <TabContext>
         <Box sx={{ mt: 3 }}>
-          <Paper sx={{ pl: 1, pr: 1 }}>
-            <Box mb={1} mt={1} p={1}>
-              <TabList textColor="secondary" indicatorColor="secondary">
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={showCompletedTasks}
-                      onChange={toggleCompletedTasks}
-                    />
-                  }
-                  label="Show Completed, Cancelled Tasks"
-                />
-                {/* {tabs.map((tab, index) => (
-                <Tab label={tab.label} value={String(index + 1)} key={index} />
-              ))} */}
-              </TabList>
-            </Box>
-          </Paper>
+        <Paper sx={{ pl: 1, pr: 1 }}>
+  <Box mb={1} mt={1} p={1}>
+    <TabList textColor="secondary" indicatorColor="secondary">
+      <Box display="flex" alignItems="center" justifyContent="center">
+        <FormControlLabel
+          control={
+            <Switch
+              checked={showCompletedTasks}
+              onChange={toggleCompletedTasks}
+            />
+          }
+          label={<Typography>Show Completed, Cancelled Tasks</Typography>}
+          labelPlacement="end"
+          sx={{ margin: 'auto' }} 
+        />
+      </Box>
+    </TabList>
+  </Box>
+</Paper>
+
         </Box>
         <TabPanel>
           <Paper sx={{ mb: 2 }}>

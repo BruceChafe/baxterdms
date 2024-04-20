@@ -10,13 +10,12 @@ import {
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import TitleLayout from "../layouts/TitleLayout";
-import { useFetchLeads } from "../../../hooks/FetchLeads";
+import { useFetchLeadsAndContacts } from "../../../hooks/FechLeadsandContacts";
 
 const LeadsTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { data, reload } = useFetchLeads(); // Ensure to handle reload if needed
-  const { leads, loading, error } = data;
+  const { data, totalCount } = useFetchLeadsAndContacts(page, rowsPerPage);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -27,27 +26,20 @@ const LeadsTable = () => {
     setPage(0);
   };
 
-  const transformedData = leads.map((lead) => {
-    const hasContacts = lead.contacts && lead.contacts.length > 0;
-    const firstName = hasContacts ? lead.contacts[0].firstName : "No contact";
-    const lastName = hasContacts ? lead.contacts[0].lastName : "";
-    const email = hasContacts ? lead.contacts[0].primaryEmail : "No email";
-  
-    const fullName = hasContacts ? `${firstName} ${lastName}`.trim() : "No contact details";
-  
-    return {
-      ...lead,
-      contactFirstName: firstName,
-      fullName,
-      email,
-    };
-  });
-  
+  const transformedData = data.combinedData.map((item) => ({
+    leadType: item.lead.leadType, // Adjust field names as per your data structure
+    leadStatus: item.lead.leadStatus, // Adjust field names as per your data structure
+    fullName: `${item.contacts[0].firstName} ${item.contacts[0].lastName}`, // Assuming there's only one contact per lead
+    email: item.contacts[0].primaryEmail, // Assuming there's only one contact per lead
+    leadDealership: item.lead.leadDealership, // Adjust field names as per your data structure
+  }));
+
+  console.log("Transformed Data:", transformedData);
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout title={<Typography variant="h4">Leads</Typography>} />
-      {loading ? (
+      {data.loading ? (
         <Container>
           <Box
             display="flex"
@@ -62,11 +54,11 @@ const LeadsTable = () => {
             </Typography>
           </Box>
         </Container>
-      ) : error ? (
+      ) : data.error ? (
         <Alert severity="error" sx={{ mt: 2 }}>
-          Error: {error}
+          Error: {data.error}
         </Alert>
-      ) : leads.length === 0 ? (
+      ) : transformedData.length === 0 ? (
         <Typography sx={{ mt: 2, textAlign: "center" }}>
           No leads found.
         </Typography>
@@ -86,11 +78,12 @@ const LeadsTable = () => {
             page={page}
             rowsPerPage={rowsPerPage}
           />
+
           <Paper sx={{ mt: 2, mb: 2 }}>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
-              count={leads.length}
+              count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

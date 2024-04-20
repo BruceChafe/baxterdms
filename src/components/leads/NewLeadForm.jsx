@@ -11,6 +11,7 @@ import {
   MenuItem,
   Paper,
 } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
 
 const NewLeadFields = [
   { label: "Dealership", key: "leadDealership" },
@@ -24,11 +25,11 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
   const [formData, setFormData] = useState({});
   const [message, setMessage] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const navigate = useNavigate();
 
-  // Configuration options stored in a state object
   const optionsMap = {
     leadDealership: ["Dealership A", "Dealership B"],
-    leadSalesConsultant: ["fred"], // Add options for sales consultants as needed
+    leadSalesConsultant: ["fred"],
     leadSource: ["Online", "Referral", "Walk-in"],
     leadType: ["New", "Used"],
     leadStatus: ["Open", "Closed", "Follow-up"]
@@ -49,14 +50,14 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
           timestamp: new Date()
         });
 
-        // Update the contact with the new lead ID
         await updateDoc(doc(db, "contacts", contactId), {
           leadIDs: arrayUnion(newLeadRef.id)
         });
 
         setMessage("Lead created successfully!");
         setFormData({});
-        onCloseForm(); // Optionally close form or reset state
+        onCloseForm();
+        navigate(`/leads/${newLeadRef.id}`);
       } catch (error) {
         console.error("Error creating lead:", error);
         setMessage("Error creating lead: " + error.message);
@@ -64,7 +65,8 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
     } else {
       setMessage("Please fill out all mandatory fields.");
     }
-  };
+};
+
 
   const renderTextField = (label, key) => (
     <TextField
@@ -109,4 +111,3 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
 };
 
 export default NewLeadForm;
-

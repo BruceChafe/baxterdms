@@ -9,8 +9,8 @@ const useFetchContacts = () => {
     error: null,
   });
 
-  const fetchData = useCallback(async () => { // Use useCallback to memoize the function
-    setData(prev => ({ ...prev, loading: true })); // Set loading to true when starting to fetch
+  const fetchData = useCallback(async () => {
+    setData(prev => ({ ...prev, loading: true }));
     try {
       const q = query(collection(db, "contacts"));
       const querySnapshot = await getDocs(q);

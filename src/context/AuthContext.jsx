@@ -1,39 +1,57 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { auth } from '../firebase';
-import { onAuthStateChanged, reauthenticateWithCredential, updatePassword, EmailAuthProvider } from "firebase/auth";
+import {
+    onAuthStateChanged,
+    reauthenticateWithCredential,
+    updatePassword,
+    EmailAuthProvider
+} from "firebase/auth";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+            setLoading(false);
+        });
 
-    return unsubscribe;
-  }, []);
+        return unsubscribe;
+    }, []);
 
-  const updateUserPassword = async (newPassword) => {
-    if (!user) {
-      throw new Error('No user authenticated');
-    }
-    await updatePassword(user, newPassword);
-  };
+    const updateUserPassword = async (newPassword) => {
+        if (!user) {
+            throw new Error('No user authenticated');
+        }
+        await updatePassword(user, newPassword);
+    };
 
-  const value = {
-    user,
-    updateUserPassword,
-  };
+    const reauthenticate = async (currentPassword) => {
+        if (!user) {
+            throw new Error('User is not logged in.');
+        }
+        const credential = EmailAuthProvider.credential(user.email, currentPassword);
+        try {
+            await reauthenticateWithCredential(user, credential);
+        } catch (error) {
+            throw new Error('Re-authentication failed: ' + error.message);
+        }
+    };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+    const value = {
+        user,
+        updateUserPassword,
+        reauthenticate,
+    };
+
+    return (
+        <AuthContext.Provider value={value}>
+            {!loading && children}
+        </AuthContext.Provider>
+    );
 };
 
 export { AuthProvider, AuthContext };

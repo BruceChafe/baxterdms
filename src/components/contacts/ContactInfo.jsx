@@ -7,13 +7,27 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange, isEditable }) => {
   const [editedContact, setEditedContact] = useState({ ...contact });
 
   useEffect(() => {
-    setEditedContact({ ...contact });
+    if (contact.dob && typeof contact.dob.seconds === 'number' && typeof contact.dob.nanoseconds === 'number') {
+      const convertedDate = new Date(contact.dob.seconds * 1000 + contact.dob.nanoseconds / 1000000);
+      setEditedContact({
+        ...contact,
+        dob: convertedDate
+      });
+    } else {
+      setEditedContact({
+        ...contact,
+        dob: null
+      });
+    }
   }, [contact]);
+  
 
   const basicInformationFields = [
     { label: "First Name", key: "firstName" },
@@ -38,6 +52,12 @@ const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange, isEditable }) =
     { label: "Work Email", key: "workEmail" },
   ];
 
+  useEffect(() => {
+    if (editedContact) {
+      onSaveContactInfo(editedContact);
+    }
+  }, [editedContact, onSaveContactInfo]);
+
   const handleFieldChange = (key, value) => {
     setEditedContact({
       ...editedContact,
@@ -46,22 +66,37 @@ const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange, isEditable }) =
     onInfoChange(true);
   };
 
-  useEffect(() => {
-    if (editedContact) {
-      onSaveContactInfo(editedContact);
-    }
-  }, [editedContact, onSaveContactInfo]);
+  const renderDatePicker = (label, key, value) => {
+    return (
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DatePicker
+          variant="outlined"
+          label={label}
+          value={value || ''}
+          onChange={(e) => handleFieldChange(key, e.target.value)}
+          renderInput={(params) => <TextField {...params} fullWidth disabled={!isEditable} />}
+          disabled={!isEditable}
+        />
+      </LocalizationProvider>
+    );
+  };
 
-  const renderTextField = (label, key, value) => (
-    <TextField
-      variant="outlined"
-      label={label}
-      value={value}
-      onChange={(e) => handleFieldChange(key, e.target.value)}
-      fullWidth
-      disabled={!isEditable}
-    />
-  );
+  const renderTextField = (label, key, value) => {
+    if (key === 'dob') {
+      return renderDatePicker(label, key, value);
+    } else {
+      return (
+        <TextField
+          variant="outlined"
+          label={label}
+          value={value || ''}
+          onChange={(e) => handleFieldChange(key, e.target.value)}
+          fullWidth
+          disabled={!isEditable}
+        />
+      );
+    }
+  };
 
   const renderSection = (sectionLabel, fields) => (
     <Box sx={{ mb: 2 }}>

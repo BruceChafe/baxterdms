@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from 'react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../src/firebase';
 
 const useFetchLeadsAndContacts = (page, rowsPerPage) => {
   const [data, setData] = useState({
@@ -11,57 +13,45 @@ const useFetchLeadsAndContacts = (page, rowsPerPage) => {
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchLeadsAndContacts = async () => {
+      setData(prev => ({ ...prev, loading: true }));
       try {
-        const leadsResponse = await fetch(`https://api.jsonbin.io/v3/b/66118931e41b4d34e4e046b7`, {
-          headers: {
-            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu'
-          }
-        });
-        const contactsResponse = await fetch(`https://api.jsonbin.io/v3/b/66118912acd3cb34a8346f91`, {
-          headers: {
-            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu' 
-          }
-        });
-
-        if (!leadsResponse.ok || !contactsResponse.ok) {
-          throw new Error("Failed to fetch data from JSONBin");
-        }
-
-        const leadsResult = await leadsResponse.json();
-        const contactsResult = await contactsResponse.json();
-
-        const leadsData = leadsResult.record.leads;
-        const contactsData = contactsResult.record.contacts;
-
+        // Fetch leads
+        const leadsQuery = query(collection(db, "leads"));
+        const leadsSnapshot = await getDocs(leadsQuery);
+        const leads = leadsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+        // Fetch contacts
+        const contactsQuery = query(collection(db, "contacts"));
+        const contactsSnapshot = await getDocs(contactsQuery);
+        const contacts = contactsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+        console.log("Leads:", leads); // Debug
+        console.log("Contacts:", contacts); // Debug
+    
+        // Combine data
         const startIndex = page * rowsPerPage;
-        const paginatedLeads = leadsData.slice(startIndex, startIndex + rowsPerPage);
-        
-        const combinedData = paginatedLeads.map((lead) => {
-          const leadContacts = contactsData.filter((contact) =>
-            contact.leadNumbers?.includes(lead.leadNumber)
-          );
-          return { ...lead, contacts: leadContacts };
+        const paginatedLeads = leads.slice(startIndex, startIndex + rowsPerPage);
+        const combinedData = paginatedLeads.map(lead => {
+          const leadContacts = contacts.filter(contact => contact.leadIDs?.includes(lead.id));
+          return { lead, contacts: leadContacts };
         });
-
+    
         setData({
           leads: paginatedLeads,
-          contacts: contactsData,
-          combinedData,
+          contacts: contacts,
+          combinedData: combinedData,
           loading: false,
           error: null,
         });
-        setTotalCount(leadsData.length);
-      } catch (error) {
-        setData((prevState) => ({
-          ...prevState,
-          loading: false,
-          error: error.message,
-        }));
+        setTotalCount(leads.length);
+      } catch (err) {
+        console.error("Fetching error:", err); // Debug
+        setData(prev => ({ ...prev, loading: false, error: `Failed to fetch data: ${err.message}` }));
       }
-    };
+    };    
 
-    fetchData();
+    fetchLeadsAndContacts();
   }, [page, rowsPerPage]);
 
   return { data, totalCount };

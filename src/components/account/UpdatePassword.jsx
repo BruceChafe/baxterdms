@@ -4,27 +4,33 @@ import {
   Alert,
   Box,
   Button,
+  CircularProgress,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
 
 const UpdatePassword = () => {
-  const { updateUserPassword } = useContext(AuthContext);
+  const { updateUserPassword, reauthenticate } = useContext(AuthContext);
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [feedback, setFeedback] = useState({ type: "", message: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setFeedback({ type: "", message: "" });
 
     if (newPassword !== confirmPassword) {
+      setLoading(false);
       setFeedback({ type: "error", message: "Passwords do not match." });
       return;
     }
 
     try {
+      await reauthenticate(currentPassword);
       await updateUserPassword(newPassword);
       setFeedback({
         type: "success",
@@ -32,15 +38,11 @@ const UpdatePassword = () => {
       });
       setNewPassword("");
       setConfirmPassword("");
+      setCurrentPassword("");
     } catch (error) {
-      let message = "Failed to update password.";
-      if (error.code === "auth/weak-password") {
-        message = "Password is too weak. Please choose a stronger password.";
-      } else if (error.code === "auth/requires-recent-login") {
-        message = "Please re-authenticate to update your password.";
-      }
-      setFeedback({ type: "error", message });
-      console.error("Error updating password:", error);
+      handlePasswordUpdateError(error);
+    } finally {
+      setLoading(false);  // Stop loading regardless of the outcome
     }
   };
 
@@ -61,6 +63,17 @@ const UpdatePassword = () => {
         )}
         <form onSubmit={handleSubmit} autoComplete="off">
           <TextField
+            label="Current Password"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            autoComplete="current-password"
+            fullWidth
+            required
+            sx={{ mb: 2 }}
+            disabled={loading}
+          />
+          <TextField
             label="New Password"
             type="password"
             value={newPassword}
@@ -69,6 +82,7 @@ const UpdatePassword = () => {
             fullWidth
             required
             sx={{ mb: 2 }}
+            disabled={loading}
           />
           <TextField
             label="Confirm Password"
@@ -79,9 +93,10 @@ const UpdatePassword = () => {
             fullWidth
             required
             sx={{ mb: 2 }}
+            disabled={loading}
           />
-          <Button type="submit" variant="outlined" color="primary">
-            Update Password
+          <Button type="submit" variant="outlined" color="primary" disabled={loading}>
+            {loading ? <CircularProgress size={24} /> : "Update Password"}
           </Button>
         </form>
       </Paper>

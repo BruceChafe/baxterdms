@@ -15,7 +15,11 @@ import {
   Paper,
   Grid,
   Divider,
+  Snackbar,
+  Alert,
+  TablePagination,
 } from "@mui/material";
+import InputMask from "react-input-mask";
 import NewLeadForm from "./NewLeadForm";
 import NewContact from "../contacts/NewContact";
 
@@ -34,6 +38,8 @@ const NewLeadComponent = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [showNewContactForm, setShowNewContactForm] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,6 +51,11 @@ const NewLeadComponent = () => {
   };
 
   const handleSearch = async () => {
+    // if (!searchData.firstName.trim() || !searchData.mobilePhone.trim()) {
+    //   setSnackbarMessage("First Name and Mobile Phone are required.");
+    //   setSnackbarOpen(true);
+    //   return;
+    // }
     setSearchPerformed(true);
     try {
       const contactQuery = query(
@@ -65,6 +76,13 @@ const NewLeadComponent = () => {
     }
   };
 
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   const handleNewLeadClick = (contactId) => {
     setContactIdForNewLead(contactId);
     setShowNewLeadForm(true);
@@ -81,8 +99,31 @@ const NewLeadComponent = () => {
     setShowNewLeadForm(false);
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
       {!showNewLeadForm && !showNewContactForm && (
         <>
           <Typography variant="h4" mb={2}>
@@ -97,112 +138,213 @@ const NewLeadComponent = () => {
               <Grid container spacing={2}>
                 {Object.keys(searchData).map((key) => (
                   <Grid item xs={12} md={6} key={key}>
-                    <TextField
-                      onChange={handleInputChange}
-                      fullWidth
-                      label={
-                        key.charAt(0).toUpperCase() +
-                        key
-                          .slice(1)
-                          .replace(/([A-Z])/g, " $1")
-                          .trim()
-                      }
-                      name={key}
-                      variant="outlined"
-                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                    />
+                    {key === "mobilePhone" ? (
+                      <InputMask
+                        mask="(999) 999-9999"
+                        value={searchData.mobilePhone}
+                        onChange={handleInputChange}
+                        disabled={false}
+                        maskChar=" "
+                      >
+                        {() => (
+                          <TextField
+                            fullWidth
+                            label="Mobile Phone"
+                            name="mobilePhone"
+                            variant="outlined"
+                            required={key === "mobilePhone"}
+                            onKeyDown={(e) =>
+                              e.key === "Enter" && handleSearch()
+                            }
+                          />
+                        )}
+                      </InputMask>
+                    ) : (
+                      <TextField
+                        onChange={handleInputChange}
+                        fullWidth
+                        label={
+                          key.charAt(0).toUpperCase() +
+                          key
+                            .slice(1)
+                            .replace(/([A-Z])/g, " $1")
+                            .trim()
+                        }
+                        name={key}
+                        variant="outlined"
+                        required={key === "firstName" || key === "mobilePhone"}
+                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                      />
+                    )}
                   </Grid>
                 ))}
               </Grid>
-              <Button variant="contained" onClick={handleSearch} sx={{ mt: 2 }}>
+              <Button variant="outlined" onClick={handleSearch} sx={{ mt: 2 }}>
                 Search
               </Button>
             </Box>
           </Paper>
 
-          {searchPerformed && (
+          {searchPerformed && searchResults.length > 0 && (
             <>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
-                    >
-                      First Name
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
-                    >
-                      Last Name
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
-                    >
-                      Email
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
-                    >
-                      Phone
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}
-                    >
-                      Actions
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {searchResults.map((row) => (
-                    <TableRow key={row.id} hover>
-                      <TableCell align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }} component="th" scope="row">
-                        {row.firstName}
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        align="center"
+                        sx={{
+                          width: "20%",
+                          borderRight: 1,
+                          borderColor: "divider",
+                        }}
+                      >
+                        First Name
                       </TableCell>
-                      <TableCell align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }} >{row.lastName}</TableCell>
-                      <TableCell align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}>{row.primaryEmail}</TableCell>
-                      <TableCell align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}>{row.mobilePhone}</TableCell>
-                      <TableCell align="center"
-                      sx={{ width: "20%", borderRight: 1, borderColor: "divider" }}>
-                        <Button
-                          variant="outlined"
-                          onClick={() => handleNewLeadClick(row.id)}
-                        >
-                          Create Lead
-                        </Button>
+                      <TableCell
+                        align="center"
+                        sx={{
+                          width: "20%",
+                          borderRight: 1,
+                          borderColor: "divider",
+                        }}
+                      >
+                        Last Name
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{
+                          width: "20%",
+                          borderRight: 1,
+                          borderColor: "divider",
+                        }}
+                      >
+                        Email
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{
+                          width: "20%",
+                          borderRight: 1,
+                          borderColor: "divider",
+                        }}
+                      >
+                        Phone
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{
+                          width: "20%",
+                          borderRight: 1,
+                          borderColor: "divider",
+                        }}
+                      >
+                        Actions
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Button
-            variant="contained"
-            onClick={handleNewContactClick}
-            sx={{ mt: 2 }}
-          >
-            New Contact
-          </Button>
-          </>
+                  </TableHead>
+                  <TableBody>
+                    {searchResults
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((row) => (
+                        <TableRow key={row.id} hover>
+                          <TableCell
+                            align="center"
+                            sx={{
+                              width: "20%",
+                              borderRight: 1,
+                              borderColor: "divider",
+                            }}
+                          >
+                            {row.firstName}
+                          </TableCell>
+                          <TableCell
+                            align="center"
+                            sx={{
+                              width: "20%",
+                              borderRight: 1,
+                              borderColor: "divider",
+                            }}
+                          >
+                            {row.lastName}
+                          </TableCell>
+                          <TableCell
+                            align="center"
+                            sx={{
+                              width: "20%",
+                              borderRight: 1,
+                              borderColor: "divider",
+                            }}
+                          >
+                            {row.primaryEmail}
+                          </TableCell>
+                          <TableCell
+                            align="center"
+                            sx={{
+                              width: "20%",
+                              borderRight: 1,
+                              borderColor: "divider",
+                            }}
+                          >
+                            {row.mobilePhone}
+                          </TableCell>
+                          <TableCell
+                            align="center"
+                            sx={{
+                              width: "20%",
+                              borderRight: 1,
+                              borderColor: "divider",
+                            }}
+                          >
+                            <Button
+                              variant="outlined"
+                              onClick={() => handleNewLeadClick(row.id)}
+                            >
+                              Create Lead
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Paper
+                sx={{
+                  mt: 2,
+                  mb: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  p: 2,
+                }}
+              >
+                <Button variant="outlined" onClick={handleNewContactClick}>
+                  New Contact
+                </Button>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, 50, 100]}
+                  component="div"
+                  count={searchResults.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </Paper>
+            </>
           )}
 
-          {noResults && (
+          {searchPerformed && noResults && (
             <Paper sx={{ p: 1, mt: 2, mb: 2, textAlign: "center" }}>
               <Typography>
                 No results found. You may want to create a new contact.
               </Typography>
               <Button
-                variant="contained"
-                onClick={handleNewContactClick}
+                      variant="outlined"
+                      onClick={handleNewContactClick}
                 sx={{ mt: 2 }}
               >
                 New Contact

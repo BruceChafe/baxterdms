@@ -1,20 +1,21 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const UserData = ({ children }) => {
   const { user } = useContext(AuthContext);
   const [userDetails, setUserDetails] = useState(null);
-  const [cachedUID, setCachedUID] = useState(null); // Cache the UID
+  const [cachedUID, setCachedUID] = useState(null);
 
   useEffect(() => {
-    // Function to fetch user details
     const fetchUserDetails = async (uid) => {
       try {
-        const response = await fetch(`http://localhost:8000/users?UID=${uid}`);
-        const data = await response.json();
-        if (data && data.length > 0) {
-          setUserDetails(data[0]);
-          setCachedUID(uid); // Update cache with the new UID
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserDetails(docSnap.data());
+          setCachedUID(uid);
         } else {
           setUserDetails(null);
         }
@@ -24,11 +25,10 @@ const UserData = ({ children }) => {
       }
     };
 
-    // Check if the current UID is different from the cached one
-    if (user?.uid !== cachedUID) {
-      fetchUserDetails(user?.uid);
+    if (user?.uid && user?.uid !== cachedUID) {
+      fetchUserDetails(user.uid);
     }
-  }, [user, cachedUID]); // Depend on user and cachedUID
+  }, [user, cachedUID]);
 
   return <>{children(userDetails)}</>;
 };

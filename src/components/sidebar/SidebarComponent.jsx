@@ -56,7 +56,7 @@ const SidebarComponent = ({ pageName, navigationLinks }) => {
         </Toolbar>
         <Divider />
         <List>
-          {navigationLinks.map((link, index) => (
+          {navigationLinks?.map((link, index) => (
             <ListItem
               key={link.to}
               disablePadding

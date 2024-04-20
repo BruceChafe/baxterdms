@@ -13,22 +13,21 @@ const UserThemeSelection = () => {
         </Typography>
         {themes && Object.keys(themes).length > 0 ? (
           Object.keys(themes).map((themeName) => (
-            <Stack>
-            <Button
-              key={themeName}
-              onClick={() => toggleTheme(themeName)}
-              variant={currentTheme === themeName ? "contained" : "outlined"}
-              color="secondary"
-              sx={{
-                mt: 2,
-                borderRadius: 1,
-                p: 1,
-                cursor: "pointer",
-                width: "15%"
-              }}
-            >
-              {themeName}
-            </Button>
+            <Stack key={themeName}>
+              <Button
+                onClick={() => toggleTheme(themeName)}
+                variant={currentTheme === themeName ? "contained" : "outlined"}
+                color="secondary"
+                sx={{
+                  mt: 2,
+                  borderRadius: 1,
+                  p: 1,
+                  cursor: "pointer",
+                  width: "15%",
+                }}
+              >
+                {themeName}
+              </Button>
             </Stack>
           ))
         ) : (

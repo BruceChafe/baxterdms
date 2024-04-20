@@ -19,6 +19,8 @@ import {
   Divider,
   Paper,
   Autocomplete,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -45,7 +47,7 @@ const PhoneInputField = ({ label, name, value, onChange }) => (
   </InputMask>
 );
 
-const NewContact = ({ onCloseForm, onNewContactCreated, navigateTo, leadId }) => {
+const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -64,6 +66,7 @@ const NewContact = ({ onCloseForm, onNewContactCreated, navigateTo, leadId }) =>
     homePhone: "",
     workPhone: "",
     primaryEmail: "",
+    secondaryEmail: "",
     notes: "",
     leadIDs: leadId ? [leadId] : []
   });
@@ -92,10 +95,20 @@ const NewContact = ({ onCloseForm, onNewContactCreated, navigateTo, leadId }) =>
     { code: "other", name: "Other" },
   ];
 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
 
   const handleInputChange = (event) => {
     const target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
     setFormData((prevData) => ({
@@ -106,15 +119,27 @@ const NewContact = ({ onCloseForm, onNewContactCreated, navigateTo, leadId }) =>
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-      try {
-        const docRef = await addDoc(collection(db, "contacts"), formData);
-        onNewContactCreated(docRef.id); // This callback is to handle the next step after contact creation
-      } catch (error) {
-        console.error("Error adding new contact:", error);
-        alert(`Failed to create contact: ${error.message}`);
-      }
-  };
+    if (!formData.mobilePhone || !formData.primaryEmail) {
+      setSnackbarMessage('Mobile phone and primary email are required.');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+      return;
+    }
   
+    try {
+      const docRef = await addDoc(collection(db, "contacts"), formData);
+      // Navigate to the contact detail page using the newly created document ID
+      navigate(`/contacts/${docRef.id}`);
+      setSnackbarMessage('Contact created successfully.');
+      setSnackbarSeverity('success');
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error("Error adding new contact:", error);
+      setSnackbarMessage(`Failed to create contact: ${error.message}`);
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    }
+  };
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
@@ -222,7 +247,6 @@ const NewContact = ({ onCloseForm, onNewContactCreated, navigateTo, leadId }) =>
                   label="Street Address"
                   name="streetAddress"
                   variant="outlined"
-                  required
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -241,7 +265,6 @@ const NewContact = ({ onCloseForm, onNewContactCreated, navigateTo, leadId }) =>
                   label="City"
                   name="city"
                   variant="outlined"
-                  required
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -352,6 +375,7 @@ const NewContact = ({ onCloseForm, onNewContactCreated, navigateTo, leadId }) =>
                   name="mobilePhone"
                   value={formData.mobilePhone}
                   onChange={handleInputChange}
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -368,6 +392,26 @@ const NewContact = ({ onCloseForm, onNewContactCreated, navigateTo, leadId }) =>
                   name="workPhone"
                   value={formData.workPhone}
                   onChange={handleInputChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Primary Email"
+                  name="primaryEmail"
+                  value={formData.primaryEmail}
+                  onChange={handleInputChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Secondary Email"
+                  name="secondaryEmail"
+                  value={formData.secondaryEmail}
+                  onChange={handleInputChange}
+                  fullWidth
                 />
               </Grid>
 
@@ -399,6 +443,11 @@ const NewContact = ({ onCloseForm, onNewContactCreated, navigateTo, leadId }) =>
           </Box>
         </Paper>
       </form>
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

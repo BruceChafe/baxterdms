@@ -10,7 +10,7 @@ import {
 
 const UserProfileInfo = ({ userDetails }) => {
   if (!userDetails) {
-    return <div>Loading user details...</div>; // or any other placeholder you prefer
+    return <div>Loading user details...</div>;
   }
 
   const {

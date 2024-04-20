@@ -1,43 +1,37 @@
-import { useState, useEffect } from "react";
-import { collection, query, getDocs } from "firebase/firestore";
-import { db } from "../src/firebase";
+import { useEffect, useState } from 'react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../src/firebase';
 
-const useFetchLeads = () => {
-  const [data, setData] = useState({
-    leads: [],
-    loading: true,
-    error: null,
-  });
+const useFetchLeads = (leadIDs) => {
+  const [leads, setLeads] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const q = query(collection(db, "leads"));
-        const querySnapshot = await getDocs(q);
-        const leadsArray = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+    const fetchLeads = async () => {
+      setLoading(true);
+      let q;
+      if (leadIDs && leadIDs.length > 0) {
+        q = query(collection(db, "leads"), where('id', 'in', leadIDs.slice(0, 10)));
+      } else {
+        q = query(collection(db, "leads"));
+      }
 
-        setData({
-          leads: leadsArray,
-          loading: false,
-          error: null,
-        });
-      } catch (error) {
-        console.error("Error fetching leads:", error);
-        setData({
-          leads: [],
-          loading: false,
-          error: error.message,
-        });
+      try {
+        const querySnapshot = await getDocs(q);
+        const fetchedLeads = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setLeads(fetchedLeads);
+      } catch (err) {
+        setError(`Failed to fetch leads: ${err.message}`);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchLeads();
+  }, [leadIDs]);
 
-  return { data };
+  return { leads, loading, error };
 };
 
 export { useFetchLeads };

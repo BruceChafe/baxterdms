@@ -82,7 +82,7 @@ const AppRoutes = () => {
           <Route path="/leads/:leadNumber" element={<Lead />} />
           <Route path="/inventory" element={<InventoryDashboard />} />
           <Route path="/inventory/:inventoryId" element={<Inventory />} />
-
+          <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
       </Grid>
     </Grid>
