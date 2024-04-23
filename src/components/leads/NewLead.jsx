@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { db } from "../../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import {
   Box,
   TextField,
@@ -50,12 +57,28 @@ const NewLeadComponent = () => {
     setSearchPerformed(false);
   };
 
+  const handleDeleteContact = async (contactId) => {
+    const docRef = doc(db, "contacts", contactId);
+    try {
+      await deleteDoc(docRef);
+      setSearchResults(
+        searchResults.filter((contact) => contact.id !== contactId)
+      );
+      setSnackbarMessage("Contact deleted successfully.");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Error deleting contact:", error);
+      setSnackbarMessage("Failed to delete contact.");
+      setSnackbarOpen(true);
+    }
+  };
+
   const handleSearch = async () => {
-    // if (!searchData.firstName.trim() || !searchData.mobilePhone.trim()) {
-    //   setSnackbarMessage("First Name and Mobile Phone are required.");
-    //   setSnackbarOpen(true);
-    //   return;
-    // }
+    if (!searchData.firstName.trim() || !searchData.mobilePhone.trim()) {
+      setSnackbarMessage("First Name and Mobile Phone are required.");
+      setSnackbarOpen(true);
+      return;
+    }
     setSearchPerformed(true);
     try {
       const contactQuery = query(
@@ -305,6 +328,14 @@ const NewLeadComponent = () => {
                             >
                               Create Lead
                             </Button>
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              onClick={() => handleDeleteContact(row.id)}
+                              sx={{ ml: 1 }}
+                            >
+                              Delete
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -343,8 +374,8 @@ const NewLeadComponent = () => {
                 No results found. You may want to create a new contact.
               </Typography>
               <Button
-                      variant="outlined"
-                      onClick={handleNewContactClick}
+                variant="outlined"
+                onClick={handleNewContactClick}
                 sx={{ mt: 2 }}
               >
                 New Contact

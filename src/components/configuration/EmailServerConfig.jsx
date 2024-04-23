@@ -1,76 +1,81 @@
 import React, { useState, useEffect } from "react";
 import {
+  Box,
   Paper,
   TextField,
   Typography,
   IconButton,
   InputAdornment,
   Snackbar,
+  Button
 } from "@mui/material";
-import { Box } from "@mui/system";
-import { useFetchEmailConfig } from "../../../hooks/FetchEmailConfig";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-// import SaveEditButton from "../utilities/SaveEditButton";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const EmailServerConfig = () => {
-  const { data, refetch } = useFetchEmailConfig();
   const [isEditable, setIsEditable] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [editableEmail, setEditableEmail] = useState("");
   const [editablePassword, setEditablePassword] = useState("");
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setEditableEmail(data.emailConfig?.emailUser || "");
-    setEditablePassword(data.emailConfig?.emailPass || "");
-  }, [data.emailConfig]);
+    const fetchData = async () => {
+      const docRef = doc(db, "emailServerConfig", "configData");
+      try {
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const configData = docSnap.data();
+          setEditableEmail(configData.emailUser || "");
+          setEditablePassword(configData.emailPass || "");
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching email configuration from Firestore:", error);
+        setSnackbarMessage(`Fetch error: ${error.message}`);
+        setSnackbarOpen(true);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSave = async () => {
+    setLoading(true);
+    const docRef = doc(db, "emailServerConfig", "configData");
+  
+    try {
+      await updateDoc(docRef, {
+        emailUser: editableEmail,
+        emailPass: editablePassword,
+      });
+      setSnackbarMessage("Configuration saved successfully!");
+      setIsEditable(false);
+    } catch (error) {
+      console.error("Error updating configuration:", error);
+      setSnackbarMessage("Failed to save configuration: " + error.message);
+    } finally {
+      setLoading(false);
+      setSnackbarOpen(true);
+    }
+  };
+  
 
   const handleEditClick = () => {
     if (isEditable) {
       handleSave();
+    } else {
+      setIsEditable(true);
     }
-    setIsEditable(!isEditable);
   };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
-  };
-
-  const handleSave = async () => {
-    try {
-      const updatedConfig = {
-        emailUser: editableEmail,
-        emailPass: editablePassword,
-      };
-
-      const response = await fetch(
-        `https://api.jsonbin.io/v3/b/661189e4ad19ca34f855fc43`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key":
-              "$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu",
-          },
-          body: JSON.stringify(updatedConfig),
-        }
-      );
-
-      if (response.ok) {
-        setSnackbarMessage("Save successful");
-        refetch();
-        setShowPassword(false);
-        setIsEditable(false);
-      } else {
-        throw new Error("Failed to save");
-      }
-    } catch (error) {
-      setSnackbarMessage(`Error: ${error.message}`);
-    } finally {
-      setSnackbarOpen(true);
-    }
   };
 
   return (
@@ -109,10 +114,15 @@ const EmailServerConfig = () => {
             ),
           }}
         />
-        <SaveEditButton
-          isEditable={isEditable}
-          onToggleEdit={handleEditClick}
-        />
+        <Button
+          onClick={handleEditClick}
+          variant="contained"
+          color="primary"
+          disabled={loading}
+          sx={{ mt: 2 }}
+        >
+          {isEditable ? "Save" : "Edit"}
+        </Button>
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}

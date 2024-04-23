@@ -1,183 +1,192 @@
-import React, { useState } from "react";
-import { db } from "../../firebase"; // Adjust path as necessary
-import { collection, query, where, getDocs } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
 import {
-  Box,
-  TextField,
   Typography,
-  Button,
-  TablePagination,
-  Divider,
-  Grid,
+  Box,
+  CircularProgress,
+  Alert,
   Paper,
+  Grid,
+  TextField,
+  IconButton,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Snackbar,
 } from "@mui/material";
-import NewLeadForm from "./NewLeadForm";
-import BasicTable from "../tables/BasicTable";
-import NewContact from "../contacts/NewContact";
+import { doc, getDoc, updateDoc, arrayRemove } from "firebase/firestore";
+import { db } from "../../firebase";
+import SearchComponent from "../../../hooks/search/SearchComponent";
+import TitleLayout from "../layouts/TitleLayout";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { removeVehicleFromLead } from "../../../hooks/RemoveVehicleFromLead";
 
-const NewLeadComponent = () => {
-  const [searchData, setSearchData] = useState({
-    firstName: "",
-    lastName: "",
-    primaryEmail: "",
-    mobilePhone: "",
-  });
-  const [searchResults, setSearchResults] = useState([]);
-  const [noResults, setNoResults] = useState(false);
-  const [showNewLeadForm, setShowNewLeadForm] = useState(false);
-  const [contactIdForNewLead, setContactIdForNewLead] = useState(null);
-  const [totalCount, setTotalCount] = useState(0);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [showNewContactForm, setShowNewContactForm] = useState(false);
+const LeadVehicle = ({ vehicleId, leadId }) => {
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [vehicle, setVehicle] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setSearchData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const searchFields = [
+    { name: "make", label: "Make" },
+    { name: "model", label: "Model" },
+    { name: "vin", label: "VIN" },
+  ];
 
-  const handleSearch = async () => {
-    try {
-      const contactRef = collection(db, "contacts");
-      let contactQuery = query(contactRef);
+  const resultFields = [
+    "make",
+    "model",
+    "year",
+    "vin",
+    "dealer_name",
+    "sale_price",
+  ];
 
-      Object.entries(searchData).forEach(([key, value]) => {
-        if (value.trim() !== "") {
-          contactQuery = query(contactQuery, where(key, "==", value.trim()));
+  useEffect(() => {
+    if (vehicleId) {
+      const fetchLeadVehicle = async () => {
+        setLoading(true);
+        try {
+          const vehicleRef = doc(db, "preOwnedVehicleInventory", vehicleId);
+          const docSnap = await getDoc(vehicleRef);
+          if (docSnap.exists()) {
+            setVehicle({ id: docSnap.id, ...docSnap.data() });
+          } else {
+            setError("No such vehicle found!");
+          }
+        } catch (err) {
+          setError("Failed to fetch vehicle: " + err.message);
+        } finally {
+          setLoading(false);
         }
-      });
+      };
 
-      const querySnapshot = await getDocs(contactQuery);
-      const results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setSearchResults(results);
-      setTotalCount(results.length);
-      setNoResults(results.length === 0);
+      fetchLeadVehicle();
+    }
+  }, [vehicleId]);
+
+  const handleDeleteLeadVehicle = async () => {
+    if (!vehicle) return;
+    const leadRef = doc(db, "leads", leadId);
+    try {
+      await updateDoc(leadRef, {
+        vehicleIDs: arrayRemove(vehicle.id),
+      });
+      setSnackbarMessage("Vehicle removed successfully.");
+      setSnackbarOpen(true);
     } catch (error) {
-      console.error("Error searching contacts:", error);
-      setNoResults(true);
+      console.error("Error removing vehicle from lead:", error);
+      setSnackbarMessage("Failed to remove vehicle.");
+      setSnackbarOpen(true);
     }
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  const handleOpenSearchDialog = () => {
+    setSearchDialogOpen(true);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handleCloseSearchDialog = () => {
+    setSearchDialogOpen(false);
   };
 
-  const handleNewLeadClick = (contactId) => {
-    setContactIdForNewLead(contactId);
-    setShowNewLeadForm(true);
-  };
+  if (loading) return <CircularProgress />;
+  if (error) return <Alert severity="error">{error}</Alert>;
 
-  const handleNewContactClick = () => {
-    setShowNewContactForm(true);
-  };
-
-  const handleNewContactCreated = (newContactId) => {
-    setContactIdForNewLead(newContactId);
-    setShowNewContactForm(false);
-    setShowNewLeadForm(true);
-  };
-
-  const handleCloseForm = () => {
-    setShowNewLeadForm(false);
-    setShowNewContactForm(false);
-  };
+  const photos = vehicle?.photo ? vehicle.photo.split(",") : [];
 
   return (
-    <Box sx={{ mt: 3, mr: 8 }}>
-      {!showNewLeadForm && !showNewContactForm && (
-        <>
-          <Typography variant="h4" mb={2}>New Lead</Typography>
-          <Divider />
-          <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-            <Box mb={1} mt={1} p={1}>
-              <Typography variant="h5" mb={2}>Search Existing Contacts</Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="First Name"
-                    name="firstName"
-                    variant="outlined"
-                    mb={2}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Last Name"
-                    name="lastName"
-                    variant="outlined"
-                    mb={2}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Email"
-                    name="primaryEmail"
-                    variant="outlined"
-                    mb={2}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Phone Number"
-                    name="mobilePhone"
-                    variant="outlined"
-                    mb={2}
-                  />
-                </Grid>
-              </Grid>
-              <Button variant="contained" onClick={handleSearch} sx={{ mt: 2 }}>Search</Button>
+    <Box sx={{ mb: 5 }}>
+      <Paper sx={{ p: 3, mb: 2 }}>
+        <Typography variant="h5" mb={2}>
+          {vehicle && `${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        </Typography>
+        <Button onClick={handleDeleteLeadVehicle} color="primary">
+          Remove Vehicle
+        </Button>
+        <Button onClick={handleOpenSearchDialog} color="primary">
+          Search Vehicles
+        </Button>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={5}>
+            <Box
+              sx={{
+                position: "relative",
+                width: "100%",
+                height: "auto",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                overflow: "hidden",
+                cursor: "pointer",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onClick={() =>
+                setActiveImageIndex(
+                  (prevIndex) => (prevIndex + 1) % photos.length
+                )
+              }
+            >
+              <img
+                src={
+                  photos.length > 0
+                    ? photos[activeImageIndex]
+                    : "path/to/default/image.jpg"
+                }
+                alt={`Vehicle Image ${activeImageIndex + 1}`}
+                style={{ width: "100%", height: "auto" }}
+              />
             </Box>
-          </Paper>
-          <Divider />
-          {noResults ? (
-            <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-              <Typography>No results found. Consider adding a new contact.</Typography>
-              <Button variant="contained" onClick={handleNewContactClick} sx={{ mt: 2 }}>New Contact</Button>
-            </Paper>
-          ) : (
-            <BasicTable
-              data={searchResults}
-              columns={[
-                { field: "firstName", header: "First Name" },
-                { field: "lastName", header: "Last Name" },
-                { field: "primaryEmail", header: "Email" },
-                { field: "mobilePhone", header: "Phone" },
-              ]}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              totalCount={totalCount}
-              onRowClick={handleNewLeadClick}
-              actionLabel="Create Lead"
-            />
-          )}
-        </>
-      )}
-      {showNewLeadForm && (
-        <NewLeadForm onCloseForm={handleCloseForm} contactId={contactIdForNewLead} />
-      )}
-      {showNewContactForm && (
-        <NewContact onCloseForm={handleCloseForm} onNewContactCreated={handleNewContactCreated} />
-      )}
+          </Grid>
+          <Grid item xs={12} md={7}>
+            <Grid container spacing={2}>
+              {resultFields.map((field, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <TextField
+                    label={field}
+                    value={vehicle ? vehicle[field] : ''}
+                    variant="outlined"
+                    fullWidth
+                    InputProps={{ readOnly: true }}
+                    disabled
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+        </Grid>
+      </Paper>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="error">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+      <Dialog open={searchDialogOpen} onClose={handleCloseSearchDialog}>
+        <DialogTitle>Search Vehicles</DialogTitle>
+        <DialogContent>
+          <SearchComponent
+            searchFields={searchFields}
+            collectionPath="preOwnedVehicleInventory"
+            resultFields={resultFields}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseSearchDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
 
-export default NewLeadComponent;
+export default LeadVehicle;

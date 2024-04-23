@@ -1,63 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { collection, query, getDocs } from "firebase/firestore";
+import { db } from "../src/firebase";
 
-const useFetchInventory = (searchQuery = '', page, rowsPerPage) => {
+const useFetchInventory = (page, rowsPerPage) => {
   const [data, setData] = useState({
     inventory: [],
-    filteredInventory: [],
     loading: true,
     error: null,
   });
-  const [totalCount, setTotalCount] = useState(0);
 
+  const fetchData = useCallback(async () => {
+    setData(prev => ({ ...prev, loading: true }));
+    try {
+      const q = query(collection(db, "preOwnedVehicleInventory"));
+      const querySnapshot = await getDocs(q);
+      const inventoryArray = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      setData({
+        inventory: inventoryArray,
+        loading: false,
+        error: null,
+      });
+    } catch (error) {
+      console.error("Error fetching inventory:", error);
+      setData({
+        inventory: [],
+        loading: false,
+        error: error.message,
+      });
+    }
+  }, []);
+ 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const inventoryResponse = await fetch(`https://api.jsonbin.io/v3/b/661189f7e41b4d34e4e04720`, {
-          headers: {
-            'X-Master-Key': '$2a$10$uiM2HEeI3BGhlOa7g8QsAO69Q1wi2tcxKz5wZeKXnvO0MSmUIY/Pu' 
-          }
-        });
+    fetchData(); 
+  }, [fetchData]);
 
-        const inventoryResult = await inventoryResponse.json();
-        const inventoryData = inventoryResult.record.inventory;
-        const startIndex = page * rowsPerPage;
-        const paginatedInventory = inventoryData.slice(startIndex, startIndex + rowsPerPage);
-  
-        setData({
-          inventory: paginatedInventory,
-          filteredInventory: paginatedInventory,
-          loading: false,
-          error: null,
-        });
-        setTotalCount(inventoryData.length);
-      } catch (error) {
-        setData((prevState) => ({
-          ...prevState,
-          loading: false,
-          error: error.message,
-        }));
-      }
-    };
-
-    fetchData();
-  }, [page, rowsPerPage]);
-
-  useEffect(() => {
-    const query = typeof searchQuery === 'string' ? searchQuery.toLowerCase() : '';
-    const filtered = data.inventory.filter(item =>
-      item.make.toLowerCase().includes(query) ||
-      item.model.toLowerCase().includes(query)
-    );
-    setData(prevState => ({
-      ...prevState,
-      filteredInventory: filtered,
-      loading: false,
-      error: null
-    }));
-    setTotalCount(filtered.length);
-  }, [searchQuery, data.inventory]);
-
-  return { inventory: data.filteredInventory, loading: data.loading, error: data.error, totalCount };
+  return { data, reload: fetchData };
 };
 
 export { useFetchInventory };

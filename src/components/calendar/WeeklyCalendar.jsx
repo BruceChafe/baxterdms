@@ -83,123 +83,115 @@ const WeeklyCalendar = () => {
       />
       <TabContext>
         <Box sx={{ mt: 3 }}>
-        <Paper sx={{ pl: 1, pr: 1 }}>
-  <Box mb={1} mt={1} p={1}>
-    <TabList textColor="secondary" indicatorColor="secondary">
-      <Box display="flex" alignItems="center" justifyContent="center">
-        <FormControlLabel
-          control={
-            <Switch
-              checked={showCompletedTasks}
-              onChange={toggleCompletedTasks}
-            />
-          }
-          label={<Typography>Show Completed, Cancelled Tasks</Typography>}
-          labelPlacement="end"
-          sx={{ margin: 'auto' }} 
-        />
-      </Box>
-    </TabList>
-  </Box>
-</Paper>
-
+          <Paper sx={{ pl: 1, pr: 1 }}>
+            <Box mb={1} mt={1} p={1}>
+              <TabList textColor="secondary" indicatorColor="secondary">
+                <Box display="flex" alignItems="center" justifyContent="center">
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={showCompletedTasks}
+                        onChange={toggleCompletedTasks}
+                      />
+                    }
+                    label={
+                      <Typography>Show Completed, Cancelled Tasks</Typography>
+                    }
+                    labelPlacement="end"
+                    sx={{ margin: "auto" }}
+                  />
+                </Box>
+              </TabList>
+            </Box>
+          </Paper>
         </Box>
         <TabPanel>
           <Paper sx={{ mb: 2 }}>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    {dates.map(({ day, date }, index) => (
-                      <TableCell
-                        key={day}
-                        align="center"
-                        sx={{
-                          width: `${100 / dates.length}%`,
-                          borderRight: index !== dates.length - 1 ? 1 : 0,
-                          borderColor: "divider",
-                        }}
-                      >
-                        <Typography variant="subtitle1">{day}</Typography>
-                        <Typography variant="body1">{date}</Typography>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    {dates.map(({ isoDate }, index) => (
-                      <TableCell
-                        key={isoDate}
-                        align="center"
-                        sx={{
-                          width: `${100 / dates.length}%`,
-                          borderRight: index !== dates.length - 1 ? 1 : 0,
-                          borderColor: "divider",
-                        }}
-                      >
-                        {tasks
-                          .filter((task) =>
-                            task.followUpDate.startsWith(isoDate)
-                          )
-                          .filter(
-                            (task) =>
-                              showCompletedTasks || task.status !== "Completed"
-                          )
-                          .filter(
-                            (task) =>
-                              showCancelledTasks || task.status !== "Cancelled"
-                          )
-                          .map((task, idx) => (
-                            <Box
-                              key={task.id || idx}
-                              onClick={() => handleCellClick(task)}
-                              sx={{
-                                cursor: "pointer",
-                                border: "1px solid",
-                                borderColor: "primary.main",
-                                borderRadius: 1,
-                                p: 2,
-                                backgroundColor:
-                                  task.status === "Completed"
-                                    ? "darkgreen"
-                                    : task.status === "Cancelled"
-                                    ? "darkgrey"
-                                    : task.status === "Active"
-                                    ? "darkblue"
-                                    : "",
-                              }}
-                            >
-                              <Typography variant="body2">
-                                <strong>{task.type}</strong> ({task.priority})
-                              </Typography>
-                              <Box>
-                                <Typography variant="caption">
-                                  {task.subject}
-                                </Typography>
-                              </Box>
-                              <Box>
-                                <Typography variant="caption">
-                                  {task.status}
-                                </Typography>
-                                <Tooltip title="Open Lead">
-                                  <IconButton
-                                    component={Link}
-                                    to={`/leads/${task.leadNumber}`}
-                                    color="primary"
-                                  >
-                                    <LaunchIcon />
-                                  </IconButton>
-                                </Tooltip>
-                              </Box>
-                            </Box>
-                          ))}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+          <TableContainer component={Paper} sx={{ minHeight: "30%" }}>
+  <Table>
+    <TableHead>
+      <TableRow>
+        {dates.map(({ day, date }, index) => (
+          <TableCell
+            key={day}
+            align="center"
+            sx={{
+              width: `${100 / dates.length}%`,
+              borderRight: index !== dates.length - 1 ? 1 : 0,
+              borderColor: "divider",
+            }}
+          >
+            <Typography variant="subtitle1">{day}</Typography>
+            <Typography variant="body1">{date}</Typography>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {dates.map(({ isoDate }, index) => {
+        const dayTasks = tasks.filter(task => task.followUpDate.startsWith(isoDate));
+        return (
+          <TableRow key={isoDate}>
+            <TableCell
+              align="center"
+              sx={{
+                width: `${100 / dates.length}%`,
+                borderRight: index !== dates.length - 1 ? 1 : 0,
+                borderColor: "divider",
+                minHeight: "150px",  // Set a specific pixel height or use percentage if the container's height is well-defined
+              }}
+              colSpan={dayTasks.length > 0 ? 1 : dates.length}  // Span all columns if no tasks
+            >
+              {dayTasks.length > 0 ? (
+                dayTasks.map((task, idx) => (
+                  <Box
+                    key={task.id || idx}
+                    onClick={() => handleCellClick(task)}
+                    sx={{
+                      cursor: "pointer",
+                      border: "1px solid",
+                      borderColor: "primary.main",
+                      borderRadius: 1,
+                      p: 2,
+                      backgroundColor:
+                        task.status === "Completed" ? "darkgreen" :
+                        task.status === "Cancelled" ? "darkgrey" :
+                        task.status === "Active" ? "darkblue" : "",
+                    }}
+                  >
+                    <Typography variant="body2">
+                      <strong>{task.type}</strong> ({task.priority})
+                    </Typography>
+                    <Box>
+                      <Typography variant="caption">{task.subject}</Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption">{task.status}</Typography>
+                      <Tooltip title="Open Lead">
+                        <IconButton
+                          component={Link}
+                          to={`/leads/${task.leadNumber}`}
+                          color="primary"
+                        >
+                          <LaunchIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </Box>
+                ))
+              ) : (
+                <Typography variant="body1" color="text.secondary">
+                  No tasks
+                </Typography>
+              )}
+            </TableCell>
+          </TableRow>
+        );
+      })}
+    </TableBody>
+  </Table>
+</TableContainer>
+
           </Paper>
         </TabPanel>
       </TabContext>

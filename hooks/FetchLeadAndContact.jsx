@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { db } from "../src/firebase";
- import { doc, getDoc, query, where, getDocs, collection } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  query,
+  where,
+  getDocs,
+  collection,
+} from "firebase/firestore";
 
 const useFetchLeadAndContact = (leadId) => {
   const [data, setData] = useState({
@@ -12,13 +19,13 @@ const useFetchLeadAndContact = (leadId) => {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!leadId) {
-        setData({ ...data, loading: false, error: "No lead ID provided" });
-        return;
-      }
+    if (!leadId) {
+      setData({ ...data, loading: false, error: "No lead ID provided" });
+      return;
+    }
 
-      setData(prev => ({ ...prev, loading: true }));
+    const fetchData = async () => {
+      setData((prev) => ({ ...prev, loading: true }));
 
       try {
         const leadRef = doc(db, "leads", leadId);
@@ -28,20 +35,25 @@ const useFetchLeadAndContact = (leadId) => {
           throw new Error("Lead not found");
         }
 
-        const leadData = leadSnap.data();
+        const leadData = {
+          id: leadSnap.id,
+          ...leadSnap.data(),
+        };
 
         const contactQuery = query(
           collection(db, "contacts"),
           where("leadIDs", "array-contains", leadId)
         );
-
         const contactSnapshot = await getDocs(contactQuery);
 
         if (contactSnapshot.empty) {
           throw new Error("Contact not found");
         }
 
-        const contactData = contactSnapshot.docs[0].data();
+        const contactData = {
+          id: contactSnapshot.docs[0].id,
+          ...contactSnapshot.docs[0].data(),
+        };
 
         const primaryEmail = contactData.primaryEmail || null;
 
@@ -52,16 +64,22 @@ const useFetchLeadAndContact = (leadId) => {
           loading: false,
           error: null,
         });
-
       } catch (error) {
-        setData(prev => ({ ...prev, loading: false, error: error.message }));
+        setData((prev) => ({ ...prev, loading: false, error: error.message }));
       }
     };
 
     fetchData();
   }, [leadId]);
 
-  return { ...data };
+  const setContact = (newContact) => {
+    setData((prevData) => ({
+      ...prevData,
+      contact: newContact,
+    }));
+  };
+
+  return { ...data, setContact };
 };
 
 export { useFetchLeadAndContact };

@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Button, Paper, Typography, Divider } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { db } from "../../firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { Button, Paper, Typography, Divider, CircularProgress, Alert } from "@mui/material";
 import { Box } from "@mui/system";
 import TransferList from "../transferList/TransferList";
 
@@ -11,69 +13,60 @@ const LeadsSection = ({
   setActiveData,
 }) => {
   const [saveStatus, setSaveStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = (field) => {
+  const handleSave = async (field) => {
+    setLoading(true);
+    const docRef = doc(db, 'leadTaskConfig', 'leadTaskConfig');
     const dataToSend = {
       [`lead${field}TypeUnactive`]: unactiveData,
       [`lead${field}TypeActive`]: activeData,
     };
 
-    fetch(`http://localhost:8000/configLeadTasks/1/`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataToSend),
-    })
-      .then((response) => {
-        if (response.ok) {
-          setSaveStatus("success");
-        } else {
-          setSaveStatus("error");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Update successful:", data);
-      })
-      .catch((error) => {
-        console.error("Error updating configuration:", error);
-        setSaveStatus("error");
-      });
+    try {
+      await updateDoc(docRef, dataToSend);
+      setSaveStatus("success");
+      console.log("Update successful");
+    } catch (error) {
+      console.error("Error updating configuration:", error);
+      setSaveStatus("error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Paper sx={{ p: 3, mb: 2 }}>
-      <Typography variant="h5" mb={2}>
-        {label}
-      </Typography>
-      <TransferList
-        leftItems={unactiveData}
-        rightItems={activeData}
-        setLeftItems={setUnactiveData}
-        setRightItems={setActiveData}
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => handleSave(label.split(" ")[1])}
-        disabled={saveStatus === "pending"}
-        sx={{ mt: 2 }}
-      >
-        {saveStatus === "pending" ? "Saving..." : "Save"}
-      </Button>
-      {saveStatus && (
-        <Typography
-          variant="body2"
-          color={saveStatus === "success" ? "success.main" : "error.main"}
-          sx={{ mt: 2 }}
-        >
-          {saveStatus === "success"
-            ? "Changes saved successfully."
-            : "Failed to save changes. Please try again."}
+      <Paper elevation={4} sx={{ p: 3, mb: 2 }}>
+        <Typography variant="h6" mb={2} sx={{ fontWeight: 'medium' }}>
+          {label}
         </Typography>
-      )}
+        <TransferList
+          leftItems={unactiveData}
+          rightItems={activeData}
+          setLeftItems={setUnactiveData}
+          setRightItems={setActiveData}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleSave(label.split(" ")[1])}
+          disabled={loading}
+          sx={{ mt: 2 }}
+          startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+        >
+          {loading ? "Saving..." : "Save Changes"}
+        </Button>
+        {saveStatus && (
+          <Alert
+            severity={saveStatus === "success" ? "success" : "error"}
+            sx={{ mt: 2 }}
+          >
+            {saveStatus === "success"
+              ? "Changes saved successfully."
+              : "Failed to save changes. Please try again."}
+          </Alert>
+        )}
       </Paper>
     </Box>
   );
@@ -112,19 +105,31 @@ const LeadTaskConfig = () => {
   ];
 
   useEffect(() => {
-    fetch("http://localhost:8000/configLeadTasks/1/")
-      .then((response) => response.json())
-      .then((data) => {
-        setLeadTaskTypeUnactive(data.leadTaskTypeUnactive || []);
-        setLeadTaskTypeActive(data.leadTaskTypeActive || []);
-        setLeadTaskStatusUnactive(data.leadTaskStatusUnactive || []);
-        setLeadTaskStatusActive(data.leadTaskStatusActive || []);
-        setLeadTaskPriorityUnactive(data.leadTaskPriorityUnactive || []); 
-        setLeadTaskPriorityActive(data.leadTaskPriorityActive || []); 
-      })
-      .catch((error) => {
+    const fetchData = async () => {
+      const docRef = doc(db, 'leadTaskConfig', 'leadTaskConfig');
+      try {
+        const docSnap = await getDoc(docRef);
+        console.log("Firestore snapshot:", docSnap); // Check the raw snapshot
+    
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log("Fetched data:", data); // Check fetched data
+    
+          setLeadTaskTypeUnactive(data.leadTaskTypeUnactive || []);
+          setLeadTaskTypeActive(data.leadTaskTypeActive || []);
+          setLeadTaskStatusUnactive(data.leadTaskStatusUnactive || []);
+          setLeadTaskStatusActive(data.leadTaskStatusActive || []);
+          setLeadTaskPriorityUnactive(data.leadTaskPriorityUnactive || []); 
+          setLeadTaskPriorityActive(data.leadTaskPriorityActive || []); 
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
         console.error("Error fetching configuration:", error);
-      });
+      }
+    };    
+
+    fetchData();
   }, []);
 
   return (

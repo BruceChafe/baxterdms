@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
 import { db } from "../../firebase";
 
-const UploadData = ({ showPanel, onClose, updateData }) => {
+const UploadData = ({ showPanel, onClose, updateData, collectionName }) => {
   const [csvData, setCSVData] = useState([]);
   const [fileParsed, setFileParsed] = useState(false);
 
@@ -16,40 +16,37 @@ const UploadData = ({ showPanel, onClose, updateData }) => {
         setFileParsed(true);
         console.log("Parsed CSV Data:", result.data);
       },
-      
       header: true,
+      skipEmptyLines: true,
+      dynamicTyping: true
     });
   };
 
   const handleUpload = async () => {
-    console.log("Attempting to upload data...");
+    console.log(`Attempting to upload data to ${collectionName}...`);
     if (!csvData.length) {
       console.error("No data available to upload.");
       return;
     }
   
-    const batch = writeBatch(db); // Correct way to create a new batch operation
-  
+    const batch = writeBatch(db);
+
     csvData.forEach((entry, index) => {
-      if (entry.dob) { // Ensure the date of birth is properly converted
-        entry.dob = new Date(entry.dob);
-      }
-      const docRef = doc(collection(db, "contacts")); // Create a document reference
-      batch.set(docRef, entry); // Add the set operation to the batch
+      const docRef = doc(collection(db, collectionName));
+      batch.set(docRef, entry);
     });
   
     try {
-      await batch.commit(); // Commit the batch operation
+      await batch.commit();
       console.log("Batch upload completed successfully");
-      updateData(); // Trigger data refresh
-      onClose(); // Close the upload modal
-      setFileParsed(false); // Reset the file parsed flag
+      updateData();
+      onClose();
+      setFileParsed(false);
     } catch (error) {
       console.error("Error uploading data:", error);
       alert(`Failed to upload data: ${error.message}`);
     }
   };
-  
   
   return (
     <>

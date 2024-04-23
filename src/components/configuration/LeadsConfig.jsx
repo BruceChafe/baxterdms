@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Button, Paper, Typography, Divider } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { db } from "../../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { Button, Paper, Typography, Divider, CircularProgress, Alert } from "@mui/material";
 import { Box } from "@mui/system";
 import TransferList from "../transferList/TransferList";
 
@@ -11,70 +13,58 @@ const LeadsSection = ({
   setActiveData,
 }) => {
   const [saveStatus, setSaveStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // const handleSave = (field) => {
-  //   const dataToSend = {
-  //     [`lead${field}Unactive`]: unactiveData,
-  //     [`lead${field}Active`]: activeData,
-  //   };
+  const handleSave = async () => {
+    setLoading(true);
+    const field = label.replace(" Management", "").replaceAll(" ", "");
+    const docRef = doc(db, 'leadConfig', 'configData');
+    const dataToSend = {
+      [`${field}Unactive`]: unactiveData,
+      [`${field}Active`]: activeData,
+    };
 
-  //   fetch(`http://localhost:8000/configLeads/1/`, {
-  //     method: "PATCH",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(dataToSend),
-  //   })
-  //     .then((response) => {
-  //       if (response.ok) {
-  //         setSaveStatus("success");
-  //       } else {
-  //         setSaveStatus("error");
-  //       }
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       console.log("Update successful:", data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error updating configuration:", error);
-  //       setSaveStatus("error");
-  //     });
-  // };
+    try {
+      await updateDoc(docRef, dataToSend);
+      setSaveStatus("success");
+      console.log("Update successful for:", field);
+    } catch (error) {
+      console.error("Error updating configuration for:", field, error);
+      setSaveStatus("error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Box sx={{ mb: 2 }}>
       <Paper sx={{ p: 3, mb: 2 }}>
-      <Typography variant="h5" mb={2}>
-        {label}
-      </Typography>
-      <TransferList
-        leftItems={unactiveData}
-        rightItems={activeData}
-        setLeftItems={setUnactiveData}
-        setRightItems={setActiveData}
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => handleSave(label.split(" ")[1])} // Pass the second word of the label
-        disabled={saveStatus === "pending"}
-        sx={{ mt: 2 }}
-      >
-        {saveStatus === "pending" ? "Saving..." : "Save"}
-      </Button>
-
-      {saveStatus && (
-        <Typography
-          variant="body2"
-          color={saveStatus === "success" ? "success.main" : "error.main"}
+        <Typography variant="h5" mb={2}>{label}</Typography>
+        <TransferList
+          leftItems={unactiveData || []}
+          rightItems={activeData || []}
+          setLeftItems={setUnactiveData}
+          setRightItems={setActiveData}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSave}
+          disabled={loading}
           sx={{ mt: 2 }}
         >
-          {saveStatus === "success"
-            ? "Changes saved successfully."
-            : "Failed to save changes. Please try again."}
-        </Typography>
-      )}
+          {loading ? <CircularProgress size={24} /> : "Save Changes"}
+        </Button>
+        {saveStatus && (
+          <Alert
+            severity={saveStatus === "success" ? "success" : "error"}
+            sx={{ mt: 2 }}
+          >
+            {saveStatus === "success"
+              ? "Changes saved successfully."
+              : "Failed to save changes. Please try again."}
+          </Alert>
+        )}
       </Paper>
     </Box>
   );
@@ -86,14 +76,11 @@ const LeadsConfig = () => {
   const [leadTypeUnactive, setLeadTypeUnactive] = useState([]);
   const [leadTypeActive, setLeadTypeActive] = useState([]);
   const [leadDealershipUnactive, setLeadDealershipUnactive] = useState([]); 
-  const [leadDealershipActive, setLeadDealershipActive] = useState([]); 
-  const [leadSalesConsultantUnactive, setLeadSalesConsultantUnactive] =
-    useState([]);
-  const [leadSalesConsultantActive, setLeadSalesConsultantActive] = useState(
-    []
-  );
-  const [leadStatusUnactive, setLeadStatusUnactive] = useState([]); 
-  const [leadStatusActive, setLeadStatusActive] = useState([]); 
+  const [leadDealershipActive, setLeadDealershipActive] = useState([]);
+  const [leadSalesConsultantUnactive, setLeadSalesConsultantUnactive] = useState([]);
+  const [leadSalesConsultantActive, setLeadSalesConsultantActive] = useState([]);
+  const [leadStatusUnactive, setLeadStatusUnactive] = useState([]);
+  const [leadStatusActive, setLeadStatusActive] = useState([]);
 
   const configFields = [
     {
@@ -118,7 +105,7 @@ const LeadsConfig = () => {
       setActiveData: setLeadDealershipActive,
     },
     {
-      label: "Lead SalesConsultant Management",
+      label: "Lead Sales Consultant Management",
       unactiveData: leadSalesConsultantUnactive,
       activeData: leadSalesConsultantActive,
       setUnactiveData: setLeadSalesConsultantUnactive,
@@ -134,23 +121,33 @@ const LeadsConfig = () => {
   ];
 
   useEffect(() => {
-    fetch("http://localhost:8000/configLeads/1")
-      .then((response) => response.json())
-      .then((data) => {
-        setLeadSourceUnactive(data.leadSourceUnactive || []);
-        setLeadSourceActive(data.leadSourceActive || []);
-        setLeadTypeUnactive(data.leadTypeUnactive || []);
-        setLeadTypeActive(data.leadTypeActive || []);
-        setLeadDealershipUnactive(data.leadDealershipUnactive || []); 
-        setLeadDealershipActive(data.leadDealershipActive || []); 
-        setLeadSalesConsultantUnactive(data.leadSalesConsultantUnactive || []); 
-        setLeadSalesConsultantActive(data.leadSalesConsultantActive || []); 
-        setLeadStatusUnactive(data.leadStatusUnactive || []); 
-        setLeadStatusActive(data.leadStatusActive || []); 
-      })
-      .catch((error) => {
-        console.error("Error fetching configuration:", error);
-      });
+    const fetchData = async () => {
+      const docRef = doc(db, 'leadConfig', 'configData');
+      try {
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const fetchedData = docSnap.data();
+          console.log("Fetched data:", fetchedData);
+          // Set each piece of state based on fetched data
+          setLeadSourceUnactive(fetchedData.leadSourceUnactive || []);
+          setLeadSourceActive(fetchedData.leadSourceActive || []);
+          setLeadTypeUnactive(fetchedData.leadTypeUnactive || []);
+          setLeadTypeActive(fetchedData.leadTypeActive || []);
+          setLeadDealershipUnactive(fetchedData.leadDealershipUnactive || []);
+          setLeadDealershipActive(fetchedData.leadDealershipActive || []);
+          setLeadSalesConsultantUnactive(fetchedData.leadSalesConsultantUnactive || []);
+          setLeadSalesConsultantActive(fetchedData.leadSalesConsultantActive || []);
+          setLeadStatusUnactive(fetchedData.leadStatusUnactive || []);
+          setLeadStatusActive(fetchedData.leadStatusActive || []);
+        } else {
+          console.log("No such document in Firestore!");
+        }
+      } catch (error) {
+        console.error("Error fetching configuration from Firestore:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (

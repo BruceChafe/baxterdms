@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Typography,
   Box,
@@ -61,16 +61,15 @@ const Contact = () => {
 
     try {
       await updateDoc(contactRef, editedContact);
-      // Update the contact state immediately
       setContact(prev => ({ ...prev, ...editedContact }));
       setSnackbarMessage("Save successful");
-      setContactInfoChanged(false); // Reset change tracking
+      setContactInfoChanged(false);
     } catch (error) {
       console.error("Error updating contact:", error);
       setSnackbarMessage(`Error: ${error.message}`);
     } finally {
       setSnackbarOpen(true);
-      setIsEditable(false); // Turn off edit mode after save
+      setIsEditable(false);
     }
   };
 

@@ -6,27 +6,21 @@ import {
   TablePagination,
   Paper,
   Alert,
-  Container
+  Container,
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchInventory } from "../../../hooks/FetchInventory";
 import UploadData from "../upload/Upload";
-import SearchComponent from "../../../hooks/search/SearchComponent";
-import { useDebounce } from "../../../hooks/search/DebouncedValue";
 import TitleLayout from "../layouts/TitleLayout";
 
 const InventoryDashboard = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
+  const { data, reload } = useFetchInventory();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  console.log(data);
 
-  const { inventory, loading, error, totalCount } = useFetchInventory(
-    debouncedSearchQuery,
-    page,
-    rowsPerPage
-  );
+  const { inventory, loading, error } = data;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -60,28 +54,21 @@ const InventoryDashboard = () => {
       />
       {loading ? (
         <Container>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight="300px"
-          flexDirection="column"
-        >
-          <CircularProgress color="primary" />
-          <Typography variant="subtitle1" sx={{ mt: 2 }}>
-            Fetching data, please wait...
-          </Typography>
-        </Box>
-      </Container>      ) : (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="300px"
+            flexDirection="column"
+          >
+            <CircularProgress color="primary" />
+            <Typography variant="subtitle1" sx={{ mt: 2 }}>
+              Fetching data, please wait...
+            </Typography>
+          </Box>
+        </Container>
+      ) : (
         <>
-          <Paper sx={{ mt: 2, mb: 2 }}>
-            <Paper sx={{ mt: 2, mb: 2, p: 1 }}>
-              <SearchComponent
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-              />
-            </Paper>
-          </Paper>
           <BasicTable
             data={inventory}
             columns={[
@@ -101,26 +88,26 @@ const InventoryDashboard = () => {
               Error: {error}
             </Alert>
           )}
-          <Paper sx={{ mt: 2, mb: 2 }}>
+                    <Paper sx={{ mt: 2, mb: 2 }}>
+
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
-              count={totalCount}
+              count={inventory.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
               sx={{ mr: 5 }}
             />
-          </Paper>
+            </Paper>
         </>
       )}
       <UploadData
         showPanel={uploadPanelOpen}
         onClose={handleCloseUploadPanel}
-        uploadUrl="http://localhost:8000/inventory"
-        uploadMethod="POST"
-        stepLabels={["Upload Inventory"]}
+        updateData={reload}
+        collectionName="preOwnedVehicleInventory"
       />
     </Box>
   );

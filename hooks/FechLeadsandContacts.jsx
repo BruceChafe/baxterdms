@@ -29,13 +29,12 @@ const useFetchLeadsAndContacts = (page, rowsPerPage) => {
         console.log("Leads:", leads); // Debug
         console.log("Contacts:", contacts); // Debug
     
-        // Combine data
         const startIndex = page * rowsPerPage;
         const paginatedLeads = leads.slice(startIndex, startIndex + rowsPerPage);
         const combinedData = paginatedLeads.map(lead => {
           const leadContacts = contacts.filter(contact => contact.leadIDs?.includes(lead.id));
-          return { lead, contacts: leadContacts };
-        });
+          return { lead: { ...lead, id: lead.id }, contacts: leadContacts };
+        });       
     
         setData({
           leads: paginatedLeads,

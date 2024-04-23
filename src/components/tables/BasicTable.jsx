@@ -64,7 +64,9 @@ const BasicTable = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedData.map((row) => (
+              {paginatedData.map((row) => {
+                  console.log("Row:", row);
+                return (
                 <TableRow key={row.id} hover>
                   <TableCell
                     align="center"
@@ -74,7 +76,7 @@ const BasicTable = ({
                       variant="outlined"
                       component={Link}
                       to={`${baseNavigationUrl}/${row.leadNumber || row.id}`}
-                    >
+                      >
                       {action}
                     </Button>
                   </TableCell>
@@ -91,7 +93,8 @@ const BasicTable = ({
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
+                )
+                    })}
             </TableBody>
           </Table>
         </TableContainer>

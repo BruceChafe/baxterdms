@@ -20,7 +20,7 @@ const ContactTable = () => {
   const { data, reload } = useFetchContacts();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  console.log(data)
+  console.log(data);
 
   const { contacts, loading, error } = data;
 
@@ -43,30 +43,33 @@ const ContactTable = () => {
     document.body.style.overflow = "auto";
   };
 
-  const transformedData = contacts.map((contact) => {
-    const fullName = `${contact.firstName || ""} ${contact.lastName || ""}`.trim();
-    const phoneNumbers = (
-      <>
-        <FormatPhoneNumber type="mobile" number={contact.mobilePhone} />
-        <FormatPhoneNumber type="home" number={contact.homePhone} />
-        <FormatPhoneNumber type="work" number={contact.workPhone} />
-      </>
-    );
-    const address = (
-      <FormatAddress
-        streetAddress={contact.streetAddress}
-        city={contact.city}
-        province={contact.province}
-        postalCode={contact.postalCode}
-      />
-    );
-    return {
-      ...contact,
-      fullName,
-      phoneNumbers,
-      address,
-    };
-  }) || [];
+  const transformedData =
+    contacts.map((contact) => {
+      const fullName = `${contact.firstName || ""} ${
+        contact.lastName || ""
+      }`.trim();
+      const phoneNumbers = (
+        <>
+          <FormatPhoneNumber type="mobile" number={contact.mobilePhone} />
+          <FormatPhoneNumber type="home" number={contact.homePhone} />
+          <FormatPhoneNumber type="work" number={contact.workPhone} />
+        </>
+      );
+      const address = (
+        <FormatAddress
+          streetAddress={contact.streetAddress}
+          city={contact.city}
+          province={contact.province}
+          postalCode={contact.postalCode}
+        />
+      );
+      return {
+        ...contact,
+        fullName,
+        phoneNumbers,
+        address,
+      };
+    }) || [];
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
@@ -132,6 +135,7 @@ const ContactTable = () => {
         showPanel={uploadPanelOpen}
         onClose={handleCloseUploadPanel}
         updateData={reload}
+        collectionName="contacts"
       />
     </Box>
   );

@@ -27,12 +27,13 @@ const LeadsTable = () => {
   };
 
   const transformedData = data.combinedData.map((item) => ({
-    leadType: item.lead.leadType, // Adjust field names as per your data structure
-    leadStatus: item.lead.leadStatus, // Adjust field names as per your data structure
-    fullName: `${item.contacts[0].firstName} ${item.contacts[0].lastName}`, // Assuming there's only one contact per lead
-    email: item.contacts[0].primaryEmail, // Assuming there's only one contact per lead
-    leadDealership: item.lead.leadDealership, // Adjust field names as per your data structure
-  }));
+    id: item.lead.id,
+    leadType: item.lead.leadType,
+    leadStatus: item.lead.leadStatus,
+    fullName: item.contacts.length > 0 ? `${item.contacts[0].firstName} ${item.contacts[0].lastName}` : 'No contact',
+    email: item.contacts.length > 0 ? item.contacts[0].primaryEmail : 'No email',
+    leadDealership: item.lead.leadDealership,
+  })); 
 
   console.log("Transformed Data:", transformedData);
 

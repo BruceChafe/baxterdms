@@ -10,6 +10,8 @@ import {
   IconButton,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 import TitleLayout from "../layouts/TitleLayout";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -20,28 +22,29 @@ const Inventory = () => {
   const { inventoryId } = useParams();
   const [inventory, setInventory] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
-    const fetchInventoryData = async () => {
+    const FetchInventory = async () => {
       setLoading(true);
+      const docRef = doc(db, "preOwnedVehicleInventory", inventoryId);
+
       try {
-        const response = await fetch(
-          `http://localhost:8000/inventory/${inventoryId}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch inventory data");
-        const data = await response.json();
-        setInventory(data);
-      } catch (error) {
-        console.error("Error fetching inventory data:", error);
-        setSnackbarMessage(error.message);
-        setSnackbarOpen(true);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setInventory({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          setError("No such inventory exists!");
+          setInventory(null);
+        }
+      } catch (err) {
+        setError("Failed to fetch inventory: " + err.message);
+        setInventory(null);
       } finally {
         setLoading(false);
       }
     };
-    fetchInventoryData();
+
+    FetchInventory();
   }, [inventoryId]);
 
   const handlePrev = () =>

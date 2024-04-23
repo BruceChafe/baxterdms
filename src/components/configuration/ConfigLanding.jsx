@@ -7,12 +7,6 @@ import LeadsConfig from "./LeadsConfig";
 import EmailServerConfig from "./EmailServerConfig";
 
 const ConfigLanding = () => {
-  const [value, setValue] = useState("1");
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
     <TitleLayout
