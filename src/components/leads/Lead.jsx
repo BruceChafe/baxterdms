@@ -32,7 +32,9 @@ const Lead = () => {
 
   const leadId = lead?.id;
 
-  
+  useEffect(() => {
+    console.log("Vehicle IDs:", lead?.vehicleIDs); // This will log the array of vehicle IDs
+  }, [lead]); 
 
   const handleSnackbar = useCallback((message, open) => {
     setSnackbarMessage(message);

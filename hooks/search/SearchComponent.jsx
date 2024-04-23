@@ -63,7 +63,7 @@ const SearchComponent = ({ searchFields, collectionPath, resultFields, leadId, o
       await updateDoc(leadRef, {
         vehicleIDs: arrayUnion(vehicleId),
       });
-      onVehicleAdded(); // Call the callback to refresh vehicle data
+      onVehicleAdded();
       setSnackbarMessage("Vehicle added to lead successfully.");
       setSnackbarOpen(true);
     } catch (error) {
@@ -106,7 +106,7 @@ const SearchComponent = ({ searchFields, collectionPath, resultFields, leadId, o
                 {resultFields.map(field => (
                   <TableCell align="center" key={field}>{field}</TableCell>
                 ))}
-                <TableCell align="center">Actions</TableCell> {/* Add this line for the "Actions" column */}
+                <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -119,7 +119,7 @@ const SearchComponent = ({ searchFields, collectionPath, resultFields, leadId, o
                   ))}
                   <TableCell align="center">
                     <Button
-                      onClick={() => handleAddVehicleToLead(row.id)} // Pass the vehicle ID to the function
+                      onClick={() => handleAddVehicleToLead(row.id)}
                       color="primary"
                       variant="contained"
                     >
