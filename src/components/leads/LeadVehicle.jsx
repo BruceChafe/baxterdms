@@ -1,61 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Typography,
   Box,
-  CircularProgress,
-  Alert,
   Paper,
   Snackbar,
   Button,
   Grid,
+  Alert,
 } from "@mui/material";
-import { doc, getDoc, updateDoc, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { db } from "../../firebase";
 import SearchAndAddVehicleDialog from "../vehicles/SearchAndAddVehicleDialog";
 import VehicleDetails from "../vehicles/VehicleDetails";
 import VehicleImageGallery from "../vehicles/VehicleImageGallery";
 
-const LeadVehicle = ({ vehicleId, leadId }) => {
-  const [vehicle, setVehicle] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+const LeadVehicle = ({ vehicleId, vehicle, leadId, onVehicleRemoved, onVehicleAdded }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
 
-  const fetchLeadVehicle = async () => {
-    if (!vehicleId) return;
-    setLoading(true);
-    setError("");
-    try {
-      const vehicleRef = doc(db, "preOwnedVehicleInventory", vehicleId);
-      const docSnap = await getDoc(vehicleRef);
-      if (docSnap.exists()) {
-        setVehicle({ id: docSnap.id, ...docSnap.data() });
-      } else {
-        setError("No such vehicle found!");
-      }
-    } catch (err) {
-      setError(`Failed to fetch vehicle: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteLeadVehicle = async () => {
+  const handleDeleteLeadVehicle = async (vehicle) => {
     if (!vehicle) return;
     const leadRef = doc(db, "leads", leadId);
     try {
       await updateDoc(leadRef, {
         vehicleIDs: arrayRemove(vehicle.id),
       });
-      setVehicle(null);
-      setSnackbarMessage("Vehicle removed successfully.");
-      setSnackbarOpen(true);
+      onVehicleRemoved();
     } catch (error) {
-      setSnackbarMessage("Failed to remove vehicle.");
+      console.error("Error removing vehicle:", error);
+      setSnackbarMessage(`Failed to remove vehicle: ${error.message}`);
       setSnackbarOpen(true);
+    }
+  };
+
+  const handleAddVehicleToLead = async (vehicleId) => {
+    try {
+      const leadRef = doc(db, "leads", leadId);
+      await updateDoc(leadRef, {
+        vehicleIDs: arrayUnion(vehicleId),
+      });
+      console.log("Vehicle added successfully");
+      onVehicleAdded();
+    } catch (error) {
+      console.error("Error adding vehicle:", error);
     }
   };
 
@@ -63,19 +51,11 @@ const LeadVehicle = ({ vehicleId, leadId }) => {
     setSearchDialogOpen(false);
   };
 
-  useEffect(() => {
-    fetchLeadVehicle();
-  }, [vehicleId, refreshKey]);  
+  console.log(vehicle);
 
-  const handleVehicleAdded = (newVehicleId) => {
-    setVehicleId(newVehicleId);
-    setRefreshKey(prevKey => prevKey + 1); // increment key to trigger refetch
-  };
+  const vehicleArray = Array.isArray(vehicle) ? vehicle : [vehicle];
   
-  if (loading) return <CircularProgress />;
-  if (error) return <Alert severity="error">{error}</Alert>;
-
-  if (!vehicle)
+  if (!vehicle || vehicleArray.length === 0) {  // Enhanced check for no vehicle data
     return (
       <>
         <Typography>No vehicle data available</Typography>
@@ -90,59 +70,61 @@ const LeadVehicle = ({ vehicleId, leadId }) => {
           open={searchDialogOpen}
           onClose={handleCloseDialog}
           leadId={leadId}
-          onVehicleAdded={fetchLeadVehicle} 
+          onVehicleAdded={handleAddVehicleToLead}
         />
       </>
     );
+  }
 
   return (
     <>
-      <Box sx={{ mb: 5 }}>
-        <Paper sx={{ p: 3, mb: 2 }}>
-          <Grid
-            container
-            spacing={2}
-            alignItems="center"
-            justifyContent="space-between"
-            mb={2}
-          >
-            <Grid item xs={12} sm>
-              <Typography variant="h5">
-                {vehicle.year} {vehicle.make} {vehicle.model}
-              </Typography>
+      {vehicleArray.map((v, index) => (
+        <Box key={index} sx={{ mb: 5 }}>
+          <Paper sx={{ p: 3, mb: 2 }}>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="space-between"
+              mb={2}
+            >
+              <Grid item xs={12} sm>
+                <Typography variant="h5">
+                  {v.year} {v.make} {v.model}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Button
+                  onClick={() => handleDeleteLeadVehicle(v)}
+                  color="primary"
+                  variant="outlined"
+                >
+                  Remove Vehicle
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Button
-                onClick={handleDeleteLeadVehicle}
-                color="primary"
-                variant="outlined"
-              >
-                Remove Vehicle
-              </Button>
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={5}>
+                <VehicleImageGallery
+                  photos={v.photo ? v.photo.split(",") : []}
+                />
+              </Grid>
+              <Grid item xs={12} md={7}>
+                <VehicleDetails vehicle={v} />
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={5}>
-              <VehicleImageGallery
-                photos={vehicle.photo ? vehicle.photo.split(",") : []}
-              />
-            </Grid>
-            <Grid item xs={12} md={7}>
-              <VehicleDetails vehicle={vehicle} />
-            </Grid>
-          </Grid>
-        </Paper>
-
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={() => setSnackbarOpen(false)}
-        >
-          <Alert onClose={() => setSnackbarOpen(false)} severity="error">
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
-      </Box>
+          </Paper>
+        </Box>
+      ))}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="success">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

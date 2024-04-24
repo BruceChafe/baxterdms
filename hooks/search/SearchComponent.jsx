@@ -18,20 +18,13 @@ import {
   Alert,
 } from "@mui/material";
 
-const SearchComponent = ({ searchFields, collectionPath, resultFields, leadId, onVehicleAdded }) => {
+const SearchComponent = ({ searchFields, collectionPath, resultFields, onVehicleAdded }) => {
   const [searchData, setSearchData] = useState(
     searchFields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
   );
   const [searchResults, setSearchResults] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-
-  useEffect(() => {
-    console.log("Received leadId in SearchComponent:", leadId);
-    if (!leadId) {
-      console.error("leadId is undefined");
-    }
-  }, [leadId]); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,12 +36,12 @@ const SearchComponent = ({ searchFields, collectionPath, resultFields, leadId, o
       const conditions = Object.entries(searchData)
         .filter(([_, value]) => value.trim() !== "")
         .map(([key, value]) => where(key, "==", value.trim()));
-      console.log("Search conditions:", conditions); // Log search conditions
+      console.log("Search conditions:", conditions);
 
       const contactQuery = query(collection(db, collectionPath), ...conditions);
       const querySnapshot = await getDocs(contactQuery);
       setSearchResults(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      console.log("Search results:", querySnapshot.docs.map(doc => doc.data())); // Log fetched data
+      console.log("Search results:", querySnapshot.docs.map(doc => doc.data()));
     } catch (error) {
       console.error("Error searching:", error);
       setSnackbarMessage("Search failed: " + error.message);
@@ -56,23 +49,6 @@ const SearchComponent = ({ searchFields, collectionPath, resultFields, leadId, o
     }
   };
   
-  const handleAddVehicleToLead = async (vehicleId) => {
-    if (!vehicleId || !leadId) return;
-    const leadRef = doc(db, "leads", leadId);
-    try {
-      await updateDoc(leadRef, {
-        vehicleIDs: arrayUnion(vehicleId),
-      });
-      onVehicleAdded();
-      setSnackbarMessage("Vehicle added to lead successfully.");
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error("Error adding vehicle to lead:", error);
-      setSnackbarMessage("Failed to add vehicle to lead.");
-      setSnackbarOpen(true);
-    }
-  }; 
-
   return (
     <Box sx={{ mt: 3, p: 2 }}>
       <Typography variant="h6">Search</Typography>
@@ -119,7 +95,7 @@ const SearchComponent = ({ searchFields, collectionPath, resultFields, leadId, o
                   ))}
                   <TableCell align="center">
                     <Button
-                      onClick={() => handleAddVehicleToLead(row.id)}
+                      onClick={() => onVehicleAdded(row.id)} 
                       color="primary"
                       variant="contained"
                     >

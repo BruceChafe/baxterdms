@@ -1,16 +1,21 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
-  Box, CircularProgress, Typography, BottomNavigation, Tooltip, IconButton, Snackbar, Container, Button,
+  Box,
+  CircularProgress,
+  Typography,
+  BottomNavigation,
+  Tooltip,
+  IconButton,
+  Snackbar,
+  Container,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { EmailOutlined } from "@mui/icons-material";
+import AddTaskIcon from "@mui/icons-material/AddTask";
 import LeadInfo from "./LeadInfo";
 import ContactInfo from "../contacts/ContactInfo";
 import EmailContact from "../contacts/EmailCustomer";
-import LeadHistory from "./LeadHistory";
 import LeadVehicle from "./LeadVehicle";
-import CreateLeadTask from "./CreateLeadTask";
-import { EmailOutlined } from "@mui/icons-material";
-import AddTaskIcon from "@mui/icons-material/AddTask";
 import TabbedLayout from "../layouts/TabbedLayout";
 import TitleLayout from "../layouts/TitleLayout";
 import { useFetchLeadAndContact } from "../../../hooks/FetchLeadAndContact";
@@ -19,89 +24,147 @@ import { db } from "../../firebase";
 
 const Lead = () => {
   const { leadNumber } = useParams();
-  const { lead, contact, primaryEmail, loading, error } = useFetchLeadAndContact(leadNumber);
-  console.log("Lead Number from URL:", leadNumber);
-  const [editedLead, setEditedLead] = useState(null);
+  const { lead, contact, vehicle, primaryEmail, loading, error, refetch } =
+    useFetchLeadAndContact(leadNumber);
+
   const [editedContact, setEditedContact] = useState({});
-  const [isEmailPaperOpen, setIsEmailPaperOpen] = useState(false);
-  const [createNewLeadOpen, setCreateNewLeadTaskOpen] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isEditable, setIsEditable] = useState(false);
-  const [contactInfoChanged, setContactInfoChanged] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-  const leadId = lead?.id;
-
-  useEffect(() => {
-    console.log("Vehicle IDs:", lead?.vehicleIDs); // This will log the array of vehicle IDs
-  }, [lead]); 
-
-  const handleSnackbar = useCallback((message, open) => {
+  const handleSnackbar = (message) => {
     setSnackbarMessage(message);
-    setSnackbarOpen(open);
-  }, []);
-
-  const toggleEdit = () => {
-    setIsEditable(!isEditable);
-    if (isEditable) {
-      handleSave();
-    }
+    setSnackbarOpen(true);
   };
 
   const handleSave = async () => {
     if (!editedContact || Object.keys(editedContact).length === 0) {
-      handleSnackbar("No changes to save", true);
+      handleSnackbar("No changes to save");
       return;
     }
-    const contactId = contact?.id; // Assuming contact ID is stored in contact data
+    const contactId = contact?.id;
     const contactRef = doc(db, "contacts", contactId);
 
     try {
       await updateDoc(contactRef, editedContact);
-      handleSnackbar("Save successful", true);
-      setContactInfoChanged(false);
+      handleSnackbar("Save successful");
     } catch (error) {
       console.error("Error updating contact:", error);
-      handleSnackbar(`Error: ${error.message}`, true);
+      handleSnackbar(`Error: ${error.message}`);
     } finally {
       setIsEditable(false);
     }
   };
 
-  const tabs = useMemo(() => [
-    { label: "Summary", component: () => <LeadInfo lead={lead} onSaveLeadInfo={setEditedLead} /> },
-    { label: "Contact", component: () => <ContactInfo contact={contact} onSaveContactInfo={setEditedContact} isEditable={isEditable} /> },
-    { label: "Vehicle", component: () => <LeadVehicle vehicleId={lead?.vehicleIDs?.[0]} leadId={leadId} /> },
-  ], [lead, contact, isEditable, leadId]);
+  const handleVehicleRemoved = async () => {
+    try {
+      refetch();
+      handleSnackbar("Vehicle removed successfully.");
+    } catch (error) {
+      console.error("Error updating data:", error);
+      handleSnackbar(`Failed to update data: ${error.message}`);
+    }
+  };
+
+  const handleVehicleAdded = async () => {
+    try {
+      refetch();
+      handleSnackbar("Vehicle added successfully.");
+    } catch (error) {
+      console.error("Error updating data:", error);
+      handleSnackbar(`Failed to update data: ${error.message}`);
+    }
+  };
+
+  const tabs = useMemo(
+    () => [
+      {
+        label: "Summary",
+        component: () => (
+          <LeadInfo lead={lead} onSaveLeadInfo={setEditedContact} />
+        ),
+      },
+      {
+        label: "Contact",
+        component: () => (
+          <ContactInfo
+            contact={contact}
+            onSaveContactInfo={setEditedContact}
+            isEditable={isEditable}
+          />
+        ),
+      },
+      {
+        label: "Vehicle",
+        component: () => (
+          <LeadVehicle
+            vehicleId={lead?.vehicleIDs}
+            vehicle={Array.isArray(vehicle) ? vehicle : [vehicle]}
+            leadId={leadId}
+            onVehicleRemoved={handleVehicleRemoved}
+            onVehicleAdded={handleVehicleAdded}
+          />
+        ),
+      },
+    ],
+    [lead, contact, isEditable, vehicle]
+  );
+
+  const leadId = lead?.id;
 
   useEffect(() => {
     if (error) {
-      handleSnackbar(error, true);
+      handleSnackbar(error);
     }
-  }, [error, handleSnackbar]);
+  }, [error]);
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
-        title={<Typography variant="h4">Lead - {contact ? `${contact.firstName} ${contact.lastName}` : "Contact not found"}</Typography>}
+        title={
+          <Typography variant="h4">
+            Lead -{" "}
+            {contact
+              ? `${contact.firstName} ${contact.lastName}`
+              : "Contact not found"}
+          </Typography>
+        }
         isEditable={isEditable}
         onToggleEdit={() => setIsEditable(!isEditable)}
-        saveDisabled={!contactInfoChanged}
       />
       {loading ? (
         <Container>
           <CircularProgress color="primary" />
-          <Typography variant="subtitle1" sx={{ mt: 2 }}>Fetching data, please wait...</Typography>
+          <Typography variant="subtitle1" sx={{ mt: 2 }}>
+            Fetching data, please wait...
+          </Typography>
         </Container>
       ) : (
         <TabbedLayout tabs={tabs} />
       )}
-      <BottomNavigation sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}>
-        <Tooltip title="Send Email"><IconButton onClick={() => setIsEmailPaperOpen(true)}><EmailOutlined /></IconButton></Tooltip>
-        <Tooltip title="Create Task"><IconButton onClick={() => setCreateNewLeadTaskOpen(true)} color="primary"><AddTaskIcon /></IconButton></Tooltip>
+      <BottomNavigation
+        sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
+      >
+        <Tooltip title="Send Email">
+          <IconButton onClick={() => handleSnackbar("Opening email dialog")}>
+            <EmailOutlined />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Create Task">
+          <IconButton
+            color="primary"
+            onClick={() => handleSnackbar("Opening task dialog")}
+          >
+            <AddTaskIcon />
+          </IconButton>
+        </Tooltip>
       </BottomNavigation>
-      {isEmailPaperOpen && <EmailContact open={isEmailPaperOpen} contact={contact} primaryEmail={primaryEmail || ""} onClose={() => setIsEmailPaperOpen(false)} />}
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)} message={snackbarMessage} />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+      />
     </Box>
   );
 };

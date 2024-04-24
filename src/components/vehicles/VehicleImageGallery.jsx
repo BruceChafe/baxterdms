@@ -12,6 +12,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 const VehicleImageGallery = ({ photos }) => {
+  console.log("Photos array:", photos);  // Add this to verify the array content
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const handlePrev = () =>
     setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
@@ -43,7 +44,7 @@ const VehicleImageGallery = ({ photos }) => {
           src={
             photos.length > 0
               ? photos[activeImageIndex]
-              : "path/to/default/image.jpg"
+              : "path/to/default/image.jpg"  // Check this default path
           }
           alt={`Vehicle Image ${activeImageIndex + 1}`}
           style={{ width: "100%", height: "auto" }}
@@ -74,28 +75,11 @@ const VehicleImageGallery = ({ photos }) => {
               objectFit: "contain",
             }}
           />
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mt: 1,
-            }}
-          >
-            <IconButton onClick={handlePrev}>
-              <ArrowBackIosNewIcon />
-            </IconButton>
-            <Typography>{`${activeImageIndex + 1} of ${
-              photos.length
-            }`}</Typography>
-            <IconButton onClick={handleNext}>
-              <ArrowForwardIosIcon />
-            </IconButton>
-          </Box>
         </DialogContent>
       </Dialog>
     </>
   );
 };
+
 
 export default VehicleImageGallery;
