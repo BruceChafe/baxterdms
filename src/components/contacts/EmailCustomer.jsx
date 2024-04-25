@@ -14,7 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) => {
   const [emailData, setEmailData] = useState({
-    from: "brucechafe@gmail.com", // This will be the email configured in MailerSend
+    from: "brucechafe@gmail.com",
     to: primaryEmail,
     subject: "",
     body: "",
@@ -22,61 +22,55 @@ const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) 
   const [isFormValid, setIsFormValid] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const isValid = Object.values(emailData).every(value => value.trim() !== "");
-    setIsFormValid(isValid);
-  }, [emailData]);
 
   const handleFieldChange = (key, value) => {
     setEmailData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!isFormValid) return;
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!isFormValid) return;
 
-    setLoading(true);
-    try {
-      const payload = {
-        from: {
-          email: emailData.from
-        },
-        to: [{
-          email: emailData.to
-        }],
-        subject: emailData.subject,
-        html: emailData.body,
-      };
+  //   setLoading(true);
+  //   try {
+  //     const payload = {
+  //       from: {
+  //         email: emailData.from
+  //       },
+  //       to: [{
+  //         email: emailData.to
+  //       }],
+  //       subject: emailData.subject,
+  //       html: emailData.body,
+  //     };
 
-      const response = await fetch("https://api.mailersend.com/v1/email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer mlsn.32d70d2ba04e114e3dab71911d63594217b9b6be0c32864af190f16288756b77"
-        },
-        body: JSON.stringify(payload),
-      });
+  //     const response = await fetch("https://api.mailersend.com/v1/email", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": "Bearer mlsn.32d70d2ba04e114e3dab71911d63594217b9b6be0c32864af190f16288756b77"
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
 
-      if (!response.ok) {
-        throw new Error("Failed to send email");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to send email");
+  //     }
 
-      const responseData = await response.json();
-      if (responseData.success) {
-        setSnackbarMessage("Email sent successfully!");
-        onSaveSuccess();
-      } else {
-        setSnackbarMessage("Email sending failed");
-      }
-    } catch (error) {
-      setSnackbarMessage(`Error: ${error.message}`);
-    } finally {
-      setLoading(false);
-      setSnackbarOpen(true);
-    }
-  };
+  //     const responseData = await response.json();
+  //     if (responseData.success) {
+  //       setSnackbarMessage("Email sent successfully!");
+  //       onSaveSuccess();
+  //     } else {
+  //       setSnackbarMessage("Email sending failed");
+  //     }
+  //   } catch (error) {
+  //     setSnackbarMessage(`Error: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //     setSnackbarOpen(true);
+  //   }
+  // };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -85,9 +79,9 @@ const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) 
 
   return (
     <Dialog onClose={onClose} open={open}>
-      <DialogTitle id="customized-dialog-title">
+      <DialogTitle>
         Send Email
-        <IconButton aria-label="close" onClick={onClose} sx={{ position: "absolute", right: 8, top: 8 }}>
+        <IconButton onClick={onClose} sx={{ position: "absolute", right: 8, top: 8 }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -97,8 +91,8 @@ const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) 
         <TextField value={emailData.body} onChange={e => handleFieldChange("body", e.target.value)} label="Body:" multiline rows={4} fullWidth required />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSubmit} color="primary" disabled={!isFormValid || loading}>
-          {loading ? <CircularProgress size={24} /> : "Send"}
+        <Button variant="outlined" disabled>
+          Coming Soon.
         </Button>
       </DialogActions>
       <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose} message={snackbarMessage} action={

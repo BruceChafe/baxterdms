@@ -18,6 +18,7 @@ import EmailContact from "../contacts/EmailCustomer";
 import LeadVehicle from "./LeadVehicle";
 import TabbedLayout from "../layouts/TabbedLayout";
 import TitleLayout from "../layouts/TitleLayout";
+import CreateLeadTask from "./CreateLeadTask";
 import { useFetchLeadAndContact } from "../../../hooks/FetchLeadAndContact";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -26,11 +27,12 @@ const Lead = () => {
   const { leadNumber } = useParams();
   const { lead, contact, vehicle, primaryEmail, loading, error, refetch } =
     useFetchLeadAndContact(leadNumber);
-
   const [editedContact, setEditedContact] = useState({});
   const [isEditable, setIsEditable] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [sendEmailOpen, setSendEmailOpen] = useState(null);
+  const [createNewLeadTaskOpen, setCreateNewLeadTaskOpen] = useState(false);
 
   const handleSnackbar = (message) => {
     setSnackbarMessage(message);
@@ -74,6 +76,18 @@ const Lead = () => {
       console.error("Error updating data:", error);
       handleSnackbar(`Failed to update data: ${error.message}`);
     }
+  };
+
+  const handleSaveSuccess = () => {
+    setReloadLeadHistory((prevState) => !prevState);
+  };
+
+  const handleSendEmailClick = () => {
+    setSendEmailOpen(true);
+  };
+
+  const handleNewLeadTaskClick = () => {
+    setCreateNewLeadTaskOpen(true);
   };
 
   const tabs = useMemo(
@@ -146,19 +160,31 @@ const Lead = () => {
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
       >
         <Tooltip title="Send Email">
-          <IconButton onClick={() => handleSnackbar("Opening email dialog")}>
+          <IconButton onClick={handleSendEmailClick}>
             <EmailOutlined />
           </IconButton>
         </Tooltip>
         <Tooltip title="Create Task">
-          <IconButton
-            color="primary"
-            onClick={() => handleSnackbar("Opening task dialog")}
-          >
+          <IconButton onClick={handleNewLeadTaskClick} color="primary">
             <AddTaskIcon />
           </IconButton>
         </Tooltip>
       </BottomNavigation>
+      <EmailContact
+        key={primaryEmail}
+        primaryEmail={primaryEmail}
+        open={sendEmailOpen}
+        onClose={() => setSendEmailOpen(false)}
+        lead={lead}
+        onSaveSuccess={handleSaveSuccess}
+      />
+      <CreateLeadTask
+        lead={lead}
+        leadId={leadId}
+        open={createNewLeadTaskOpen}
+        onClose={() => setCreateNewLeadTaskOpen(false)}
+        onSaveSuccess={handleSaveSuccess}
+      />
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}

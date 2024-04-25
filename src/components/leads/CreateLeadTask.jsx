@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { db } from "../../firebase";
+import { doc, setDoc, Timestamp } from "firebase/firestore"; // Import Timestamp
 import {
   Button,
   Dialog,
@@ -16,7 +18,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const CreateLeadTask = ({ open, onClose, lead, id, onSaveSuccess }) => {
+const CreateLeadTask = ({ open, onClose, lead, leadId, onSaveSuccess }) => {
   const initialTaskState = {
     leadTaskType: "",
     leadTaskPriority: "",
@@ -33,75 +35,51 @@ const CreateLeadTask = ({ open, onClose, lead, id, onSaveSuccess }) => {
   const [taskPriorityOptions, setTaskPriorityOptions] = useState([]);
   const [isFormValid, setIsFormValid] = useState(false);
 
+
   useEffect(() => {
     const isValid =
       leadTask.leadTaskType &&
       leadTask.leadTaskPriority &&
       leadTask.followUpDate;
     setIsFormValid(isValid);
-    fetchTaskConfigurations();
   }, [leadTask]);
-
-  const fetchTaskConfigurations = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:8000/configLeadTasks/1");
-      const configData = await response.json();
-      setTaskTypeOptions(configData.leadTaskTypeActive || []);
-      setTaskPriorityOptions(configData.leadTaskPriorityActive || []);
-    } catch (error) {
-      console.error("Error fetching options:", error);
-      setSnackbarMessage("Failed to load task configurations.");
-      setSnackbarOpen(true);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleFieldChange = (key, value) => {
     setLeadTask((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSave = async () => {
+    if (!lead || !lead.leadId) {
+      setSnackbarMessage("Error: Lead number is undefined.");
+      setSnackbarOpen(true);
+      return;
+    }
     if (!isFormValid) {
       setSnackbarMessage("Please fill in all required fields.");
       setSnackbarOpen(true);
       return;
     }
     setLoading(true);
+    const taskDetails = {
+      ...leadTask,
+      followUpDate: Timestamp.fromDate(new Date(leadTask.followUpDate)), // Convert to Firestore Timestamp
+      status: "Active",
+      activity: "Task Created",
+      leadId: lead.leadId,
+      timestamp: Timestamp.now(), // Use Firestore Timestamp for current time
+    };
     try {
-      const timestamp = new Date().toISOString();
-      const leadNumber = lead.leadNumber; 
-
-      const taskDetails = {
-        followUpDate: leadTask.followUpDate.toISOString(), 
-        type: leadTask.leadTaskType,
-        priority: leadTask.leadTaskPriority,
-        employee: leadTask.leadTaskEmployee,
-        subject: leadTask.leadTaskSubject,
-        additionalInfo: leadTask.leadTaskAdditionalInfo,
-        timestamp: timestamp,
-        status: "Active",
-        activity: "Task Created",
-        leadNumber: leadNumber,
-      };
-
-      await fetch(`http://localhost:8000/tasks`, { 
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(taskDetails), 
-      });
+      await setDoc(doc(db, "leadTasks", `${lead.leadId}`), taskDetails);
       setLeadTask(initialTaskState);
       setSnackbarMessage("Task saved successfully!");
-      onSaveSuccess(); 
+      onSaveSuccess();
     } catch (error) {
-      setSnackbarMessage("Error saving lead task.");
-      console.error("Error saving task:", error); 
+      setSnackbarMessage(
+        `Error saving lead task: ${error.message || "Unknown error"}`
+      );
     } finally {
-      setSnackbarOpen(true);
       setLoading(false);
+      setSnackbarOpen(true);
     }
   };
 
@@ -109,6 +87,7 @@ const CreateLeadTask = ({ open, onClose, lead, id, onSaveSuccess }) => {
     setSnackbarOpen(false);
     onClose();
   };
+
 
   return (
     <Dialog onClose={onClose} open={open}>
@@ -137,13 +116,12 @@ const CreateLeadTask = ({ open, onClose, lead, id, onSaveSuccess }) => {
           onChange={(e) => handleFieldChange("leadTaskType", e.target.value)}
           select
           fullWidth
-        >
-          {taskTypeOptions.map((option) => (
+          children={taskTypeOptions.map((option) => (
             <MenuItem key={option} value={option}>
               {option}
             </MenuItem>
           ))}
-        </TextField>
+        />
         <TextField
           variant="outlined"
           label="Follow-Up Priority"
@@ -153,13 +131,12 @@ const CreateLeadTask = ({ open, onClose, lead, id, onSaveSuccess }) => {
           }
           select
           fullWidth
-        >
-          {taskPriorityOptions.map((option) => (
+          children={taskPriorityOptions.map((option) => (
             <MenuItem key={option} value={option}>
               {option}
             </MenuItem>
           ))}
-        </TextField>
+        />
         <TextField
           variant="outlined"
           label="Assigned Employee"

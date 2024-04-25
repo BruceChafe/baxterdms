@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import {
   Box,
-  CircularProgress,
   IconButton,
   Paper,
   Switch,
@@ -15,8 +14,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-
+import { TabContext, TabPanel } from "@mui/lab";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import LaunchIcon from "@mui/icons-material/Launch";
@@ -27,18 +25,14 @@ import TaskDialog from "./TaskDialog";
 import { useFetchTasksForWeek } from "../../../hooks/FetchTasksForWeek";
 
 const WeeklyCalendar = () => {
-  const [refetchTrigger, setRefetchTrigger] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const dates = useMemo(() => getWeekDates(currentDate), [currentDate]);
-  const { tasks, loading, error } = useFetchTasksForWeek(dates, refetchTrigger);
+  const { tasks, loading, error } = useFetchTasksForWeek(dates);
+
   const [showCompletedTasks, setShowCompletedTasks] = useState(false);
   const [showCancelledTasks, setShowCancelledTasks] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-
-  const refetchTasks = () => {
-    setRefetchTrigger((prev) => !prev);
-  };
 
   const handleCellClick = (task) => {
     setSelectedTask(task);
@@ -59,19 +53,15 @@ const WeeklyCalendar = () => {
   };
 
   const leftActions = (
-    <>
-      <IconButton onClick={() => navigateWeek(-7)}>
-        <ArrowBack />
-      </IconButton>
-    </>
+    <IconButton onClick={() => navigateWeek(-7)}>
+      <ArrowBack />
+    </IconButton>
   );
 
   const rightActions = (
-    <>
-      <IconButton onClick={() => navigateWeek(7)}>
-        <ArrowForward />
-      </IconButton>
-    </>
+    <IconButton onClick={() => navigateWeek(7)}>
+      <ArrowForward />
+    </IconButton>
   );
 
   return (
@@ -81,125 +71,110 @@ const WeeklyCalendar = () => {
         leftActions={leftActions}
         rightActions={rightActions}
       />
-      <TabContext>
+      <TabContext value="1">
         <Box sx={{ mt: 3 }}>
           <Paper sx={{ pl: 1, pr: 1 }}>
             <Box mb={1} mt={1} p={1}>
-              <TabList textColor="secondary" indicatorColor="secondary">
-                <Box display="flex" alignItems="center" justifyContent="center">
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={showCompletedTasks}
-                        onChange={toggleCompletedTasks}
-                      />
-                    }
-                    label={
-                      <Typography>Show Completed, Cancelled Tasks</Typography>
-                    }
-                    labelPlacement="end"
-                    sx={{ margin: "auto" }}
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={showCompletedTasks}
+                    onChange={toggleCompletedTasks}
                   />
-                </Box>
-              </TabList>
+                }
+                label={<Typography>Show Completed, Cancelled Tasks</Typography>}
+                labelPlacement="end"
+                sx={{ margin: "auto" }}
+              />
             </Box>
           </Paper>
         </Box>
-        <TabPanel>
-          <Paper sx={{ mb: 2 }}>
-          <TableContainer component={Paper} sx={{ minHeight: "30%" }}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        {dates.map(({ day, date }, index) => (
-          <TableCell
-            key={day}
-            align="center"
-            sx={{
-              width: `${100 / dates.length}%`,
-              borderRight: index !== dates.length - 1 ? 1 : 0,
-              borderColor: "divider",
-            }}
-          >
-            <Typography variant="subtitle1">{day}</Typography>
-            <Typography variant="body1">{date}</Typography>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {dates.map(({ isoDate }, index) => {
-        const dayTasks = tasks.filter(task => task.followUpDate.startsWith(isoDate));
-        return (
-          <TableRow key={isoDate}>
-            <TableCell
-              align="center"
-              sx={{
-                width: `${100 / dates.length}%`,
-                borderRight: index !== dates.length - 1 ? 1 : 0,
-                borderColor: "divider",
-                minHeight: "150px",  // Set a specific pixel height or use percentage if the container's height is well-defined
-              }}
-              colSpan={dayTasks.length > 0 ? 1 : dates.length}  // Span all columns if no tasks
-            >
-              {dayTasks.length > 0 ? (
-                dayTasks.map((task, idx) => (
-                  <Box
-                    key={task.id || idx}
-                    onClick={() => handleCellClick(task)}
-                    sx={{
-                      cursor: "pointer",
-                      border: "1px solid",
-                      borderColor: "primary.main",
-                      borderRadius: 1,
-                      p: 2,
-                      backgroundColor:
-                        task.status === "Completed" ? "darkgreen" :
-                        task.status === "Cancelled" ? "darkgrey" :
-                        task.status === "Active" ? "darkblue" : "",
-                    }}
-                  >
-                    <Typography variant="body2">
-                      <strong>{task.type}</strong> ({task.priority})
-                    </Typography>
-                    <Box>
-                      <Typography variant="caption">{task.subject}</Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption">{task.status}</Typography>
-                      <Tooltip title="Open Lead">
-                        <IconButton
-                          component={Link}
-                          to={`/leads/${task.leadNumber}`}
-                          color="primary"
-                        >
-                          <LaunchIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  </Box>
-                ))
-              ) : (
-                <Typography variant="body1" color="text.secondary">
-                  No tasks
-                </Typography>
-              )}
-            </TableCell>
-          </TableRow>
-        );
-      })}
-    </TableBody>
-  </Table>
-</TableContainer>
+        <TabPanel value="1">
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {dates.map(({ day, date }, index) => (
+                    <TableCell
+                      key={day}
+                      align="center"
+                      sx={{
+                        width: `${100 / dates.length}%`,
+                        borderRight: index !== dates.length - 1 ? 1 : 0,
+                      }}
+                    >
+                      <Typography variant="subtitle1">{day}</Typography>
+                      <Typography variant="body1">{date}</Typography>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tasks.map((task) => (
+                  <TableRow key={task.id}>
+                    {dates.map(({ start, end }) => {
+                      const taskDate = new Date(task.followUpDate.seconds * 1000);
+                      const startDate = new Date(start.seconds * 1000);
+                      const endDate = new Date(end.seconds * 1000);
 
-          </Paper>
+                      if (taskDate >= startDate && taskDate <= endDate) {
+                        return (
+                          <TableCell
+                            key={task.id}
+                            align="center"
+                            sx={{ minHeight: "150px" }}
+                          >
+                            <Box
+                              onClick={() => handleCellClick(task)}
+                              sx={{
+                                cursor: "pointer",
+                                border: "1px solid",
+                                borderRadius: 1,
+                                p: 2,
+                                backgroundColor:
+                                  task.status === "Completed"
+                                    ? "darkgreen"
+                                    : task.status === "Cancelled"
+                                    ? "darkgrey"
+                                    : task.status === "Active"
+                                    ? "darkblue"
+                                    : "",
+                              }}
+                            >
+                              <Typography variant="body2">
+                                <strong>{task.leadTaskType}</strong> ({task.leadTaskPriority})
+                              </Typography>
+                              <Typography variant="caption">
+                                {task.leadTaskSubject}
+                              </Typography>
+                              <Typography variant="caption">{task.status}</Typography>
+                              <Tooltip title="Open Lead">
+                                <IconButton
+                                  component={Link}
+                                  to={`/leads/${task.id}`}
+                                  color="primary"
+                                >
+                                  <LaunchIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </Box>
+                          </TableCell>
+                        );
+                      } else {
+                        return <TableCell key={task.id} />;
+                      }
+                    })}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </TabPanel>
       </TabContext>
       <TaskDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         taskDetails={selectedTask}
-        refetchTasks={refetchTasks}
       />
     </Box>
   );

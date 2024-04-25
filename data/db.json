@@ -324,6 +324,18 @@
       "activity": "Task Created",
       "leadNumber": 1747,
       "id": 4
+    },
+    {
+      "followUpDate": "2024-05-01T02:30:00.000Z",
+      "type": "48 Hour Follow Up",
+      "priority": "Normal",
+      "employee": "Bruce",
+      "subject": "Test",
+      "additionalInfo": "Test",
+      "timestamp": "2024-04-25T21:19:53.621Z",
+      "status": "Active",
+      "activity": "Task Created",
+      "id": 5
     }
   ],
   "emails": [
@@ -496,7 +508,6 @@
     "emailUser": "baxterdms@outlook.com",
     "emailPass": "Diet1989Coke!"
   },
-  
   "inventory": [
     {
       "d_id": "3761",
