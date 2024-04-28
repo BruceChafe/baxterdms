@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CircularProgress,
   Box,
@@ -15,7 +16,8 @@ import FormatPhoneNumber from "../../../hooks/FormatPhoneNumber";
 import FormatAddress from "../../../hooks/FormatAddress";
 import TitleLayout from "../layouts/TitleLayout";
 
-const ContactTable = () => {
+const ContactsDashboard = () => {
+  const navigate = useNavigate();
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const { data, reload } = useFetchContacts();
   const [page, setPage] = useState(0);
@@ -71,6 +73,10 @@ const ContactTable = () => {
       };
     }) || [];
 
+    const handleNewContactClick = () => {
+      navigate(`/contacts/newcontact`);
+    };
+
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
@@ -79,6 +85,10 @@ const ContactTable = () => {
           {
             label: "Import",
             onClick: handleImportClick,
+          },
+          {
+            label: "New Contact",
+            onClick: handleNewContactClick,
           },
         ]}
       />
@@ -117,7 +127,7 @@ const ContactTable = () => {
               Error: {error}
             </Alert>
           )}
-          <Paper sx={{ mt: 2, mb: 2 }}>
+          <Paper sx={{ mt: 2, mb: 2, border: "solid", borderColor: "divider" }}>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
@@ -141,4 +151,4 @@ const ContactTable = () => {
   );
 };
 
-export default ContactTable;
+export default ContactsDashboard;

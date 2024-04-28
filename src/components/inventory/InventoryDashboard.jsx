@@ -88,8 +88,7 @@ const InventoryDashboard = () => {
               Error: {error}
             </Alert>
           )}
-                    <Paper sx={{ mt: 2, mb: 2 }}>
-
+          <Paper sx={{ mt: 2, mb: 2, border: "solid", borderColor: "divider" }}>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
@@ -100,7 +99,7 @@ const InventoryDashboard = () => {
               onRowsPerPageChange={handleChangeRowsPerPage}
               sx={{ mr: 5 }}
             />
-            </Paper>
+          </Paper>
         </>
       )}
       <UploadData

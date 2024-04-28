@@ -2,56 +2,55 @@ import { useState, useEffect, useCallback } from "react";
 import { db } from "../src/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-const useFetchLeadConfig = () => {
+const useFetchLeadTaskConfig = () => {
   const [config, setConfig] = useState({
-    sourceOptions: [],
-    typeOptions: [],
-    dealershipOptions: [],
-    statusOptions: [],
+    leadTaskActivityOptions: [],
+    leadTaskPriorityOptions: [],
+    leadTaskStatusOptions: [],
+    leadTaskTypeOptions: [],
     loading: true,
     error: null,
   });
 
   const fetchData = useCallback(async () => {
-    setConfig(prev => ({ ...prev, loading: true }));
     try {
-      const docRef = doc(db, 'leadConfig', 'configData');
+      setConfig(prev => ({ ...prev, loading: true, error: null }));
+      const docRef = doc(db, 'leadTaskConfig', 'leadTaskConfig');
       const docSnap = await getDoc(docRef);
-  
+
       if (!docSnap.exists()) {
         throw new Error("Configuration data not found.");
       }
-  
+
       const data = docSnap.data();
+      console.log("data", data)
       setConfig({
-        sourceOptions: data.leadSourceActive || [],
-        typeOptions: data.leadTypeActive || [],
-        dealershipOptions: data.leadDealershipActive || [],
-        statusOptions: data.leadStatusActive || [],
+        leadTaskPriorityOptions: data.leadTaskPriorityActive || [],
+        leadTaskStatusOptions: data.leadTaskStatusActive || [],
+        leadTaskTypeOptions: data.leadTaskTypeActive || [], //
         loading: false,
         error: null,
       });
     } catch (error) {
+      console.error("Error fetching config:", error);
       setConfig({
-        sourceOptions: data.leadSourceActive || [],
-        typeOptions: data.leadTypeActive || [],
-        dealershipOptions: data.leadDealershipActive || [],
-        statusOptions: data.leadStatusActive || [],
+        leadTaskPriorityOptions: [],
+        leadTaskStatusOptions: [],
+        leadTaskTypeOptions: [],
         loading: false,
         error: "Failed to fetch configuration: " + error.message,
       });
     }
   }, []);
-  
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-  
+
   return {
     ...config,
     refetch: fetchData,
   };
-
 }
 
-export { useFetchLeadConfig };
+export { useFetchLeadTaskConfig };

@@ -15,23 +15,23 @@ import { useFetchLeadTasks } from "../../../hooks/FetchLeadTasks";
 import { useFetchLeadEmails } from "../../../hooks/FetchLeadEmails";
 import UseSentEmailDialog from "../../../hooks/SentEmailDialog";
 
-const LeadHistory = ({ leadData }) => {
-  const leadNumber = leadData?.leadNumber;
+const LeadHistory = ({ leadId }) => {
   const {
     tasks,
     loading: tasksLoading,
     error: tasksError,
-  } = useFetchLeadTasks(leadNumber);
-  const {
-    emails,
-    loading: emailsLoading,
-    error: emailsError,
-  } = useFetchLeadEmails(leadNumber);
+  } = useFetchLeadTasks(leadId);
+  console.log(tasks)
+  // const {
+  //   emails,
+  //   loading: emailsLoading,
+  //   error: emailsError,
+  // } = useFetchLeadEmails(leadId);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
-  const [currentEmailData, setCurrentEmailData] = useState({});
+  // const [currentEmailData, setCurrentEmailData] = useState({});
 
   const formatTimestamp = (timestamp) => {
-    const date = new Date(timestamp);
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const datePart = date.toLocaleString("en-US", {
       month: "short",
       day: "2-digit",
@@ -42,26 +42,26 @@ const LeadHistory = ({ leadData }) => {
       minute: "2-digit",
       hour12: true,
     });
-
-    return [datePart, timePart];
+  
+    return `${datePart} at ${timePart}`;
   };
+  
+  // const handleEmailClick = (emailData) => {
+  //   setCurrentEmailData(emailData);
+  //   setEmailDialogOpen(true);
+  // };
 
-  const handleEmailClick = (emailData) => {
-    setCurrentEmailData(emailData);
-    setEmailDialogOpen(true);
-  };
-
-  const leadHistoryRows = leadData.history.map((history) => ({
-    timestamp: formatTimestamp(history.timestamp),
-    activity: history.activity,
-  }));
+  // const leadHistoryRows = leadData.history.map((history) => ({
+  //   timestamp: formatTimestamp(history.timestamp),
+  //   activity: history.activity,
+  // }));
 
   const leadTasksRows = tasks.map((task) => ({
-    timestamp: formatTimestamp(task.timestamp),
-    activity: task.activity + " - " + task.type,
+    timestamp: formatTimestamp(task.leadTaskCreatedTimestamp),
+    activity: task.activity + " - " + task.leadTaskType,
     activityDetails: `Priority: ${
       task.priority
-    }\nFollow Up Date: ${formatTimestamp(task.followUpDate)}\nStatus: ${
+    }\nFollow Up Date: ${formatTimestamp(task.leadTaskFollowUpDate)}\nStatus: ${
       task.status
     }`,
     subject: task.subject,
@@ -69,42 +69,42 @@ const LeadHistory = ({ leadData }) => {
     status: task.status,
   }));
 
-  const leadEmailsRows = emails.map((email) => {
-    const [datePart, timePart] = formatTimestamp(email.timestamp);
+  // const leadEmailsRows = emails.map((email) => {
+  //   const [datePart, timePart] = formatTimestamp(email.timestamp);
 
-    return {
-      timestamp: (
-        <Stack>
-          <Typography variant="body2">{datePart}</Typography>
-          <Typography variant="body2">{timePart}</Typography>
-        </Stack>
-      ),
-      activity: email.activityType,
-      activityDetails: (
-        <>
-          <Typography variant="body2" component="div">
-            From: {email.from}
-          </Typography>
-          <Typography variant="body2" component="div">
-            To: {email.to}
-          </Typography>
-          <Typography variant="body2" component="div">
-            Subject: {email.subject}
-          </Typography>
-          <Tooltip title="View Sent Email">
-            <IconButton onClick={() => handleEmailClick(email)} color="primary">
-              <MarkEmailReadIcon />
-            </IconButton>
-          </Tooltip>
-        </>
-      ),
-    };
-  });
+  //   return {
+  //     timestamp: (
+  //       <Stack>
+  //         <Typography variant="body2">{datePart}</Typography>
+  //         <Typography variant="body2">{timePart}</Typography>
+  //       </Stack>
+  //     ),
+  //     activity: email.activityType,
+  //     activityDetails: (
+  //       <>
+  //         <Typography variant="body2" component="div">
+  //           From: {email.from}
+  //         </Typography>
+  //         <Typography variant="body2" component="div">
+  //           To: {email.to}
+  //         </Typography>
+  //         <Typography variant="body2" component="div">
+  //           Subject: {email.subject}
+  //         </Typography>
+  //         <Tooltip title="View Sent Email">
+  //           <IconButton onClick={() => handleEmailClick(email)} color="primary">
+  //             <MarkEmailReadIcon />
+  //           </IconButton>
+  //         </Tooltip>
+  //       </>
+  //     ),
+  //   };
+  // });
 
   const combinedRows = [
-    ...leadHistoryRows,
+    // ...leadHistoryRows,
     ...leadTasksRows,
-    ...leadEmailsRows,
+    // ...leadEmailsRows,
   ];
 
   const columns = [
@@ -113,9 +113,9 @@ const LeadHistory = ({ leadData }) => {
     { field: "activityDetails", header: "Details" },
   ];
 
-  if (tasksLoading || emailsLoading) return <CircularProgress />;
+  // if (tasksLoading || emailsLoading) return <CircularProgress />;
   if (tasksError) return <Alert severity="error">{tasksError}</Alert>;
-  if (emailsError) return <Alert severity="error">{emailsError}</Alert>;
+  // if (emailsError) return <Alert severity="error">{emailsError}</Alert>;
 
   return (
     <Box sx={{ mb: 5 }}>
@@ -127,11 +127,11 @@ const LeadHistory = ({ leadData }) => {
           defaultSortDirection="descending"
         />
       </Paper>
-      <UseSentEmailDialog
+      {/* <UseSentEmailDialog
         open={emailDialogOpen}
         onClose={() => setEmailDialogOpen(false)}
         emailData={currentEmailData}
-      />
+      /> */}
     </Box>
   );
 };

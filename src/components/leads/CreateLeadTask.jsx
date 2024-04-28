@@ -1,184 +1,144 @@
-import { useState, useEffect } from "react";
-import { db } from "../../firebase";
-import { doc, setDoc, Timestamp } from "firebase/firestore"; // Import Timestamp
+import React, { useState } from "react";
 import {
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  Button,
   IconButton,
   TextField,
-  Snackbar,
   MenuItem,
-  CircularProgress,
+  Box,
 } from "@mui/material";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import CloseIcon from "@mui/icons-material/Close";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { addDoc, collection, Timestamp as FirestoreTimestamp } from "firebase/firestore";
+import { db } from "../../firebase";
+import { useFetchLeadTaskConfig } from "../../../hooks/FetchLeadTaskConfig";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-const CreateLeadTask = ({ open, onClose, lead, leadId, onSaveSuccess }) => {
-  const initialTaskState = {
+const CreateLeadTask = ({ open, onClose, leadId, onSaveSuccess }) => {
+  const {
+    leadTaskTypeOptions,
+    leadTaskPriorityOptions,
+    leadTaskStatusOptions,
+    loading,
+    error,
+  } = useFetchLeadTaskConfig();
+
+  const [newTask, setNewTask] = useState({
     leadTaskType: "",
-    leadTaskPriority: "",
     leadTaskEmployee: "",
+    leadTaskStatus: "",
     leadTaskSubject: "",
+    leadTaskFollowUpDate: "",
     leadTaskAdditionalInfo: "",
-    followUpDate: null,
-  };
-  const [leadTask, setLeadTask] = useState(initialTaskState);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [taskTypeOptions, setTaskTypeOptions] = useState([]);
-  const [taskPriorityOptions, setTaskPriorityOptions] = useState([]);
-  const [isFormValid, setIsFormValid] = useState(false);
+  });
 
-
-  useEffect(() => {
-    const isValid =
-      leadTask.leadTaskType &&
-      leadTask.leadTaskPriority &&
-      leadTask.followUpDate;
-    setIsFormValid(isValid);
-  }, [leadTask]);
-
-  const handleFieldChange = (key, value) => {
-    setLeadTask((prev) => ({ ...prev, [key]: value }));
+  const handleChange = (e, field) => {
+    setNewTask((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  const handleSave = async () => {
-    if (!lead || !lead.leadId) {
-      setSnackbarMessage("Error: Lead number is undefined.");
-      setSnackbarOpen(true);
-      return;
-    }
-    if (!isFormValid) {
-      setSnackbarMessage("Please fill in all required fields.");
-      setSnackbarOpen(true);
-      return;
-    }
-    setLoading(true);
-    const taskDetails = {
-      ...leadTask,
-      followUpDate: Timestamp.fromDate(new Date(leadTask.followUpDate)), // Convert to Firestore Timestamp
-      status: "Active",
-      activity: "Task Created",
-      leadId: lead.leadId,
-      timestamp: Timestamp.now(), // Use Firestore Timestamp for current time
-    };
+  const handleDateChange = (date) => {
+    setNewTask((prev) => ({ ...prev, leadTaskFollowUpDate: date || new Date() }));
+  }; 
+
+  const handleCreate = async () => {
     try {
-      await setDoc(doc(db, "leadTasks", `${lead.leadId}`), taskDetails);
-      setLeadTask(initialTaskState);
-      setSnackbarMessage("Task saved successfully!");
+      const now = FirestoreTimestamp.now(); // Current timestamp
+      const followUpDate = FirestoreTimestamp.fromDate(newTask.leadTaskFollowUpDate || new Date());
+      const taskData = {
+        ...newTask,
+        leadId,
+        leadTaskCreatedTimestamp: now,
+        leadTaskFollowUpDate: followUpDate
+      };
+      const taskRef = collection(db, "leadTasks");
+      await addDoc(taskRef, taskData);
       onSaveSuccess();
+      onClose();
     } catch (error) {
-      setSnackbarMessage(
-        `Error saving lead task: ${error.message || "Unknown error"}`
-      );
-    } finally {
-      setLoading(false);
-      setSnackbarOpen(true);
+      console.error("Error creating task:", error);
     }
-  };
+  };  
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-    onClose();
-  };
-
+  if (loading) return <Box>Loading configuration...</Box>;
+  if (error) return <Box>Error loading configuration: {error}</Box>;
 
   return (
-    <Dialog onClose={onClose} open={open}>
-      <DialogTitle>
-        Create Follow-Up{" "}
-        <IconButton
-          onClick={onClose}
-          sx={{ position: "absolute", right: 8, top: 8 }}
-        >
+    <Dialog
+      onClose={onClose}
+      open={open}
+      sx={{ "& .MuiDialog-paper": { width: "600px", maxWidth: "100%" } }}
+    >
+      <DialogTitle id="task-dialog-title">
+        Create New Task
+        <IconButton onClick={onClose} sx={{ position: "absolute", right: 8, top: 8 }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label="Follow-Up Date"
-            value={leadTask.followUpDate}
-            onChange={(date) => handleFieldChange("followUpDate", date)}
-            renderInput={(params) => <TextField {...params} fullWidth />}
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DateTimePicker
+            label="Follow Up Date"
+            value={newTask.leadTaskFollowUpDate}
+            onChange={handleDateChange}
+            renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
           />
         </LocalizationProvider>
+        {Object.entries({
+          leadTaskType: leadTaskTypeOptions || [],
+          leadTaskStatus: leadTaskStatusOptions || [],
+        }).map(([field, options]) => (
+          <TextField
+            key={field}
+            margin="dense"
+            label={field.replace("leadTask", "")}
+            value={newTask[field] || ""}
+            onChange={(e) => handleChange(e, field)}
+            fullWidth
+            select
+          >
+            {options.map((option, index) => (
+              <MenuItem key={index} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+        ))}
         <TextField
-          variant="outlined"
-          label="Follow-Up Type"
-          value={leadTask.leadTaskType}
-          onChange={(e) => handleFieldChange("leadTaskType", e.target.value)}
-          select
-          fullWidth
-          children={taskTypeOptions.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        />
-        <TextField
-          variant="outlined"
-          label="Follow-Up Priority"
-          value={leadTask.leadTaskPriority}
-          onChange={(e) =>
-            handleFieldChange("leadTaskPriority", e.target.value)
-          }
-          select
-          fullWidth
-          children={taskPriorityOptions.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        />
-        <TextField
-          variant="outlined"
-          label="Assigned Employee"
-          value={leadTask.leadTaskEmployee}
-          onChange={(e) =>
-            handleFieldChange("leadTaskEmployee", e.target.value)
-          }
+          margin="dense"
+          label="Employee"
+          value={newTask.leadTaskEmployee}
+          onChange={(e) => handleChange(e, 'leadTaskEmployee')}
           fullWidth
         />
         <TextField
-          variant="outlined"
+          margin="dense"
           label="Subject"
-          value={leadTask.leadTaskSubject}
-          onChange={(e) => handleFieldChange("leadTaskSubject", e.target.value)}
+          value={newTask.leadTaskSubject}
+          onChange={(e) => handleChange(e, 'leadTaskSubject')}
           fullWidth
         />
         <TextField
-          variant="outlined"
+          margin="dense"
           label="Additional Info"
-          value={leadTask.leadTaskAdditionalInfo}
-          onChange={(e) =>
-            handleFieldChange("leadTaskAdditionalInfo", e.target.value)
-          }
+          value={newTask.leadTaskAdditionalInfo}
+          onChange={(e) => handleChange(e, 'leadTaskAdditionalInfo')}
           fullWidth
-        />{" "}
+          multiline
+          rows={4}
+        />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSave} disabled={loading || !isFormValid}>
-          {loading ? <CircularProgress size={24} /> : "Save changes"}
+        <Button onClick={onClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleCreate} color="primary">
+          Create
         </Button>
       </DialogActions>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-        action={
-          <Button color="inherit" size="small" onClick={handleSnackbarClose}>
-            Close
-          </Button>
-        }
-      />
     </Dialog>
   );
 };

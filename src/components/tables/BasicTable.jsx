@@ -30,11 +30,16 @@ const BasicTable = ({
   return (
     <Box sx={{ mt: 3 }}>
       <Paper sx={{ mt: 2, mb: 2 }}>
-        <TableContainer component={Paper}>
-          <Table
+          <TableContainer
+            component={Paper}
             sx={{
-              "&:active": { boxShadow: "none" },
+              border: "solid",
+              borderColor: "divider",
+              height: "75vh",
+              overflow: "auto" 
             }}
+          >          <Table
+          stickyHeader
           >
             <TableHead>
               <TableRow>

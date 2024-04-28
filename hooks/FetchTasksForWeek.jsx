@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "../src/firebase";
 
 const useFetchTasksForWeek = (dates, refetchTrigger) => {
@@ -19,14 +19,14 @@ const useFetchTasksForWeek = (dates, refetchTrigger) => {
         setLoading(true);
         setError("");
 
-        const startDate = dates[0].start;
+        const startDate = dates[0].start; 
         const endDate = dates[dates.length - 1].end;
 
         const tasksRef = collection(db, "leadTasks");
         const tasksQuery = query(
           tasksRef,
-          where("followUpDate", ">=", startDate),
-          where("followUpDate", "<=", endDate)
+          where("leadTaskFollowUpDate", ">=", startDate),
+          where("leadTaskFollowUpDate", "<=", endDate)
         );
 
         const querySnapshot = await getDocs(tasksQuery);
@@ -36,7 +36,6 @@ const useFetchTasksForWeek = (dates, refetchTrigger) => {
         }));
 
         setTasks(tasksData);
-        console.log(tasksData)
       } catch (error) {
         setError(`Error fetching tasks for the week: ${error.message}`);
         console.error("Fetch error:", error);

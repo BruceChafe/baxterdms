@@ -19,6 +19,7 @@ import LeadVehicle from "./LeadVehicle";
 import TabbedLayout from "../layouts/TabbedLayout";
 import TitleLayout from "../layouts/TitleLayout";
 import CreateLeadTask from "./CreateLeadTask";
+import LeadHistory from "./LeadHistory";
 import { useFetchLeadAndContact } from "../../../hooks/FetchLeadAndContact";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -79,7 +80,7 @@ const Lead = () => {
   };
 
   const handleSaveSuccess = () => {
-    setReloadLeadHistory((prevState) => !prevState);
+    // setReloadLeadHistory((prevState) => !prevState);
   };
 
   const handleSendEmailClick = () => {
@@ -117,6 +118,14 @@ const Lead = () => {
             leadId={leadId}
             onVehicleRemoved={handleVehicleRemoved}
             onVehicleAdded={handleVehicleAdded}
+          />
+        ),
+      },
+       {
+        label: "History",
+        component: () => (
+          <LeadHistory
+          leadId={leadId}        
           />
         ),
       },

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import {
@@ -21,6 +21,7 @@ import {
   Autocomplete,
   Snackbar,
   Alert,
+  FormHelperText,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -28,7 +29,14 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import TitleLayout from "../layouts/TitleLayout";
 import InputMask from "react-input-mask";
 
-const PhoneInputField = ({ label, name, value, onChange }) => (
+const PhoneInputField = ({
+  label,
+  name,
+  value,
+  onChange,
+  error,
+  helperText,
+}) => (
   <InputMask
     mask="(999) 999-9999"
     value={value}
@@ -42,6 +50,8 @@ const PhoneInputField = ({ label, name, value, onChange }) => (
         name={name}
         fullWidth
         variant="outlined"
+        error={error}
+        helperText={helperText}
       />
     )}
   </InputMask>
@@ -68,8 +78,68 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
     primaryEmail: "",
     secondaryEmail: "",
     notes: "",
-    leadIDs: leadId ? [leadId] : []
+    leadIDs: leadId ? [leadId] : [],
   });
+
+  const [formErrors, setFormErrors] = useState({});
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.firstName) errors.firstName = "First Name is required.";
+    if (!formData.lastName) errors.lastName = "Last Name is required.";
+    if (!formData.mobilePhone) errors.mobilePhone = "Mobile Phone is required.";
+    if (!formData.primaryEmail)
+      errors.primaryEmail = "Primary Email is required.";
+    return errors;
+  };
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+
+  const handleInputChange = (event) => {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    try {
+      const docRef = await addDoc(collection(db, "contacts"), formData);
+      navigate(`/contacts/${docRef.id}`);
+      setSnackbarMessage("Contact created successfully.");
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+      onNewContactCreated();
+    } catch (error) {
+      console.error("Error adding new contact:", error);
+      setSnackbarMessage(`Failed to create contact: ${error.message}`);
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
+  };
 
   const provinces = [
     { code: "AB", name: "Alberta" },
@@ -95,56 +165,10 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
     { code: "other", name: "Other" },
   ];
 
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenSnackbar(false);
-  };
-
-  const handleInputChange = (event) => {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.mobilePhone || !formData.primaryEmail) {
-      setSnackbarMessage('Mobile phone and primary email are required.');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
-      return;
-    }
-  
-    try {
-      const docRef = await addDoc(collection(db, "contacts"), formData);
-      // Navigate to the contact detail page using the newly created document ID
-      navigate(`/contacts/${docRef.id}`);
-      setSnackbarMessage('Contact created successfully.');
-      setSnackbarSeverity('success');
-      setOpenSnackbar(true);
-    } catch (error) {
-      console.error("Error adding new contact:", error);
-      setSnackbarMessage(`Failed to create contact: ${error.message}`);
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
-    }
-  };
-
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout title={<Typography variant="h4">New Contact</Typography>} />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <Box sx={{ mt: 3 }}>
           <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
             <Box mb={1} mt={1} p={1}>
@@ -160,6 +184,8 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
                     name="firstName"
                     variant="outlined"
                     required
+                    error={!!formErrors.firstName}
+                    helperText={formErrors.firstName || ""}
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -179,6 +205,8 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
                     name="lastName"
                     variant="outlined"
                     required
+                    error={!!formErrors.lastName}
+                    helperText={formErrors.lastName || ""}
                   />
                 </Grid>
               </Grid>
@@ -375,7 +403,8 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
                   name="mobilePhone"
                   value={formData.mobilePhone}
                   onChange={handleInputChange}
-                  required
+                  error={!!formErrors.mobilePhone}
+                  helperText={formErrors.mobilePhone}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -403,6 +432,8 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
                   onChange={handleInputChange}
                   fullWidth
                   required
+                  error={!!formErrors.primaryEmail}
+                  helperText={formErrors.primaryEmail || ""}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -442,12 +473,22 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
             </Grid>
           </Box>
         </Paper>
+
+        {/* Additional form sections and components */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+        >
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </form>
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

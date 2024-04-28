@@ -10,13 +10,13 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
 import NewContact from "./components/contacts/NewContact";
-import ContactTable from "./components/contacts/Contacts";
+import ContactsDashboard from "./components/contacts/ContactsDashboard";
 import UserThemeSelection from "./components/account/UserThemeSelection";
 import AccountOverview from "./components/account/Overview";
 import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
 import UserProfile from "./components/account/PersonalInfo";
 import UpdatePassword from "./components/account/UpdatePassword";
-import LeadsTable from "./components/leads/Leads";
+import LeadsDashboard from "./components/leads/LeadsDashboard";
 import NewLeadComponent from "./components/leads/NewLead";
 import { ThemeProvider } from "./context/ThemeContext";
 import ConfigLanding from "./components/configuration/ConfigLanding";
@@ -62,7 +62,7 @@ const AppRoutes = () => {
             path="/contacts/:contactId/*"
             element={<Navigate to={`/contacts/:contactId`} target="_blank" />}
           />
-          <Route path="/contacts/*" element={<ContactTable />} />
+          <Route path="/contacts/*" element={<ContactsDashboard />} />
           <Route path="/contacts/newcontact" element={<NewContact />} />
           <Route
             path="/account/overview"
@@ -73,7 +73,7 @@ const AppRoutes = () => {
           <Route path="/account/theme" element={<UserThemeSelection />} />
           <Route path="/account/userprofile" element={<UserProfile />} />
           <Route path="/account/updatepassword" element={<UpdatePassword />} />
-          <Route path="/leads" element={<LeadsTable />} />
+          <Route path="/leads" element={<LeadsDashboard />} />
           <Route path="/leads/newlead" element={<NewLeadComponent />} />
           <Route path="/configuration" element={<ConfigLanding />} />
           <Route path="/configuration/leads" element={<LeadsConfig />} />

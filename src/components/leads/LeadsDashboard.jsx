@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CircularProgress,
   Box,
@@ -12,7 +13,8 @@ import BasicTable from "../tables/BasicTable";
 import TitleLayout from "../layouts/TitleLayout";
 import { useFetchLeadsAndContacts } from "../../../hooks/FechLeadsandContacts";
 
-const LeadsTable = () => {
+const LeadsDashboard = () => {
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { data, totalCount } = useFetchLeadsAndContacts(page, rowsPerPage);
@@ -30,16 +32,30 @@ const LeadsTable = () => {
     id: item.lead.id,
     leadType: item.lead.leadType,
     leadStatus: item.lead.leadStatus,
-    fullName: item.contacts.length > 0 ? `${item.contacts[0].firstName} ${item.contacts[0].lastName}` : 'No contact',
-    email: item.contacts.length > 0 ? item.contacts[0].primaryEmail : 'No email',
+    fullName:
+      item.contacts.length > 0
+        ? `${item.contacts[0].firstName} ${item.contacts[0].lastName}`
+        : "No contact",
+    email:
+      item.contacts.length > 0 ? item.contacts[0].primaryEmail : "No email",
     leadDealership: item.lead.leadDealership,
-  })); 
+  }));
 
-  console.log("Transformed Data:", transformedData);
+  const handleNewLeadClick = () => {
+    navigate(`/leads/newlead`);
+  };
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
-      <TitleLayout title={<Typography variant="h4">Leads</Typography>} />
+      <TitleLayout
+        title={<Typography variant="h4">Leads</Typography>}
+        actionButtons={[
+          {
+            label: "New Lead",
+            onClick: handleNewLeadClick,
+          },
+        ]}
+      />
       {data.loading ? (
         <Container>
           <Box
@@ -80,7 +96,7 @@ const LeadsTable = () => {
             rowsPerPage={rowsPerPage}
           />
 
-          <Paper sx={{ mt: 2, mb: 2 }}>
+          <Paper sx={{ mt: 2, mb: 2, border: "solid", borderColor: "divider" }}>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
@@ -98,4 +114,4 @@ const LeadsTable = () => {
   );
 };
 
-export default LeadsTable;
+export default LeadsDashboard;

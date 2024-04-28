@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -22,6 +23,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const Contact = () => {
+  const navigate = useNavigate();
   const { contactId } = useParams();
   const { contact, setContact, loading, error } = useFetchContact(contactId);
   const [editedContact, setEditedContact] = useState({});
@@ -77,6 +79,10 @@ const Contact = () => {
     setContactInfoChanged(changed);
   };
 
+        const handleNewLeadClick = () => {
+          navigate(`/leads/newlead`);
+        };
+
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
@@ -95,6 +101,12 @@ const Contact = () => {
         isEditable={isEditable}
         onToggleEdit={toggleEdit}
         saveDisabled={!contactInfoChanged}
+        actionButtons={[
+          {
+            label: "New Lead",
+            onClick: handleNewLeadClick,
+          },
+        ]}
       />
       {loading ? (
         <Container>
