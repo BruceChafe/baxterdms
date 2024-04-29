@@ -80,7 +80,7 @@ const LeadVehicle = ({ vehicleId, vehicle, leadId, onVehicleRemoved, onVehicleAd
     <>
       {vehicleArray.map((v, index) => (
         <Box key={index} sx={{ mb: 5 }}>
-          <Paper sx={{ p: 3, mb: 2 }}>
+          <Paper sx={{ p: 3, mb: 2, border: "solid", borderColor: "divider" }}>
             <Grid
               container
               spacing={2}

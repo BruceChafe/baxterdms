@@ -80,7 +80,7 @@ const EmailServerConfig = () => {
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Paper sx={{ p: 3, mb: 2 }}>
+      <Paper sx={{ p: 3, mb: 2, border: "solid", borderColor: "divider" }}>
         <Typography variant="h5" mb={2}>
           Email Server Configuration
         </Typography>

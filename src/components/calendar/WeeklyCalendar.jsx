@@ -13,8 +13,6 @@ import {
   TableRow,
   Typography,
   Stack,
-  Button,
-  Chip,
 } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
 import ArrowBack from "@mui/icons-material/ArrowBack";
@@ -72,7 +70,7 @@ const WeeklyCalendar = () => {
     return showCompleted && showCancelled;
   });
 
-  const minimumRows = 4;
+  const minimumRows = 10;
   const emptyRows = minimumRows - visibleTasks.length;
 
   return (
@@ -141,31 +139,29 @@ const WeeklyCalendar = () => {
               sx={{
                 border: "solid",
                 borderColor: "divider",
-                minHeight: "70vh",
+                height: "72vh",
               }}
             >
-              <Table>
+              <Table stickyHeader>
                 <TableHead>
-                  <TableRow>
-                    {dates.map(({ day, date }, index) => (
-                      <TableCell
-                        key={day}
-                        align="center"
-                        sx={{
-                          width: `${100 / dates.length}%`,
-                          borderRight: index !== dates.length - 1 ? 1 : 0,
-                          borderColor: "divider",
-                        }}
-                      >
-                        <Typography variant="subtitle1">{day}</Typography>
-                        <Typography variant="body1">{date}</Typography>
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                  {dates.map(({ day, date }, index) => (
+                    <TableCell
+                      key={day}
+                      align="center"
+                      sx={{
+                        width: `${100 / dates.length}%`,
+                        borderRight: index !== dates.length - 1 ? 1 : 0,
+                        borderColor: "divider",
+                      }}
+                    >
+                      <Typography variant="subtitle1">{day}</Typography>
+                      <Typography variant="body1">{date}</Typography>
+                    </TableCell>
+                  ))}
                 </TableHead>
                 <TableBody>
                   {visibleTasks.map((task) => (
-                    <TableRow key={task.id} sx={{ minHeight: "150px" }}>
+                    <TableRow key={task.id} sx={{ height: "17.5vh" }}>
                       {dates.map(({ start, end }) => {
                         const taskDate = new Date(
                           task.leadTaskFollowUpDate.seconds * 1000
@@ -181,7 +177,8 @@ const WeeklyCalendar = () => {
                               sx={{
                                 borderRight: 1,
                                 borderColor: "divider",
-                                
+                                height: "100%",
+                                borderBottom: 0,
                               }}
                             >
                               <Box
@@ -228,6 +225,8 @@ const WeeklyCalendar = () => {
                               sx={{
                                 borderRight: 1,
                                 borderColor: "divider",
+                                height: "100%",
+                                borderBottom: 0,
                               }}
                             />
                           );
@@ -237,16 +236,15 @@ const WeeklyCalendar = () => {
                   ))}
                   {emptyRows > 0 &&
                     [...Array(emptyRows)].map((_, index) => (
-                      <TableRow
-                        key={`empty-${index}`}
-                        sx={{ minHeight: "150px" }}
-                      >
+                      <TableRow key={`empty-${index}`} sx={{ height: "7vh" }}>
                         {dates.map((_, dateIndex) => (
                           <TableCell
                             key={`empty-cell-${dateIndex}`}
                             sx={{
                               borderRight: 1,
                               borderColor: "divider",
+                              height: "100%",
+                              borderBottom: 0,
                             }}
                           />
                         ))}

@@ -119,7 +119,7 @@ const LeadHistory = ({ leadId }) => {
 
   return (
     <Box sx={{ mb: 5 }}>
-      <Paper sx={{ p: 3 }}>
+      <Paper sx={{ p: 3, border: "solid", borderColor: "divider" }}>
         <SortingTable
           data={combinedRows}
           columns={columns}

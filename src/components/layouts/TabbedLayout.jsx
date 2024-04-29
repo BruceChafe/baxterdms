@@ -10,12 +10,15 @@ const TabbedLayout = ({ tabs }) => {
   };
 
   return (
-  
     <Box sx={{ mt: 3 }}>
       <TabContext value={value}>
-        <Paper sx={{ pl: 1, pr: 1 }}>
-          <Box mb={1} mt={1} p={1}>
-            <TabList onChange={handleChange} textColor="secondary" indicatorColor="secondary">
+        <Paper sx={{ border: "solid", borderColor: "divider" }}>
+          <Box>
+            <TabList
+              onChange={handleChange}
+              textColor="secondary"
+              indicatorColor="transparent"
+            >
               {tabs.map((tab, index) => (
                 <Tab label={tab.label} value={String(index + 1)} key={index} />
               ))}
@@ -23,9 +26,18 @@ const TabbedLayout = ({ tabs }) => {
           </Box>
         </Paper>
         {tabs.map((tab, index) => (
-          <TabPanel value={String(index + 1)} key={index}>
+          <Box>
+          <TabPanel
+            value={String(index + 1)}
+            key={index}
+            sx={{
+              height: "8vh",
+              width: "100%",
+            }}
+          >
             {tab.component()}
           </TabPanel>
+          </Box>
         ))}
       </TabContext>
     </Box>

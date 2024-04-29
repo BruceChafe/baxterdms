@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { CssBaseline, Grid } from "@mui/material";
+import { CssBaseline, Grid, Box } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
@@ -44,18 +44,18 @@ const AppRoutes = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
   if (user === undefined) {
     return null;
   }
 
   return user ? (
-<Grid container>
-  <Grid item xs={12} md={3} lg={2}>
-    <SidebarSwitcher />
-  </Grid>
-  <Grid item xs={12} md={9} lg={10} > 
+    <Grid container>
+      <Grid item xs={12} md={3} lg={2}>
+        <SidebarSwitcher />
+      </Grid>
+      <Grid item xs={12} md={9} lg={10}>
         <Routes>
           <Route path="/home" element={<WeeklyCalendar />} />
           <Route
@@ -64,12 +64,7 @@ const AppRoutes = () => {
           />
           <Route path="/contacts/*" element={<ContactsDashboard />} />
           <Route path="/contacts/newcontact" element={<NewContact />} />
-          <Route
-            path="/account/overview"
-            element={
-              <AccountOverview />
-            }
-          />
+          <Route path="/account/overview" element={<AccountOverview />} />
           <Route path="/account/theme" element={<UserThemeSelection />} />
           <Route path="/account/userprofile" element={<UserProfile />} />
           <Route path="/account/updatepassword" element={<UpdatePassword />} />

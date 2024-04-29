@@ -95,7 +95,7 @@ const Inventory = () => {
             }
           />
           <Box mt={2}>
-          <Paper sx={{ p: 3, mb: 2 }}>
+          <Paper sx={{ p: 3, mb: 2, border: "solid", borderColor: "divider" }}>
           <Grid container spacing={4}>
 
             <Grid item xs={12} md={5}>

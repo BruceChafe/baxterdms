@@ -29,6 +29,7 @@ import {
 import InputMask from "react-input-mask";
 import NewLeadForm from "./NewLeadForm";
 import NewContact from "../contacts/NewContact";
+import TitleLayout from "../layouts/TitleLayout";
 
 const NewLeadComponent = () => {
   const [searchData, setSearchData] = useState({
@@ -149,12 +150,16 @@ const NewLeadComponent = () => {
 
       {!showNewLeadForm && !showNewContactForm && (
         <>
-          <Typography variant="h4" mb={2}>
-            New Lead
-          </Typography>
-          <Divider />
-          <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-            <Box mb={1} mt={1} p={1}>
+          <TitleLayout title={<Typography variant="h4">New Lead</Typography>} />
+          <Box sx={{ mt: 3 }}>
+            <Paper
+              sx={{
+                border: "solid",
+                borderColor: "divider",
+                p: 3,
+                mb: 2,
+              }}
+            >
               <Typography variant="h5" mb={2}>
                 Search Existing Contacts
               </Typography>
@@ -205,13 +210,19 @@ const NewLeadComponent = () => {
               <Button variant="outlined" onClick={handleSearch} sx={{ mt: 2 }}>
                 Search
               </Button>
-            </Box>
-          </Paper>
+            </Paper>
+          </Box>
 
           {searchPerformed && searchResults.length > 0 && (
             <>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }}>
+              <TableContainer
+                component={Paper}
+                sx={{
+                  border: "solid",
+                  borderColor: "divider",
+                }}
+              >
+                <Table stickyHeader>
                   <TableHead>
                     <TableRow>
                       <TableCell
@@ -346,10 +357,12 @@ const NewLeadComponent = () => {
                 sx={{
                   mt: 2,
                   mb: 2,
+                  p: 2,
+                  border: "solid",
+                  borderColor: "divider",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  p: 2,
                 }}
               >
                 <Button variant="outlined" onClick={handleNewContactClick}>
@@ -369,7 +382,7 @@ const NewLeadComponent = () => {
           )}
 
           {searchPerformed && noResults && (
-            <Paper sx={{ p: 1, mt: 2, mb: 2, textAlign: "center" }}>
+            <Paper sx={{ p: 1, mt: 2, mb: 2, textAlign: "center", border: "solid", borderColor: "divider" }}>
               <Typography>
                 No results found. You may want to create a new contact.
               </Typography>

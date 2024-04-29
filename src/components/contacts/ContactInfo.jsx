@@ -7,27 +7,37 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
-const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange, isEditable }) => {
+const ContactInfo = ({
+  contact,
+  onSaveContactInfo,
+  onInfoChange,
+  isEditable,
+}) => {
   const [editedContact, setEditedContact] = useState({ ...contact });
 
   useEffect(() => {
-    if (contact.dob && typeof contact.dob.seconds === 'number' && typeof contact.dob.nanoseconds === 'number') {
-      const convertedDate = new Date(contact.dob.seconds * 1000 + contact.dob.nanoseconds / 1000000);
+    if (
+      contact.dob &&
+      typeof contact.dob.seconds === "number" &&
+      typeof contact.dob.nanoseconds === "number"
+    ) {
+      const convertedDate = new Date(
+        contact.dob.seconds * 1000 + contact.dob.nanoseconds / 1000000
+      );
       setEditedContact({
         ...contact,
-        dob: convertedDate
+        dob: convertedDate,
       });
     } else {
       setEditedContact({
         ...contact,
-        dob: null
+        dob: null,
       });
     }
   }, [contact]);
-  
 
   const basicInformationFields = [
     { label: "First Name", key: "firstName" },
@@ -70,26 +80,33 @@ const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange, isEditable }) =
     return (
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DatePicker
-          variant="outlined"
           label={label}
-          value={value || ''}
-          onChange={(e) => handleFieldChange(key, e.target.value)}
-          renderInput={(params) => <TextField {...params} fullWidth disabled={!isEditable} />}
+          value={value}
+          onChange={(newValue) => handleFieldChange(key, newValue)}
+          renderInput={(params) => (
+            <TextField 
+              {...params} 
+              fullWidth 
+              disabled={!isEditable} 
+              error={params.error && !params.value}
+            />
+          )}
           disabled={!isEditable}
         />
       </LocalizationProvider>
     );
   };
+  
 
   const renderTextField = (label, key, value) => {
-    if (key === 'dob') {
+    if (key === "dob") {
       return renderDatePicker(label, key, value);
     } else {
       return (
         <TextField
           variant="outlined"
           label={label}
-          value={value || ''}
+          value={value || ""}
           onChange={(e) => handleFieldChange(key, e.target.value)}
           fullWidth
           disabled={!isEditable}
@@ -99,33 +116,37 @@ const ContactInfo = ({ contact, onSaveContactInfo, onInfoChange, isEditable }) =
   };
 
   const renderSection = (sectionLabel, fields) => (
-    <Box sx={{ mb: 2 }}>
-      <Paper sx={{ p: 3, mb: 2 }}>
-        <Typography variant="h5" mb={2}>
-          {sectionLabel}
-        </Typography>
-        <Grid container spacing={2}>
-          {fields.map((field) => (
-            <Grid item xs={12} sm={6} key={field.label}>
-              {renderTextField(
-                field.label,
-                field.key,
-                editedContact[field.key]
-              )}
-            </Grid>
-          ))}
-        </Grid>
-      </Paper>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h5" mb={2}>
+        {sectionLabel}
+      </Typography>
+      <Grid container spacing={2}>
+        {fields.map((field) => (
+          <Grid item xs={12} sm={6} key={field.label}>
+            {renderTextField(field.label, field.key, editedContact[field.key])}
+          </Grid>
+        ))}
+      </Grid>
     </Box>
   );
 
   return (
-    <Box sx={{ mb: 5}}>
-      {renderSection("Basic Information", basicInformationFields)}
-      <Divider sx={{ mt: 2, mb: 2 }} />
-      {renderSection("Location", locationFields)}
-      <Divider sx={{ mt: 2, mb: 2 }} />
-      {renderSection("Contact Information", contactInformationFields)}
+    <Box sx={{ mb: 5 }}>
+      <Paper
+        sx={{
+          border: "solid",
+          borderColor: "divider",
+          p: 1,
+          height: "73vh",
+          overflow: "auto"
+        }}
+      >
+        {renderSection("Basic Information", basicInformationFields)}
+        <Divider />
+        {renderSection("Location", locationFields)}
+        <Divider />
+        {renderSection("Contact Information", contactInformationFields)}
+      </Paper>
     </Box>
   );
 };

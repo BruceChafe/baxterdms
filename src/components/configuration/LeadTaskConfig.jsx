@@ -37,7 +37,7 @@ const LeadsSection = ({
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Paper elevation={4} sx={{ p: 3, mb: 2 }}>
+      <Paper sx={{ p: 3, mb: 2 , border: "solid", borderColor: "divider"}}>
         <Typography variant="h6" mb={2} sx={{ fontWeight: 'medium' }}>
           {label}
         </Typography>

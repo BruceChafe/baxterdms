@@ -46,7 +46,7 @@ const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
   if (error) return <Box>Error: {error}</Box>;
 
   return (
-    <Paper sx={{ p: 3, mb: 2 }}>
+    <Paper sx={{ p: 3, mb: 2, border: "solid", borderColor: "divider" }}>
       <Box mb={1} mt={1} p={1}>
         <Grid container spacing={2}>
           {[

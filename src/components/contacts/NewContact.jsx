@@ -21,7 +21,6 @@ import {
   Autocomplete,
   Snackbar,
   Alert,
-  FormHelperText,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -168,10 +167,19 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout title={<Typography variant="h4">New Contact</Typography>} />
-      <form onSubmit={handleSubmit} noValidate>
-        <Box sx={{ mt: 3 }}>
-          <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-            <Box mb={1} mt={1} p={1}>
+      <Box sx={{ mt: 3 }}>
+        <form onSubmit={handleSubmit} noValidate>
+          <Paper
+            sx={{
+              border: "solid",
+              borderColor: "divider",
+              height: "73vh",
+              overflow: "auto",
+              p: 3,
+              mb: 2
+            }}
+          >
+            
               <Typography variant="h5" mb={2}>
                 Identity
               </Typography>
@@ -210,7 +218,8 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
                   />
                 </Grid>
               </Grid>
-              <Grid container spacing={2} sx={{ mt: 1 }}>
+
+              <Grid container spacing={2}>
                 <Grid item xs={12} md={4}>
                   <Autocomplete
                     id="gender-select"
@@ -258,237 +267,228 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
                   </LocalizationProvider>
                 </Grid>
               </Grid>
-            </Box>
-          </Paper>
-        </Box>
-        <Divider />
-        <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-          <Box mb={1} mt={1} p={1}>
-            <Typography variant="h5" mb={2}>
-              Location
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  onChange={handleInputChange}
-                  fullWidth
-                  label="Street Address"
-                  name="streetAddress"
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  onChange={handleInputChange}
-                  fullWidth
-                  label="Postal Code"
-                  name="postalCode"
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  onChange={handleInputChange}
-                  fullWidth
-                  label="City"
-                  name="city"
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Autocomplete
-                  id="province-select"
-                  options={provinces}
-                  getOptionLabel={(option) => option.name}
-                  onChange={(event, value) =>
-                    handleInputChange({
-                      target: {
-                        name: "gender",
-                        value: value ? value.code : "",
-                      },
-                    })
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Province"
-                      name="province"
-                      fullWidth
-                      variant="outlined"
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <InputLabel id="contact-country-select">Country</InputLabel>
-                  <Select
-                    value={formData.country}
+
+              <Divider sx={{ mt: 2, mb: 2 }} />
+              <Typography variant="h5" mb={2}>
+                Contact Information
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">Preferred Language</FormLabel>
+                    <RadioGroup
+                      aria-label="Preferred Language"
+                      name="preferredLanguage"
+                      value={formData.preferredLanguage}
+                      onChange={handleInputChange}
+                    >
+                      <FormControlLabel
+                        value="english"
+                        control={<Radio />}
+                        label="English"
+                      />
+                      <FormControlLabel
+                        value="french"
+                        control={<Radio />}
+                        label="French"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">
+                      Preferred Contact Method
+                    </FormLabel>
+                    <RadioGroup
+                      aria-label="Preferred Contact Method"
+                      name="preferredContact"
+                      value={formData.preferredContact}
+                      onChange={handleInputChange}
+                    >
+                      <FormControlLabel
+                        value="sms"
+                        control={<Radio />}
+                        label="SMS"
+                      />
+                      <FormControlLabel
+                        value="email"
+                        control={<Radio />}
+                        label="Email"
+                      />
+                      <FormControlLabel
+                        value="phone"
+                        control={<Radio />}
+                        label="Phone"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <PhoneInputField
+                    label="Mobile Phone"
+                    name="mobilePhone"
+                    value={formData.mobilePhone}
                     onChange={handleInputChange}
-                    labelId="contact-country-select"
-                    label="Country"
-                    name="country"
+                    error={!!formErrors.mobilePhone}
+                    helperText={formErrors.mobilePhone}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <PhoneInputField
+                    label="Home Phone"
+                    name="homePhone"
+                    value={formData.homePhone}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <PhoneInputField
+                    label="Work Phone"
+                    name="workPhone"
+                    value={formData.workPhone}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Primary Email"
+                    name="primaryEmail"
+                    value={formData.primaryEmail}
+                    onChange={handleInputChange}
+                    fullWidth
+                    required
+                    error={!!formErrors.primaryEmail}
+                    helperText={formErrors.primaryEmail || ""}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Secondary Email"
+                    name="secondaryEmail"
+                    value={formData.secondaryEmail}
+                    onChange={handleInputChange}
+                    fullWidth
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    onChange={handleInputChange}
+                    fullWidth
+                    label="Notes"
+                    name="notes"
                     variant="outlined"
-                  >
-                    <MenuItem value="CA">Canada</MenuItem>
-                    <MenuItem value="US">United States of America</MenuItem>
-                  </Select>
-                </FormControl>
+                    multiline
+                    rows={4}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        </Paper>
-        <Divider />
 
-        <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-          <Box mb={1} mt={1} p={1}>
-            <Typography variant="h5" mb={2}>
-              Contact Information
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">Preferred Language</FormLabel>
-                  <RadioGroup
-                    aria-label="Preferred Language"
-                    name="preferredLanguage"
-                    value={formData.preferredLanguage}
+              <Divider sx={{ mt: 2, mb: 2 }} />
+              <Typography variant="h5" mb={2}>
+                Location
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <TextField
                     onChange={handleInputChange}
-                  >
-                    <FormControlLabel
-                      value="english"
-                      control={<Radio />}
-                      label="English"
-                    />
-                    <FormControlLabel
-                      value="french"
-                      control={<Radio />}
-                      label="French"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">
-                    Preferred Contact Method
-                  </FormLabel>
-                  <RadioGroup
-                    aria-label="Preferred Contact Method"
-                    name="preferredContact"
-                    value={formData.preferredContact}
+                    fullWidth
+                    label="Street Address"
+                    name="streetAddress"
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
                     onChange={handleInputChange}
-                  >
-                    <FormControlLabel
-                      value="sms"
-                      control={<Radio />}
-                      label="SMS"
-                    />
-                    <FormControlLabel
-                      value="email"
-                      control={<Radio />}
-                      label="Email"
-                    />
-                    <FormControlLabel
-                      value="phone"
-                      control={<Radio />}
-                      label="Phone"
-                    />
-                  </RadioGroup>
-                </FormControl>
+                    fullWidth
+                    label="Postal Code"
+                    name="postalCode"
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    onChange={handleInputChange}
+                    fullWidth
+                    label="City"
+                    name="city"
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Autocomplete
+                    id="province-select"
+                    options={provinces}
+                    getOptionLabel={(option) => option.name}
+                    onChange={(event, value) =>
+                      handleInputChange({
+                        target: {
+                          name: "gender",
+                          value: value ? value.code : "",
+                        },
+                      })
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Province"
+                        name="province"
+                        fullWidth
+                        variant="outlined"
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <InputLabel id="contact-country-select">Country</InputLabel>
+                    <Select
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      labelId="contact-country-select"
+                      label="Country"
+                      name="country"
+                      variant="outlined"
+                    >
+                      <MenuItem value="CA">Canada</MenuItem>
+                      <MenuItem value="US">United States of America</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={4}>
-                <PhoneInputField
-                  label="Mobile Phone"
-                  name="mobilePhone"
-                  value={formData.mobilePhone}
-                  onChange={handleInputChange}
-                  error={!!formErrors.mobilePhone}
-                  helperText={formErrors.mobilePhone}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <PhoneInputField
-                  label="Home Phone"
-                  name="homePhone"
-                  value={formData.homePhone}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <PhoneInputField
-                  label="Work Phone"
-                  name="workPhone"
-                  value={formData.workPhone}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Primary Email"
-                  name="primaryEmail"
-                  value={formData.primaryEmail}
-                  onChange={handleInputChange}
-                  fullWidth
-                  required
-                  error={!!formErrors.primaryEmail}
-                  helperText={formErrors.primaryEmail || ""}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Secondary Email"
-                  name="secondaryEmail"
-                  value={formData.secondaryEmail}
-                  onChange={handleInputChange}
-                  fullWidth
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  onChange={handleInputChange}
-                  fullWidth
-                  label="Notes"
-                  name="notes"
-                  variant="outlined"
-                  multiline
-                  rows={4}
-                />
-              </Grid>
-            </Grid>
-          </Box>
-        </Paper>
-        <Divider />
-        <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-          <Box mb={1} mt={1} p={1}>
+            
+          </Paper>
+        
+          <Paper
+            sx={{ mt: 2, mb: 2, p: 2, border: "solid", borderColor: "divider" }}
+          >
             <Grid container>
               <Button variant="outlined" onClick={onCloseForm} sx={{ mr: 2 }}>
                 Back
               </Button>
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" variant="outlined">
                 Create
               </Button>
             </Grid>
-          </Box>
-        </Paper>
-
-        {/* Additional form sections and components */}
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleSnackbarClose}
-        >
-          <Alert
+          </Paper>
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={6000}
             onClose={handleSnackbarClose}
-            severity={snackbarSeverity}
-            sx={{ width: "100%" }}
           >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
-      </form>
+            <Alert
+              onClose={handleSnackbarClose}
+              severity={snackbarSeverity}
+              sx={{ width: "100%" }}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+        </form>
+      </Box>
     </Box>
   );
 };

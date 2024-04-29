@@ -114,7 +114,7 @@ const Contact = () => {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            minHeight="300px"
+            // minHeight="300px"
             flexDirection="column"
           >
             <CircularProgress color="primary" />
@@ -144,13 +144,13 @@ const Contact = () => {
           ]}
         />
       )}
-      <BottomNavigation
+      {/* <BottomNavigation
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
       >
         <Button onClick={handleEmailClick}>
           <EmailOutlined /> Email
         </Button>
-      </BottomNavigation>
+      </BottomNavigation> */}
 
       {isEmailPaperOpen && (
         <EmailContact
