@@ -58,11 +58,9 @@ const LeadHistory = ({ leadId }) => {
 
   const leadTasksRows = tasks.map((task) => ({
     timestamp: formatTimestamp(task.leadTaskCreatedTimestamp),
-    activity: task.activity + " - " + task.leadTaskType,
-    activityDetails: `Priority: ${
-      task.priority
-    }\nFollow Up Date: ${formatTimestamp(task.leadTaskFollowUpDate)}\nStatus: ${
-      task.status
+    activity: task.leadTaskType,
+    activityDetails: `Follow Up Date: ${formatTimestamp(task.leadTaskFollowUpDate)}\nStatus: ${
+      task.leadTaskStatus
     }`,
     subject: task.subject,
     additionalInfo: task.additionalInfo,

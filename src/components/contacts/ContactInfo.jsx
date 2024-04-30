@@ -84,10 +84,10 @@ const ContactInfo = ({
           value={value}
           onChange={(newValue) => handleFieldChange(key, newValue)}
           renderInput={(params) => (
-            <TextField 
-              {...params} 
-              fullWidth 
-              disabled={!isEditable} 
+            <TextField
+              {...params}
+              fullWidth
+              disabled={!isEditable}
               error={params.error && !params.value}
             />
           )}
@@ -96,7 +96,6 @@ const ContactInfo = ({
       </LocalizationProvider>
     );
   };
-  
 
   const renderTextField = (label, key, value) => {
     if (key === "dob") {
@@ -138,7 +137,7 @@ const ContactInfo = ({
           borderColor: "divider",
           p: 1,
           height: "73vh",
-          overflow: "auto"
+          overflow: "auto",
         }}
       >
         {renderSection("Basic Information", basicInformationFields)}

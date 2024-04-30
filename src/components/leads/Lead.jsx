@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   CircularProgress,
@@ -25,6 +26,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const Lead = () => {
+  const navigate = useNavigate();
   const { leadNumber } = useParams();
   const { lead, contact, vehicle, primaryEmail, loading, error, refetch } =
     useFetchLeadAndContact(leadNumber);
@@ -34,27 +36,40 @@ const Lead = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [sendEmailOpen, setSendEmailOpen] = useState(null);
   const [createNewLeadTaskOpen, setCreateNewLeadTaskOpen] = useState(false);
+  const [contactInfoChanged, setContactInfoChanged] = useState(false);
+  const contactId = contact?.id;
 
   const handleSnackbar = (message) => {
     setSnackbarMessage(message);
     setSnackbarOpen(true);
   };
 
+  const toggleEdit = () => {
+    setIsEditable(!isEditable);
+    if (isEditable) {
+      handleSave();
+    }
+  };
+
   const handleSave = async () => {
     if (!editedContact || Object.keys(editedContact).length === 0) {
-      handleSnackbar("No changes to save");
+      setSnackbarMessage("No changes to save");
+      setSnackbarOpen(true);
       return;
     }
-    const contactId = contact?.id;
+
     const contactRef = doc(db, "contacts", contactId);
 
     try {
       await updateDoc(contactRef, editedContact);
-      handleSnackbar("Save successful");
+      setContact((prev) => ({ ...prev, ...editedContact }));
+      setSnackbarMessage("Save successful");
+      setContactInfoChanged(false);
     } catch (error) {
       console.error("Error updating contact:", error);
-      handleSnackbar(`Error: ${error.message}`);
+      setSnackbarMessage(`Error: ${error.message}`);
     } finally {
+      setSnackbarOpen(true);
       setIsEditable(false);
     }
   };
@@ -83,6 +98,10 @@ const Lead = () => {
     // setReloadLeadHistory((prevState) => !prevState);
   };
 
+  const handleContactInfoChange = (changed) => {
+    setContactInfoChanged(changed);
+  };
+
   const handleSendEmailClick = () => {
     setSendEmailOpen(true);
   };
@@ -90,6 +109,15 @@ const Lead = () => {
   const handleNewLeadTaskClick = () => {
     setCreateNewLeadTaskOpen(true);
   };
+
+  const handleViewContactClick = () => {
+    if (contact?.id) {
+      navigate(`/contacts/${contact.id}`);
+    } else {
+      console.error('No contact ID available');
+    }
+  };
+  
 
   const tabs = useMemo(
     () => [
@@ -105,6 +133,7 @@ const Lead = () => {
           <ContactInfo
             contact={contact}
             onSaveContactInfo={setEditedContact}
+            onInfoChange={handleContactInfoChange}
             isEditable={isEditable}
           />
         ),
@@ -121,13 +150,9 @@ const Lead = () => {
           />
         ),
       },
-       {
+      {
         label: "History",
-        component: () => (
-          <LeadHistory
-          leadId={leadId}        
-          />
-        ),
+        component: () => <LeadHistory leadId={leadId} />,
       },
     ],
     [lead, contact, isEditable, vehicle]
@@ -145,22 +170,43 @@ const Lead = () => {
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
         title={
-          <Typography variant="h4">
-            Lead -{" "}
-            {contact
-              ? `${contact.firstName} ${contact.lastName}`
-              : "Contact not found"}
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography variant="h4">Lead </Typography>
+            {loading ? (
+              <CircularProgress color="primary" />
+            ) : (
+              <Typography variant="h5">
+                -{" "}
+                {contact
+                  ? `${contact.firstName} ${contact.lastName}`
+                  : "Contact not found"}
+              </Typography>
+            )}
+          </Box>
         }
         isEditable={isEditable}
-        onToggleEdit={() => setIsEditable(!isEditable)}
+        onToggleEdit={toggleEdit}
+        saveDisabled={!contactInfoChanged}
+        actionButtons={[
+          {
+            label: "View Contact",
+            onClick: handleViewContactClick,
+          },
+        ]}
       />
       {loading ? (
         <Container>
-          <CircularProgress color="primary" />
-          <Typography variant="subtitle1" sx={{ mt: 2 }}>
-            Fetching data, please wait...
-          </Typography>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
+          >
+            <CircularProgress color="primary" />
+            <Typography variant="subtitle1" sx={{ mt: 2 }}>
+              Fetching data, please wait...
+            </Typography>
+          </Box>
         </Container>
       ) : (
         <TabbedLayout tabs={tabs} />
@@ -169,7 +215,7 @@ const Lead = () => {
         sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
       >
         <Tooltip title="Send Email">
-          <IconButton onClick={handleSendEmailClick}>
+          <IconButton onClick={handleSendEmailClick} color="primary">
             <EmailOutlined />
           </IconButton>
         </Tooltip>

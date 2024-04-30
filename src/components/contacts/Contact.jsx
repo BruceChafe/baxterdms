@@ -63,7 +63,7 @@ const Contact = () => {
 
     try {
       await updateDoc(contactRef, editedContact);
-      setContact(prev => ({ ...prev, ...editedContact }));
+      setContact((prev) => ({ ...prev, ...editedContact }));
       setSnackbarMessage("Save successful");
       setContactInfoChanged(false);
     } catch (error) {
@@ -79,21 +79,24 @@ const Contact = () => {
     setContactInfoChanged(changed);
   };
 
-        const handleNewLeadClick = () => {
-          navigate(`/leads/newlead`);
-        };
+  const handleNewLeadClick = () => {
+    navigate(`/leads/newlead`);
+  };
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
         title={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography variant="h4">Contact Details</Typography>
+            <Typography variant="h4">Contact </Typography>
             {loading ? (
               <CircularProgress color="primary" />
             ) : (
               <Typography variant="h5">
-                - {contact ? `${contact.firstName} ${contact.lastName}` : "Contact not found"}
+                -{" "}
+                {contact
+                  ? `${contact.firstName} ${contact.lastName}`
+                  : "Contact not found"}
               </Typography>
             )}
           </Box>
@@ -114,7 +117,6 @@ const Contact = () => {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            // minHeight="300px"
             flexDirection="column"
           >
             <CircularProgress color="primary" />

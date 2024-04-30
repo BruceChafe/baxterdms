@@ -56,7 +56,7 @@ const useFetchLeadAndContact = (leadId) => {
     fetchData();
   }, [leadId, reload]);
 
-  return { ...data, refetch };
+  return { ...data, refetch, setData };
 };
 
 export { useFetchLeadAndContact}

@@ -7,6 +7,7 @@ import {
   Tooltip,
   IconButton,
   Stack,
+  Box,
 } from "@mui/material";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { Link } from "react-router-dom";
@@ -14,20 +15,21 @@ import { useFetchContactLeads } from "../../../hooks/FetchContactLeads";
 import SortingTable from "../tables/SortingTable";
 
 const formatTimestamp = (timestamp) => {
-  const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-  const datePart = date.toLocaleString("en-US", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  });
-
-  const timePart = date.toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-
-  return [datePart, timePart];
+  const date = new Date(
+    timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
+  );
+  return [
+    date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    }),
+    date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }),
+  ];
 };
 
 const columns = [
@@ -45,13 +47,62 @@ const ContactLeads = ({ contact }) => {
     contact?.leadIDs || []
   );
 
-  if (loading) return <CircularProgress />;
-  if (error) return <Alert severity="error">Error: {error}</Alert>;
-  if (leads.length === 0) return <Alert severity="info">No leads found for this contact.</Alert>;
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "73vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Paper
+        sx={{
+          border: "solid",
+          borderColor: "divider",
+          p: 1,
+          height: "73vh",
+          overflow: "auto",
+        }}
+      >
+        <Box sx={{ p: 3 }}>
+          <Alert severity="error">
+            Error: Could not fetch leads due to{" "}
+            {error.message || "a network error"}
+          </Alert>{" "}
+        </Box>
+      </Paper>
+    );
+  }
+
+  if (!leads.length) {
+    return (
+      <Paper
+        sx={{
+          border: "solid",
+          borderColor: "divider",
+          p: 1,
+          height: "73vh",
+          overflow: "auto",
+        }}
+      >
+        <Box sx={{ p: 3 }}>
+          <Alert severity="info">No leads found for this contact.</Alert>
+        </Box>
+      </Paper>
+    )
+  }
 
   const leadsRows = leads.map((lead) => {
     const [datePart, timePart] = formatTimestamp(lead.timestamp);
-
     return {
       action: (
         <Tooltip title="Open Lead">
@@ -59,6 +110,7 @@ const ContactLeads = ({ contact }) => {
             component={Link}
             to={`/leads/${lead.leadId}`}
             color="primary"
+            aria-label="Open Lead"
           >
             <LaunchIcon />
           </IconButton>
@@ -82,23 +134,28 @@ const ContactLeads = ({ contact }) => {
         </Stack>
       ),
       leadDealership: lead.leadDealership,
-      leadVehicles: (
-        <>
-          <Typography>Coming soon.</Typography>
-        </>
-      ),
+      leadVehicles: <Typography>Coming soon.</Typography>,
       leadNumber: lead.leadNumber,
     };
   });
 
   return (
-    <Paper sx={{ p: 3, mb: 2 }}>
-      <SortingTable
-        data={leadsRows}
-        columns={columns}
-        defaultSortField="createdDate"
-        defaultSortDirection="desc"
-      />
+    <Paper
+      sx={{
+        border: "solid",
+        borderColor: "divider",
+        p: 1,
+        height: "73vh",
+        overflow: "auto",
+      }}
+    >      <Box sx={{ p: 3 }}>
+        <SortingTable
+          data={leadsRows}
+          columns={columns}
+          defaultSortField="createdDate"
+          defaultSortDirection="desc"
+        />
+      </Box>
     </Paper>
   );
 };

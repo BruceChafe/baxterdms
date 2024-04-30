@@ -7,9 +7,9 @@ import {
   TableHead,
   TableRow,
   Button,
-  Typography,
   Box,
   Paper,
+  Tooltip,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -77,6 +77,7 @@ const BasicTable = ({
                     align="center"
                     sx={{ borderRight: 1, borderColor: "divider" }}
                   >
+                    <Tooltip title="Open">
                     <Button
                       variant="outlined"
                       component={Link}
@@ -84,6 +85,7 @@ const BasicTable = ({
                       >
                       {action}
                     </Button>
+                    </Tooltip>
                   </TableCell>
                   {columns.map((column, index) => (
                     <TableCell

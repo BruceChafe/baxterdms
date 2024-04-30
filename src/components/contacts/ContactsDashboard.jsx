@@ -21,9 +21,7 @@ const ContactsDashboard = () => {
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const { data, reload } = useFetchContacts();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  console.log(data);
-
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const { contacts, loading, error } = data;
 
   const handleChangePage = (event, newPage) => {
