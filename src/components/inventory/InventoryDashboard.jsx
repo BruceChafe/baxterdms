@@ -17,7 +17,7 @@ const InventoryDashboard = () => {
   const [uploadPanelOpen, setUploadPanelOpen] = useState(false);
   const { data, reload } = useFetchInventory();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   console.log(data);
 
   const { inventory, loading, error } = data;

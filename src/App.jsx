@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { CssBaseline, Grid, Box } from "@mui/material";
+import { CssBaseline, Grid, CircularProgress } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
@@ -44,8 +44,13 @@ const AppRoutes = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <CircularProgress />
+      </Box>
+    );
   }
+  
   if (user === undefined) {
     return null;
   }

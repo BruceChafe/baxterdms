@@ -1,43 +1,37 @@
-import React, { useState } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
-import { IconButton, Button, TextField, Box, Modal, styled, Typography } from '@mui/material';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '../../firebase';
+import React, { useState } from "react";
+import {
+  Button,
+  TextField,
+  Box,
+  Modal,
+  Typography,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../../firebase";
 
-const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+const ForgotPassword = ({ toggleView }) => {
+  const [email, setEmail] = useState("");
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleResetPassword = async (event) => {
     event.preventDefault();
-
     try {
       await sendPasswordResetEmail(auth, email);
-      console.log('Password reset email sent successfully!');
-      handleOpen();
+      setMessage(`If there is an account associated with ${email}, you will receive an email with instructions to reset your password.`);
+      setOpen(true);
     } catch (error) {
-      console.error('Error sending password reset email:', error.message);
+      setError(error.message);
+      setMessage("");
     }
   };
 
-  const ModalContent = styled(Box)`
-    position: absolute;
-    width: 100%;
-    background-color: #000;
-    border: 2px solid #000;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    p: {
-      margin: 0;
-      padding: 10px;
-    }
-  `;
-
   return (
-    <Box component="form" noValidate sx={{ mt: 1 }} style={{ width: '80%' }}>
+    <Box component="form" noValidate sx={{ mt: 1, width: "80%" }} onSubmit={handleResetPassword}>
       <TextField
         margin="normal"
         required
@@ -49,35 +43,25 @@ const ForgotPassword = () => {
         autoFocus
         onChange={(e) => setEmail(e.target.value)}
       />
-
-      <Button
-        type="submit"
-        fullWidth
-        variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-        onClick={handleResetPassword}
-      >        Reset Password
+      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+        Reset Password
       </Button>
-      <Modal
-        aria-labelledby="unstyled-modal-title"
-        aria-describedby="unstyled-modal-description"
-        open={open}
-      >
-        <ModalContent sx={{ width: 400 }}>
-          <IconButton
-            aria-label="close"
-            style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 9999 }}
-            onClose={handleClose}
-          >
+      {error && <Typography color="error">{error}</Typography>}
+      <Button startIcon={<ArrowBackIcon />} onClick={() => toggleView(false)} sx={{ mt: 1, mb: 2 }}>
+        Back to Sign In
+      </Button>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 400, bgcolor: "background.paper", border: "2px solid #000", p: 4 }}>
+          <IconButton onClick={() => setOpen(false)} sx={{ position: "absolute", top: 10, right: 10 }}>
             <CloseIcon />
           </IconButton>
-          <Typography>
-            reset
+          <Typography id="password-reset-modal-description" sx={{ mt: 2 }}>
+            {message}
           </Typography>
-        </ModalContent>
+        </Box>
       </Modal>
     </Box>
   );
-}
+};
 
 export default ForgotPassword;
