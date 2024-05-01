@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {
-  Alert,
   Box,
   Button,
   CircularProgress,
@@ -9,40 +8,37 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const UpdatePassword = () => {
   const { updateUserPassword, reauthenticate } = useContext(AuthContext);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [feedback, setFeedback] = useState({ type: "", message: "" });
   const [loading, setLoading] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setFeedback({ type: "", message: "" });
 
     if (newPassword !== confirmPassword) {
       setLoading(false);
-      setFeedback({ type: "error", message: "Passwords do not match." });
+      showSnackbar("Passwords do not match.", "error");
       return;
     }
 
     try {
       await reauthenticate(currentPassword);
       await updateUserPassword(newPassword);
-      setFeedback({
-        type: "success",
-        message: "Password updated successfully!",
-      });
+      showSnackbar("Password updated successfully!", "success");
       setNewPassword("");
       setConfirmPassword("");
       setCurrentPassword("");
     } catch (error) {
-      handlePasswordUpdateError(error);
+      showSnackbar("Failed to update password. Please try again.", "error");
     } finally {
-      setLoading(false);  // Stop loading regardless of the outcome
+      setLoading(false);
     }
   };
 
@@ -56,12 +52,7 @@ const UpdatePassword = () => {
           Choose a strong password and refrain from using it on other accounts
           for added security.
         </Typography>
-        {feedback.message && (
-          <Alert severity={feedback.type} sx={{ mb: 2 }}>
-            {feedback.message}
-          </Alert>
-        )}
-        <form onSubmit={handleSubmit} autoComplete="off">
+        <form onSubmit={handleSubmit} noValidate>
           <TextField
             label="Current Password"
             type="password"

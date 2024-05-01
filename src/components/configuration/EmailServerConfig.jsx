@@ -6,21 +6,20 @@ import {
   Typography,
   IconButton,
   InputAdornment,
-  Snackbar,
   Button
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const EmailServerConfig = () => {
   const [isEditable, setIsEditable] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [editableEmail, setEditableEmail] = useState("");
   const [editablePassword, setEditablePassword] = useState("");
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const { showSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -33,38 +32,33 @@ const EmailServerConfig = () => {
           setEditableEmail(configData.emailUser || "");
           setEditablePassword(configData.emailPass || "");
         } else {
-          console.log("No such document!");
+          showSnackbar("No email configuration found.", "info");
         }
       } catch (error) {
-        console.error("Error fetching email configuration from Firestore:", error);
-        setSnackbarMessage(`Fetch error: ${error.message}`);
-        setSnackbarOpen(true);
+        showSnackbar(`Fetch error: ${error.message}`, "error");
       }
     };
 
     fetchData();
-  }, []);
+  }, [showSnackbar]);
 
   const handleSave = async () => {
     setLoading(true);
     const docRef = doc(db, "emailServerConfig", "configData");
-  
+
     try {
       await updateDoc(docRef, {
         emailUser: editableEmail,
         emailPass: editablePassword,
       });
-      setSnackbarMessage("Configuration saved successfully!");
+      showSnackbar("Configuration saved successfully!", "success");
       setIsEditable(false);
     } catch (error) {
-      console.error("Error updating configuration:", error);
-      setSnackbarMessage("Failed to save configuration: " + error.message);
+      showSnackbar("Failed to save configuration: " + error.message, "error");
     } finally {
       setLoading(false);
-      setSnackbarOpen(true);
     }
   };
-  
 
   const handleEditClick = () => {
     if (isEditable) {
@@ -123,12 +117,6 @@ const EmailServerConfig = () => {
         >
           {isEditable ? "Save" : "Edit"}
         </Button>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={() => setSnackbarOpen(false)}
-          message={snackbarMessage}
-        />
       </Paper>
     </Box>
   );

@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { Button, Paper, Typography, Divider, CircularProgress, Alert } from "@mui/material";
+import {
+  Button,
+  Paper,
+  Typography,
+  Divider,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import TransferList from "../transferList/TransferList";
 
@@ -17,7 +24,7 @@ const LeadsSection = ({
 
   const handleSave = async (field) => {
     setLoading(true);
-    const docRef = doc(db, 'leadTaskConfig', 'leadTaskConfig');
+    const docRef = doc(db, "leadTaskConfig", "leadTaskConfig");
     const dataToSend = {
       [`lead${field}TypeUnactive`]: unactiveData,
       [`lead${field}TypeActive`]: activeData,
@@ -37,8 +44,8 @@ const LeadsSection = ({
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Paper sx={{ p: 3, mb: 2 , border: "solid", borderColor: "divider"}}>
-        <Typography variant="h6" mb={2} sx={{ fontWeight: 'medium' }}>
+      <Paper sx={{ p: 3, mb: 2, border: "solid", borderColor: "divider" }}>
+        <Typography variant="h6" mb={2} sx={{ fontWeight: "medium" }}>
           {label}
         </Typography>
         <TransferList
@@ -53,7 +60,9 @@ const LeadsSection = ({
           onClick={() => handleSave(label.split(" ")[1])}
           disabled={loading}
           sx={{ mt: 2 }}
-          startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+          startIcon={
+            loading ? <CircularProgress size={20} color="inherit" /> : null
+          }
         >
           {loading ? "Saving..." : "Save Changes"}
         </Button>
@@ -77,7 +86,7 @@ const LeadTaskConfig = () => {
   const [leadTaskTypeActive, setLeadTaskTypeActive] = useState([]);
   const [leadTaskStatusUnactive, setLeadTaskStatusUnactive] = useState([]);
   const [leadTaskStatusActive, setLeadTaskStatusActive] = useState([]);
-  const [leadTaskPriorityUnactive, setLeadTaskPriorityUnactive] = useState([]); 
+  const [leadTaskPriorityUnactive, setLeadTaskPriorityUnactive] = useState([]);
   const [leadTaskPriorityActive, setLeadTaskPriorityActive] = useState([]);
 
   const configFields = [
@@ -106,28 +115,28 @@ const LeadTaskConfig = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const docRef = doc(db, 'leadTaskConfig', 'leadTaskConfig');
+      const docRef = doc(db, "leadTaskConfig", "leadTaskConfig");
       try {
         const docSnap = await getDoc(docRef);
         console.log("Firestore snapshot:", docSnap); // Check the raw snapshot
-    
+
         if (docSnap.exists()) {
           const data = docSnap.data();
           console.log("Fetched data:", data); // Check fetched data
-    
+
           setLeadTaskTypeUnactive(data.leadTaskTypeUnactive || []);
           setLeadTaskTypeActive(data.leadTaskTypeActive || []);
           setLeadTaskStatusUnactive(data.leadTaskStatusUnactive || []);
           setLeadTaskStatusActive(data.leadTaskStatusActive || []);
-          setLeadTaskPriorityUnactive(data.leadTaskPriorityUnactive || []); 
-          setLeadTaskPriorityActive(data.leadTaskPriorityActive || []); 
+          setLeadTaskPriorityUnactive(data.leadTaskPriorityUnactive || []);
+          setLeadTaskPriorityActive(data.leadTaskPriorityActive || []);
         } else {
           console.log("No such document!");
         }
       } catch (error) {
         console.error("Error fetching configuration:", error);
       }
-    };    
+    };
 
     fetchData();
   }, []);

@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../../src/firebase';
-import { collection, query, where, getDocs, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import React, { useState, useContext } from "react";
+import { db } from "../../src/firebase";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import {
   Box,
   TextField,
@@ -14,17 +19,18 @@ import {
   TableRow,
   Paper,
   Grid,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 
-const SearchComponent = ({ searchFields, collectionPath, resultFields, onVehicleAdded }) => {
+const SearchComponent = ({
+  searchFields,
+  collectionPath,
+  resultFields,
+  onVehicleAdded,
+}) => {
   const [searchData, setSearchData] = useState(
-    searchFields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+    searchFields.reduce((acc, field) => ({ ...acc, [field.name]: "" }), {})
   );
   const [searchResults, setSearchResults] = useState([]);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,21 +40,19 @@ const SearchComponent = ({ searchFields, collectionPath, resultFields, onVehicle
   const handleSearch = async () => {
     try {
       const conditions = Object.entries(searchData)
-        .filter(([_, value]) => value.trim() !== "")
+        .filter(([, value]) => value.trim() !== "")
         .map(([key, value]) => where(key, "==", value.trim()));
-      console.log("Search conditions:", conditions);
 
       const contactQuery = query(collection(db, collectionPath), ...conditions);
       const querySnapshot = await getDocs(contactQuery);
-      setSearchResults(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      console.log("Search results:", querySnapshot.docs.map(doc => doc.data()));
+      setSearchResults(
+        querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      );
     } catch (error) {
       console.error("Error searching:", error);
-      setSnackbarMessage("Search failed: " + error.message);
-      setSnackbarOpen(true);
     }
   };
-  
+
   return (
     <Box sx={{ mt: 3, p: 2 }}>
       <Typography variant="h6">Search</Typography>
@@ -73,29 +77,30 @@ const SearchComponent = ({ searchFields, collectionPath, resultFields, onVehicle
           </Grid>
         </Grid>
       </Paper>
-
       {searchResults.length > 0 && (
         <TableContainer component={Paper} sx={{ mt: 2 }}>
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
-                {resultFields.map(field => (
-                  <TableCell align="center" key={field}>{field}</TableCell>
+                {resultFields.map((field) => (
+                  <TableCell align="center" key={field}>
+                    {field}
+                  </TableCell>
                 ))}
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {searchResults.map(row => (
+              {searchResults.map((row) => (
                 <TableRow key={row.id}>
-                  {resultFields.map(field => (
+                  {resultFields.map((field) => (
                     <TableCell align="center" key={field}>
                       {row[field]}
                     </TableCell>
                   ))}
                   <TableCell align="center">
                     <Button
-                      onClick={() => onVehicleAdded(row.id)} 
+                      onClick={() => onVehicleAdded(row.id)}
                       color="primary"
                       variant="contained"
                     >
@@ -108,11 +113,6 @@ const SearchComponent = ({ searchFields, collectionPath, resultFields, onVehicle
           </Table>
         </TableContainer>
       )}
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
-        <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

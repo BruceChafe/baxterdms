@@ -14,27 +14,30 @@ import ContactsDashboard from "./components/contacts/ContactsDashboard";
 import UserThemeSelection from "./components/account/UserThemeSelection";
 import AccountOverview from "./components/account/Overview";
 import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
-import UserProfile from "./components/account/PersonalInfo";
+// import UserProfile from "./components/account/PersonalInfo";
 import UpdatePassword from "./components/account/UpdatePassword";
 import LeadsDashboard from "./components/leads/LeadsDashboard";
 import NewLeadComponent from "./components/leads/NewLead";
 import { ThemeProvider } from "./context/ThemeContext";
-import ConfigLanding from "./components/configuration/ConfigLanding";
+import ConfigLanding from "./components/configuration/ConfigDashboard";
 import LeadsConfig from "./components/configuration/LeadsConfig";
 import Lead from "./components/leads/Lead";
 import LeadTaskConfig from "./components/configuration/LeadTaskConfig";
 import WeeklyCalendar from "./components/calendar/WeeklyCalendar";
 import InventoryDashboard from "./components/inventory/InventoryDashboard";
 import Inventory from "./components/inventory/Inventory";
+import { SnackbarProvider } from "./context/SnackbarContext";
 
 const App = () => {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <CssBaseline />
-        <Router>
-          <AppRoutes />
-        </Router>
+        <SnackbarProvider>
+          <CssBaseline />
+          <Router>
+            <AppRoutes />
+          </Router>
+        </SnackbarProvider>
       </ThemeProvider>
     </AuthProvider>
   );
@@ -45,12 +48,17 @@ const AppRoutes = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
         <CircularProgress />
       </Box>
     );
   }
-  
+
   if (user === undefined) {
     return null;
   }
@@ -71,7 +79,7 @@ const AppRoutes = () => {
           <Route path="/contacts/newcontact" element={<NewContact />} />
           <Route path="/account/overview" element={<AccountOverview />} />
           <Route path="/account/theme" element={<UserThemeSelection />} />
-          <Route path="/account/userprofile" element={<UserProfile />} />
+          {/* <Route path="/account/userprofile" element={<UserProfile />} /> */}
           <Route path="/account/updatepassword" element={<UpdatePassword />} />
           <Route path="/leads" element={<LeadsDashboard />} />
           <Route path="/leads/newlead" element={<NewLeadComponent />} />

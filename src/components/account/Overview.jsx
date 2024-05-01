@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Box } from "@mui/material";
-import UserData from "./UserData";
+import UserData from "../../context/UserData";
 import UserProfileInfo from "./UserProfileInfo";
 import UserThemeSelection from "./UserThemeSelection";
 import UpdatePassword from "./UpdatePassword";

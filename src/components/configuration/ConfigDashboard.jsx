@@ -6,7 +6,7 @@ import LeadTaskConfig from "./LeadTaskConfig";
 import LeadsConfig from "./LeadsConfig";
 import EmailServerConfig from "./EmailServerConfig";
 
-const ConfigLanding = () => {
+const ConfigDashboard = () => {
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
     <TitleLayout
@@ -40,4 +40,4 @@ const ConfigLanding = () => {
   );
 };
 
-export default ConfigLanding;
+export default ConfigDashboard;

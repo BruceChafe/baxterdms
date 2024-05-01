@@ -14,6 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useFetchLeadTaskConfig } from "../../../hooks/FetchLeadTaskConfig";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const TaskDialog = ({ open, onClose, taskDetails, refetchTasks }) => {
   const {
@@ -23,6 +24,7 @@ const TaskDialog = ({ open, onClose, taskDetails, refetchTasks }) => {
     loading,
     error,
   } = useFetchLeadTaskConfig();
+  const { showSnackbar } = useSnackbar();
 
   const [selectedTask, setSelectedTask] = useState(
     taskDetails ? { ...taskDetails } : {}
@@ -52,9 +54,10 @@ const TaskDialog = ({ open, onClose, taskDetails, refetchTasks }) => {
     try {
       await updateDoc(taskRef, updatedFields);
       refetchTasks();
+      showSnackbar("Save successfull", "success");
       onClose();
     } catch (error) {
-      console.error("Error updating task:", error);
+      showSnackbar(Error, "error");
     } finally {
       setLoadingSave(false);
     }
@@ -67,7 +70,14 @@ const TaskDialog = ({ open, onClose, taskDetails, refetchTasks }) => {
     <Dialog
       onClose={() => onClose()}
       open={open}
-      sx={{ "& .MuiDialog-paper": { width: "600px", maxWidth: "100%" } }}
+      sx={{
+        "& .MuiDialog-paper": {
+          width: "600px",
+          maxWidth: "100%",
+          border: "solid",
+          borderColor: "divider",
+        },
+      }}
     >
       <DialogTitle id="task-dialog-title">
         Task Details

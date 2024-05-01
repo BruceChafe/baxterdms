@@ -21,15 +21,13 @@ import {
   TableRow,
   Paper,
   Grid,
-  Divider,
-  Snackbar,
-  Alert,
   TablePagination,
 } from "@mui/material";
 import InputMask from "react-input-mask";
 import NewLeadForm from "./NewLeadForm";
 import NewContact from "../contacts/NewContact";
 import TitleLayout from "../layouts/TitleLayout";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const NewLeadComponent = () => {
   const [searchData, setSearchData] = useState({
@@ -46,8 +44,7 @@ const NewLeadComponent = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [showNewContactForm, setShowNewContactForm] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const { showSnackbar } = useSnackbar();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,19 +62,16 @@ const NewLeadComponent = () => {
       setSearchResults(
         searchResults.filter((contact) => contact.id !== contactId)
       );
-      setSnackbarMessage("Contact deleted successfully.");
-      setSnackbarOpen(true);
+      showSnackbar("Contact deleted successfully.", "success");
     } catch (error) {
       console.error("Error deleting contact:", error);
-      setSnackbarMessage("Failed to delete contact.");
-      setSnackbarOpen(true);
+      showSnackbar("Failed to delete contact.", "error");
     }
   };
 
   const handleSearch = async () => {
     if (!searchData.firstName.trim() || !searchData.mobilePhone.trim()) {
-      setSnackbarMessage("First Name and Mobile Phone are required.");
-      setSnackbarOpen(true);
+      showSnackbar("First Name and Mobile Phone are required.", "error");
       return;
     }
     setSearchPerformed(true);
@@ -97,14 +91,8 @@ const NewLeadComponent = () => {
     } catch (error) {
       console.error("Error searching contacts:", error);
       setNoResults(true);
+      showSnackbar("Error occurred while searching contacts.", "error");
     }
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbarOpen(false);
   };
 
   const handleNewLeadClick = (contactId) => {
@@ -134,20 +122,6 @@ const NewLeadComponent = () => {
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-
       {!showNewLeadForm && !showNewContactForm && (
         <>
           <TitleLayout title={<Typography variant="h4">New Lead</Typography>} />
@@ -212,7 +186,6 @@ const NewLeadComponent = () => {
               </Button>
             </Paper>
           </Box>
-
           {searchPerformed && searchResults.length > 0 && (
             <>
               <TableContainer
@@ -382,7 +355,16 @@ const NewLeadComponent = () => {
           )}
 
           {searchPerformed && noResults && (
-            <Paper sx={{ p: 1, mt: 2, mb: 2, textAlign: "center", border: "solid", borderColor: "divider" }}>
+            <Paper
+              sx={{
+                p: 1,
+                mt: 2,
+                mb: 2,
+                textAlign: "center",
+                border: "solid",
+                borderColor: "divider",
+              }}
+            >
               <Typography>
                 No results found. You may want to create a new contact.
               </Typography>

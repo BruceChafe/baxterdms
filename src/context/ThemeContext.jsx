@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { ThemeProvider as MuiThemeProvider, createTheme } from "@mui/material";
 import { AuthContext } from "./AuthContext";
-import UserData from "../components/account/UserData";
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import UserData from "./UserData";
+import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 const ThemeContext = createContext();
@@ -162,13 +162,13 @@ const themes = {
 
 const ThemeProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
-  const [theme, setTheme] = useState('Default Dark Theme');
+  const [theme, setTheme] = useState("Default Dark Theme");
 
   useEffect(() => {
     const fetchUserTheme = async () => {
       if (user && user.uid) {
         try {
-          const userDocRef = doc(db, 'users', user.uid);
+          const userDocRef = doc(db, "users", user.uid);
           const userDocSnap = await getDoc(userDocRef);
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
@@ -178,7 +178,7 @@ const ThemeProvider = ({ children }) => {
             }
           }
         } catch (error) {
-          console.error('Error fetching user theme:', error);
+          console.error("Error fetching user theme:", error);
         }
       }
     };
@@ -188,18 +188,18 @@ const ThemeProvider = ({ children }) => {
 
   const toggleTheme = (selectedTheme) => {
     if (!user || !user.uid) {
-      console.error('User information not available.');
+      console.error("User information not available.");
       return;
     }
 
     if (themes[selectedTheme]) {
       setTheme(selectedTheme);
-      const userDocRef = doc(db, 'users', user.uid);
-      updateDoc(userDocRef, { theme: selectedTheme }).catch(error => {
-        console.error('Error updating user theme:', error);
+      const userDocRef = doc(db, "users", user.uid);
+      updateDoc(userDocRef, { theme: selectedTheme }).catch((error) => {
+        console.error("Error updating user theme:", error);
       });
     } else {
-      console.error('Selected theme is not available.');
+      console.error("Selected theme is not available.");
     }
   };
 
@@ -213,7 +213,7 @@ const ThemeProvider = ({ children }) => {
 const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 };
