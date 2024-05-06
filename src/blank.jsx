@@ -18,13 +18,12 @@ const NewLeadForm = ({ onCloseForm, contactId }) => {
       const docRef = doc(db, "configData", "leadsConfig");
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        // Assuming the data structure you provided
         setOptionsMap({
           leadDealership: docSnap.data().leadDealershipActive,
           leadSource: docSnap.data().leadSourceActive,
           leadType: docSnap.data().leadTypeActive,
           leadStatus: docSnap.data().leadStatusActive,
-          leadSalesConsultant: ["Fred"],  // This should be updated similarly if dynamic
+          leadSalesConsultant: ["Fred"],
         });
       } else {
         console.log("No such document!");

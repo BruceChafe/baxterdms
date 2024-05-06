@@ -145,7 +145,6 @@ const ContactsDashboard = () => {
         updateData={reload}
         collectionName="contacts"
       />
-      <img src="src/images/vehiclePlaceholder/interior.jpeg"/>
     </Box>
   );
 };
