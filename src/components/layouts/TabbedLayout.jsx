@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Paper, Tab, Typography } from "@mui/material";
+import { Box, Paper, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 
 const TabbedLayout = ({ tabs }) => {

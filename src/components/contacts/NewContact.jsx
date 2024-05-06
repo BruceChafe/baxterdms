@@ -19,45 +19,18 @@ import {
   Divider,
   Paper,
   Autocomplete,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import TitleLayout from "../layouts/TitleLayout";
 import InputMask from "react-input-mask";
+import { useSnackbar } from "../../context/SnackbarContext";
+import { PhoneInputField } from "../fields/renderPhoneInputFields";
 
-const PhoneInputField = ({
-  label,
-  name,
-  value,
-  onChange,
-  error,
-  helperText,
-}) => (
-  <InputMask
-    mask="(999) 999-9999"
-    value={value}
-    onChange={onChange}
-    maskChar=" "
-  >
-    {(inputProps) => (
-      <TextField
-        {...inputProps}
-        label={label}
-        name={name}
-        fullWidth
-        variant="outlined"
-        error={error}
-        helperText={helperText}
-      />
-    )}
-  </InputMask>
-);
-
-const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
+const NewContact = ({ onCloseForm, leadId }) => {
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
   const [formData, setFormData] = useState({
     firstName: "",
     middleName: "",
@@ -91,17 +64,6 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
     return errors;
   };
 
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenSnackbar(false);
-  };
-
   const handleInputChange = (event) => {
     const target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
@@ -128,15 +90,10 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
     try {
       const docRef = await addDoc(collection(db, "contacts"), formData);
       navigate(`/contacts/${docRef.id}`);
-      setSnackbarMessage("Contact created successfully.");
-      setSnackbarSeverity("success");
-      setOpenSnackbar(true);
-      onNewContactCreated();
+      showSnackbar("Contact created successfully.", "success");
     } catch (error) {
       console.error("Error adding new contact:", error);
-      setSnackbarMessage(`Failed to create contact: ${error.message}`);
-      setSnackbarSeverity("error");
-      setOpenSnackbar(true);
+      showSnackbar(`Failed to create contact: ${error.message}`, "error");
     }
   };
 
@@ -176,292 +133,289 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
               height: "73vh",
               overflow: "auto",
               p: 3,
-              mb: 2
+              mb: 2,
             }}
           >
-            
-              <Typography variant="h5" mb={2}>
-                Identity
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="First Name"
-                    name="firstName"
-                    variant="outlined"
-                    required
-                    error={!!formErrors.firstName}
-                    helperText={formErrors.firstName || ""}
-                  />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Middle Name"
-                    name="middleName"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Last Name"
-                    name="lastName"
-                    variant="outlined"
-                    required
-                    error={!!formErrors.lastName}
-                    helperText={formErrors.lastName || ""}
-                  />
-                </Grid>
+            <Typography variant="h5" mb={2}>
+              Identity
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  onChange={handleInputChange}
+                  fullWidth
+                  label="First Name"
+                  name="firstName"
+                  variant="outlined"
+                  required
+                  error={!!formErrors.firstName}
+                  helperText={formErrors.firstName || ""}
+                />
               </Grid>
-
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={4}>
-                  <Autocomplete
-                    id="gender-select"
-                    options={genders}
-                    getOptionLabel={(option) => option.name}
-                    onChange={(event, value) =>
-                      handleInputChange({
-                        target: {
-                          name: "gender",
-                          value: value ? value.code : "",
-                        },
-                      })
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Gender"
-                        name="gender"
-                        fullWidth
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Grid>
-
-                <Grid item xs={12} md={4}>
-                  <LocalizationProvider
-                    dateAdapter={AdapterDayjs}
-                    adapterLocale="EN"
-                  >
-                    <DatePicker
-                      label="Date of Birth"
-                      inputVariant="outlined"
-                      value={formData.dob}
-                      onChange={(date) =>
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          dob: date ? date.toDate() : null, // Converts Dayjs object to Date object
-                        }))
-                      }
-                      renderInput={(params) => (
-                        <TextField {...params} fullWidth />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  onChange={handleInputChange}
+                  fullWidth
+                  label="Middle Name"
+                  name="middleName"
+                  variant="outlined"
+                />
               </Grid>
-
-              <Divider sx={{ mt: 2, mb: 2 }} />
-              <Typography variant="h5" mb={2}>
-                Contact Information
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <FormControl component="fieldset">
-                    <FormLabel component="legend">Preferred Language</FormLabel>
-                    <RadioGroup
-                      aria-label="Preferred Language"
-                      name="preferredLanguage"
-                      value={formData.preferredLanguage}
-                      onChange={handleInputChange}
-                    >
-                      <FormControlLabel
-                        value="english"
-                        control={<Radio />}
-                        label="English"
-                      />
-                      <FormControlLabel
-                        value="french"
-                        control={<Radio />}
-                        label="French"
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <FormControl component="fieldset">
-                    <FormLabel component="legend">
-                      Preferred Contact Method
-                    </FormLabel>
-                    <RadioGroup
-                      aria-label="Preferred Contact Method"
-                      name="preferredContact"
-                      value={formData.preferredContact}
-                      onChange={handleInputChange}
-                    >
-                      <FormControlLabel
-                        value="sms"
-                        control={<Radio />}
-                        label="SMS"
-                      />
-                      <FormControlLabel
-                        value="email"
-                        control={<Radio />}
-                        label="Email"
-                      />
-                      <FormControlLabel
-                        value="phone"
-                        control={<Radio />}
-                        label="Phone"
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <PhoneInputField
-                    label="Mobile Phone"
-                    name="mobilePhone"
-                    value={formData.mobilePhone}
-                    onChange={handleInputChange}
-                    error={!!formErrors.mobilePhone}
-                    helperText={formErrors.mobilePhone}
-                  />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <PhoneInputField
-                    label="Home Phone"
-                    name="homePhone"
-                    value={formData.homePhone}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <PhoneInputField
-                    label="Work Phone"
-                    name="workPhone"
-                    value={formData.workPhone}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    label="Primary Email"
-                    name="primaryEmail"
-                    value={formData.primaryEmail}
-                    onChange={handleInputChange}
-                    fullWidth
-                    required
-                    error={!!formErrors.primaryEmail}
-                    helperText={formErrors.primaryEmail || ""}
-                  />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    label="Secondary Email"
-                    name="secondaryEmail"
-                    value={formData.secondaryEmail}
-                    onChange={handleInputChange}
-                    fullWidth
-                  />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Notes"
-                    name="notes"
-                    variant="outlined"
-                    multiline
-                    rows={4}
-                  />
-                </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  onChange={handleInputChange}
+                  fullWidth
+                  label="Last Name"
+                  name="lastName"
+                  variant="outlined"
+                  required
+                  error={!!formErrors.lastName}
+                  helperText={formErrors.lastName || ""}
+                />
               </Grid>
+            </Grid>
 
-              <Divider sx={{ mt: 2, mb: 2 }} />
-              <Typography variant="h5" mb={2}>
-                Location
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Street Address"
-                    name="streetAddress"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="Postal Code"
-                    name="postalCode"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    onChange={handleInputChange}
-                    fullWidth
-                    label="City"
-                    name="city"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Autocomplete
-                    id="province-select"
-                    options={provinces}
-                    getOptionLabel={(option) => option.name}
-                    onChange={(event, value) =>
-                      handleInputChange({
-                        target: {
-                          name: "gender",
-                          value: value ? value.code : "",
-                        },
-                      })
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Province"
-                        name="province"
-                        fullWidth
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <FormControl fullWidth>
-                    <InputLabel id="contact-country-select">Country</InputLabel>
-                    <Select
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      labelId="contact-country-select"
-                      label="Country"
-                      name="country"
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <Autocomplete
+                  id="gender-select"
+                  options={genders}
+                  getOptionLabel={(option) => option.name}
+                  onChange={(event, value) =>
+                    handleInputChange({
+                      target: {
+                        name: "gender",
+                        value: value ? value.code : "",
+                      },
+                    })
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Gender"
+                      name="gender"
+                      fullWidth
                       variant="outlined"
-                    >
-                      <MenuItem value="CA">Canada</MenuItem>
-                      <MenuItem value="US">United States of America</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
+                    />
+                  )}
+                />
               </Grid>
-            
+
+              <Grid item xs={12} md={4}>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale="EN"
+                >
+                  <DatePicker
+                    label="Date of Birth"
+                    inputVariant="outlined"
+                    value={formData.dob}
+                    onChange={(date) =>
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        dob: date ? date.toDate() : null, // Converts Dayjs object to Date object
+                      }))
+                    }
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Grid>
+            </Grid>
+
+            <Divider sx={{ mt: 2, mb: 2 }} />
+            <Typography variant="h5" mb={2}>
+              Contact Information
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Preferred Language</FormLabel>
+                  <RadioGroup
+                    aria-label="Preferred Language"
+                    name="preferredLanguage"
+                    value={formData.preferredLanguage}
+                    onChange={handleInputChange}
+                  >
+                    <FormControlLabel
+                      value="english"
+                      control={<Radio />}
+                      label="English"
+                    />
+                    <FormControlLabel
+                      value="french"
+                      control={<Radio />}
+                      label="French"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">
+                    Preferred Contact Method
+                  </FormLabel>
+                  <RadioGroup
+                    aria-label="Preferred Contact Method"
+                    name="preferredContact"
+                    value={formData.preferredContact}
+                    onChange={handleInputChange}
+                  >
+                    <FormControlLabel
+                      value="sms"
+                      control={<Radio />}
+                      label="SMS"
+                    />
+                    <FormControlLabel
+                      value="email"
+                      control={<Radio />}
+                      label="Email"
+                    />
+                    <FormControlLabel
+                      value="phone"
+                      control={<Radio />}
+                      label="Phone"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <PhoneInputField
+                  label="Mobile Phone"
+                  name="mobilePhone"
+                  value={formData.mobilePhone}
+                  onChange={handleInputChange}
+                  error={!!formErrors.mobilePhone}
+                  helperText={formErrors.mobilePhone}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <PhoneInputField
+                  label="Home Phone"
+                  name="homePhone"
+                  value={formData.homePhone}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <PhoneInputField
+                  label="Work Phone"
+                  name="workPhone"
+                  value={formData.workPhone}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Primary Email"
+                  name="primaryEmail"
+                  value={formData.primaryEmail}
+                  onChange={handleInputChange}
+                  fullWidth
+                  required
+                  error={!!formErrors.primaryEmail}
+                  helperText={formErrors.primaryEmail || ""}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Secondary Email"
+                  name="secondaryEmail"
+                  value={formData.secondaryEmail}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  onChange={handleInputChange}
+                  fullWidth
+                  label="Notes"
+                  name="notes"
+                  variant="outlined"
+                  multiline
+                  rows={4}
+                />
+              </Grid>
+            </Grid>
+
+            <Divider sx={{ mt: 2, mb: 2 }} />
+            <Typography variant="h5" mb={2}>
+              Location
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  onChange={handleInputChange}
+                  fullWidth
+                  label="Street Address"
+                  name="streetAddress"
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  onChange={handleInputChange}
+                  fullWidth
+                  label="Postal Code"
+                  name="postalCode"
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  onChange={handleInputChange}
+                  fullWidth
+                  label="City"
+                  name="city"
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Autocomplete
+                  id="province-select"
+                  options={provinces}
+                  getOptionLabel={(option) => option.name}
+                  onChange={(event, value) =>
+                    handleInputChange({
+                      target: {
+                        name: "gender",
+                        value: value ? value.code : "",
+                      },
+                    })
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Province"
+                      name="province"
+                      fullWidth
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="contact-country-select">Country</InputLabel>
+                  <Select
+                    value={formData.country}
+                    onChange={handleInputChange}
+                    labelId="contact-country-select"
+                    label="Country"
+                    name="country"
+                    variant="outlined"
+                  >
+                    <MenuItem value="CA">Canada</MenuItem>
+                    <MenuItem value="US">United States of America</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
           </Paper>
-        
           <Paper
             sx={{ mt: 2, mb: 2, p: 2, border: "solid", borderColor: "divider" }}
           >
@@ -474,19 +428,6 @@ const NewContact = ({ onCloseForm, onNewContactCreated, leadId }) => {
               </Button>
             </Grid>
           </Paper>
-          <Snackbar
-            open={openSnackbar}
-            autoHideDuration={6000}
-            onClose={handleSnackbarClose}
-          >
-            <Alert
-              onClose={handleSnackbarClose}
-              severity={snackbarSeverity}
-              sx={{ width: "100%" }}
-            >
-              {snackbarMessage}
-            </Alert>
-          </Snackbar>
         </form>
       </Box>
     </Box>

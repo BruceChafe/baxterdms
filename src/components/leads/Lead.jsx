@@ -7,7 +7,6 @@ import {
   BottomNavigation,
   Tooltip,
   IconButton,
-  Snackbar,
   Container,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
@@ -24,6 +23,7 @@ import LeadHistory from "./LeadHistory";
 import { useFetchLeadAndContact } from "../../../hooks/FetchLeadAndContact";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const Lead = () => {
   const navigate = useNavigate();
@@ -32,17 +32,11 @@ const Lead = () => {
     useFetchLeadAndContact(leadNumber);
   const [editedContact, setEditedContact] = useState({});
   const [isEditable, setIsEditable] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [sendEmailOpen, setSendEmailOpen] = useState(null);
   const [createNewLeadTaskOpen, setCreateNewLeadTaskOpen] = useState(false);
   const [contactInfoChanged, setContactInfoChanged] = useState(false);
   const contactId = contact?.id;
-
-  const handleSnackbar = (message) => {
-    setSnackbarMessage(message);
-    setSnackbarOpen(true);
-  };
+  const { showSnackbar } = useSnackbar();
 
   const toggleEdit = () => {
     setIsEditable(!isEditable);
@@ -53,8 +47,7 @@ const Lead = () => {
 
   const handleSave = async () => {
     if (!editedContact || Object.keys(editedContact).length === 0) {
-      setSnackbarMessage("No changes to save");
-      setSnackbarOpen(true);
+      showSnackbar("No changes to save", "info");
       return;
     }
 
@@ -63,13 +56,12 @@ const Lead = () => {
     try {
       await updateDoc(contactRef, editedContact);
       setContact((prev) => ({ ...prev, ...editedContact }));
-      setSnackbarMessage("Save successful");
+      showSnackbar("Save successful", "success");
       setContactInfoChanged(false);
     } catch (error) {
       console.error("Error updating contact:", error);
-      setSnackbarMessage(`Error: ${error.message}`);
+      showSnackbar(`Error: ${error.message}`, "error");
     } finally {
-      setSnackbarOpen(true);
       setIsEditable(false);
     }
   };
@@ -77,25 +69,25 @@ const Lead = () => {
   const handleVehicleRemoved = async () => {
     try {
       refetch();
-      handleSnackbar("Vehicle removed successfully.");
+      showSnackbar("Vehicle removed successfully.", "success");
     } catch (error) {
       console.error("Error updating data:", error);
-      handleSnackbar(`Failed to update data: ${error.message}`);
+      showSnackbar(`Failed to update data: ${error.message}`, "error");
     }
   };
 
   const handleVehicleAdded = async () => {
     try {
       refetch();
-      handleSnackbar("Vehicle added successfully.");
+      showSnackbar("Vehicle added successfully.", "success");
     } catch (error) {
       console.error("Error updating data:", error);
-      handleSnackbar(`Failed to update data: ${error.message}`);
+      showSnackbar(`Failed to update data: ${error.message}`, "error");
     }
   };
 
   const handleSaveSuccess = () => {
-    // setReloadLeadHistory((prevState) => !prevState);
+    showSnackbar("Operation successful", "success");
   };
 
   const handleContactInfoChange = (changed) => {
@@ -114,10 +106,9 @@ const Lead = () => {
     if (contact?.id) {
       navigate(`/contacts/${contact.id}`);
     } else {
-      console.error('No contact ID available');
+      console.error("No contact ID available");
     }
   };
-  
 
   const tabs = useMemo(
     () => [
@@ -162,9 +153,9 @@ const Lead = () => {
 
   useEffect(() => {
     if (error) {
-      handleSnackbar(error);
+      showSnackbar(error, "error");
     }
-  }, [error]);
+  }, [error, showSnackbar]);
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
@@ -239,12 +230,6 @@ const Lead = () => {
         open={createNewLeadTaskOpen}
         onClose={() => setCreateNewLeadTaskOpen(false)}
         onSaveSuccess={handleSaveSuccess}
-      />
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-        message={snackbarMessage}
       />
     </Box>
   );

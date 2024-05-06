@@ -10,13 +10,18 @@ import {
   MenuItem,
   Box,
 } from "@mui/material";
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import CloseIcon from "@mui/icons-material/Close";
-import { addDoc, collection, Timestamp as FirestoreTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  Timestamp as FirestoreTimestamp,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import { useFetchLeadTaskConfig } from "../../../hooks/FetchLeadTaskConfig";
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const CreateLeadTask = ({ open, onClose, leadId, onSaveSuccess }) => {
   const {
@@ -26,6 +31,8 @@ const CreateLeadTask = ({ open, onClose, leadId, onSaveSuccess }) => {
     loading,
     error,
   } = useFetchLeadTaskConfig();
+
+  const { showSnackbar } = useSnackbar(); // Use the snackbar context
 
   const [newTask, setNewTask] = useState({
     leadTaskType: "",
@@ -41,30 +48,40 @@ const CreateLeadTask = ({ open, onClose, leadId, onSaveSuccess }) => {
   };
 
   const handleDateChange = (date) => {
-    setNewTask((prev) => ({ ...prev, leadTaskFollowUpDate: date || new Date() }));
-  }; 
+    setNewTask((prev) => ({
+      ...prev,
+      leadTaskFollowUpDate: date || new Date(),
+    }));
+  };
 
   const handleCreate = async () => {
     try {
-      const now = FirestoreTimestamp.now(); // Current timestamp
-      const followUpDate = FirestoreTimestamp.fromDate(newTask.leadTaskFollowUpDate || new Date());
+      const now = FirestoreTimestamp.now();
+      const followUpDate = FirestoreTimestamp.fromDate(
+        newTask.leadTaskFollowUpDate || new Date()
+      );
       const taskData = {
         ...newTask,
         leadId,
         leadTaskCreatedTimestamp: now,
-        leadTaskFollowUpDate: followUpDate
+        leadTaskFollowUpDate: followUpDate,
       };
       const taskRef = collection(db, "leadTasks");
       await addDoc(taskRef, taskData);
       onSaveSuccess();
       onClose();
+      showSnackbar("Task created successfully.", "success");
     } catch (error) {
       console.error("Error creating task:", error);
+      showSnackbar(`Error creating task: ${error.message}`, "error");
     }
-  };  
+  };
 
   if (loading) return <Box>Loading configuration...</Box>;
-  if (error) return <Box>Error loading configuration: {error}</Box>;
+  if (error) {
+    showSnackbar(`Error loading configuration: ${error.message}`, "error");
+    return <Box>Error loading configuration: {error.message}</Box>;
+  }
 
   return (
     <Dialog
@@ -74,7 +91,10 @@ const CreateLeadTask = ({ open, onClose, leadId, onSaveSuccess }) => {
     >
       <DialogTitle id="task-dialog-title">
         Create New Task
-        <IconButton onClick={onClose} sx={{ position: "absolute", right: 8, top: 8 }}>
+        <IconButton
+          onClick={onClose}
+          sx={{ position: "absolute", right: 8, top: 8 }}
+        >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -84,7 +104,9 @@ const CreateLeadTask = ({ open, onClose, leadId, onSaveSuccess }) => {
             label="Follow Up Date"
             value={newTask.leadTaskFollowUpDate}
             onChange={handleDateChange}
-            renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
+            renderInput={(params) => (
+              <TextField {...params} fullWidth margin="dense" />
+            )}
           />
         </LocalizationProvider>
         {Object.entries({
@@ -111,21 +133,21 @@ const CreateLeadTask = ({ open, onClose, leadId, onSaveSuccess }) => {
           margin="dense"
           label="Employee"
           value={newTask.leadTaskEmployee}
-          onChange={(e) => handleChange(e, 'leadTaskEmployee')}
+          onChange={(e) => handleChange(e, "leadTaskEmployee")}
           fullWidth
         />
         <TextField
           margin="dense"
           label="Subject"
           value={newTask.leadTaskSubject}
-          onChange={(e) => handleChange(e, 'leadTaskSubject')}
+          onChange={(e) => handleChange(e, "leadTaskSubject")}
           fullWidth
         />
         <TextField
           margin="dense"
           label="Additional Info"
           value={newTask.leadTaskAdditionalInfo}
-          onChange={(e) => handleChange(e, 'leadTaskAdditionalInfo')}
+          onChange={(e) => handleChange(e, "leadTaskAdditionalInfo")}
           fullWidth
           multiline
           rows={4}

@@ -1,23 +1,21 @@
 import React, { useState } from "react";
-import {
-  Typography,
-  Box,
-  Paper,
-  Snackbar,
-  Button,
-  Grid,
-  Alert,
-} from "@mui/material";
+import { Typography, Box, Paper, Button, Grid } from "@mui/material";
 import { doc, updateDoc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { db } from "../../firebase";
 import SearchAndAddVehicleDialog from "../vehicles/SearchAndAddVehicleDialog";
 import VehicleDetails from "../vehicles/VehicleDetails";
 import VehicleImageGallery from "../vehicles/VehicleImageGallery";
+import { useSnackbar } from "../../context/SnackbarContext";
 
-const LeadVehicle = ({ vehicleId, vehicle, leadId, onVehicleRemoved, onVehicleAdded }) => {
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+const LeadVehicle = ({
+  vehicleId,
+  vehicle,
+  leadId,
+  onVehicleRemoved,
+  onVehicleAdded,
+}) => {
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
   const handleDeleteLeadVehicle = async (vehicle) => {
     if (!vehicle) return;
@@ -27,10 +25,10 @@ const LeadVehicle = ({ vehicleId, vehicle, leadId, onVehicleRemoved, onVehicleAd
         vehicleIDs: arrayRemove(vehicle.id),
       });
       onVehicleRemoved();
+      showSnackbar("Vehicle removed successfully.", "success");
     } catch (error) {
       console.error("Error removing vehicle:", error);
-      setSnackbarMessage(`Failed to remove vehicle: ${error.message}`);
-      setSnackbarOpen(true);
+      showSnackbar(`Failed to remove vehicle: ${error.message}`, "error");
     }
   };
 
@@ -42,8 +40,10 @@ const LeadVehicle = ({ vehicleId, vehicle, leadId, onVehicleRemoved, onVehicleAd
       });
       console.log("Vehicle added successfully");
       onVehicleAdded();
+      showSnackbar("Vehicle added successfully.", "success");
     } catch (error) {
       console.error("Error adding vehicle:", error);
+      showSnackbar(`Failed to add vehicle: ${error.message}`, "error");
     }
   };
 
@@ -54,8 +54,8 @@ const LeadVehicle = ({ vehicleId, vehicle, leadId, onVehicleRemoved, onVehicleAd
   console.log(vehicle);
 
   const vehicleArray = Array.isArray(vehicle) ? vehicle : [vehicle];
-  
-  if (!vehicle || vehicleArray.length === 0) {  // Enhanced check for no vehicle data
+
+  if (!vehicle || vehicleArray.length === 0) {
     return (
       <>
         <Typography>No vehicle data available</Typography>
@@ -116,15 +116,6 @@ const LeadVehicle = ({ vehicleId, vehicle, leadId, onVehicleRemoved, onVehicleAd
           </Paper>
         </Box>
       ))}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-      >
-        <Alert onClose={() => setSnackbarOpen(false)} severity="success">
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </>
   );
 };

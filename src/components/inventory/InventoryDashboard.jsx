@@ -18,8 +18,6 @@ const InventoryDashboard = () => {
   const { data, reload } = useFetchInventory();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  console.log(data);
-
   const { inventory, loading, error } = data;
 
   const handleChangePage = (event, newPage) => {

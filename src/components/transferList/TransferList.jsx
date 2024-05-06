@@ -8,7 +8,6 @@ import {
   Checkbox,
   Button,
   Paper,
-  Typography,
   Box,
   TextField,
   Tooltip,
@@ -20,7 +19,6 @@ import {
   KeyboardDoubleArrowLeft,
   ArrowForward,
   ArrowBack,
-  Add,
 } from "@mui/icons-material";
 
 const ScrollableList = styled(List)({

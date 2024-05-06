@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { Button, Paper, Typography, Divider, CircularProgress, Alert } from "@mui/material";
+import {
+  Button,
+  Paper,
+  Typography,
+  Divider,
+  CircularProgress,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import TransferList from "../transferList/TransferList";
 import { useSnackbar } from "../../context/SnackbarContext";
 
 const LeadsSection = ({
   label,
+  name,
   unactiveData,
   activeData,
   setUnactiveData,
@@ -18,8 +25,8 @@ const LeadsSection = ({
 
   const handleSave = async () => {
     setLoading(true);
-    const field = label.replace(" Management", "").replaceAll(" ", "");
-    const docRef = doc(db, 'leadConfig', 'configData');
+    const field = name;
+    const docRef = doc(db, "leadConfig", "configData");
     const dataToSend = {
       [`${field}Unactive`]: unactiveData,
       [`${field}Active`]: activeData,
@@ -29,7 +36,10 @@ const LeadsSection = ({
       await updateDoc(docRef, dataToSend);
       showSnackbar("Update successful for " + field, "success");
     } catch (error) {
-      showSnackbar("Error updating configuration for " + field + ": " + error.message, "error");
+      showSnackbar(
+        "Error updating configuration for " + field + ": " + error.message,
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -38,7 +48,9 @@ const LeadsSection = ({
   return (
     <Box sx={{ mb: 2 }}>
       <Paper sx={{ p: 3, mb: 2, border: "solid", borderColor: "divider" }}>
-        <Typography variant="h5" mb={2}>{label}</Typography>
+        <Typography variant="h5" mb={2}>
+          {label}
+        </Typography>
         <TransferList
           leftItems={unactiveData || []}
           rightItems={activeData || []}
@@ -57,23 +69,28 @@ const LeadsSection = ({
       </Paper>
     </Box>
   );
-}
+};
+
 
 const LeadsConfig = () => {
   const [leadSourceUnactive, setLeadSourceUnactive] = useState([]);
   const [leadSourceActive, setLeadSourceActive] = useState([]);
   const [leadTypeUnactive, setLeadTypeUnactive] = useState([]);
   const [leadTypeActive, setLeadTypeActive] = useState([]);
-  const [leadDealershipUnactive, setLeadDealershipUnactive] = useState([]); 
+  const [leadDealershipUnactive, setLeadDealershipUnactive] = useState([]);
   const [leadDealershipActive, setLeadDealershipActive] = useState([]);
-  const [leadSalesConsultantUnactive, setLeadSalesConsultantUnactive] = useState([]);
-  const [leadSalesConsultantActive, setLeadSalesConsultantActive] = useState([]);
+  const [leadSalesConsultantUnactive, setLeadSalesConsultantUnactive] =
+    useState([]);
+  const [leadSalesConsultantActive, setLeadSalesConsultantActive] = useState(
+    []
+  );
   const [leadStatusUnactive, setLeadStatusUnactive] = useState([]);
   const [leadStatusActive, setLeadStatusActive] = useState([]);
 
   const configFields = [
     {
       label: "Lead Source Management",
+      name: "leadSource",
       unactiveData: leadSourceUnactive,
       activeData: leadSourceActive,
       setUnactiveData: setLeadSourceUnactive,
@@ -81,6 +98,7 @@ const LeadsConfig = () => {
     },
     {
       label: "Lead Type Management",
+      name: "leadType",
       unactiveData: leadTypeUnactive,
       activeData: leadTypeActive,
       setUnactiveData: setLeadTypeUnactive,
@@ -88,6 +106,7 @@ const LeadsConfig = () => {
     },
     {
       label: "Lead Dealership Management",
+      name: "leadDealership",
       unactiveData: leadDealershipUnactive,
       activeData: leadDealershipActive,
       setUnactiveData: setLeadDealershipUnactive,
@@ -102,6 +121,7 @@ const LeadsConfig = () => {
     },
     {
       label: "Lead Status Management",
+      name: "leadStatus",
       unactiveData: leadStatusUnactive,
       activeData: leadStatusActive,
       setUnactiveData: setLeadStatusUnactive,
@@ -111,21 +131,16 @@ const LeadsConfig = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const docRef = doc(db, 'leadConfig', 'configData');
+      const docRef = doc(db, "leadConfig", "configData");
       try {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const fetchedData = docSnap.data();
-          setLeadSourceUnactive(fetchedData.leadSourceUnactive || []);
-          setLeadSourceActive(fetchedData.leadSourceActive || []);
-          setLeadTypeUnactive(fetchedData.leadTypeUnactive || []);
-          setLeadTypeActive(fetchedData.leadTypeActive || []);
-          setLeadDealershipUnactive(fetchedData.leadDealershipUnactive || []);
-          setLeadDealershipActive(fetchedData.leadDealershipActive || []);
-          setLeadSalesConsultantUnactive(fetchedData.leadSalesConsultantUnactive || []);
-          setLeadSalesConsultantActive(fetchedData.leadSalesConsultantActive || []);
-          setLeadStatusUnactive(fetchedData.leadStatusUnactive || []);
-          setLeadStatusActive(fetchedData.leadStatusActive || []);
+          configFields.forEach((field) => {
+            const { name } = field;
+            field.setUnactiveData(fetchedData[`${name}Unactive`] || []);
+            field.setActiveData(fetchedData[`${name}Active`] || []);
+          });
         }
       } catch (error) {
         console.error("Error fetching configuration from Firestore:", error);

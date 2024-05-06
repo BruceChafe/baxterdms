@@ -179,6 +179,7 @@ const WeeklyCalendar = () => {
                                 borderColor: "divider",
                                 height: "100%",
                                 borderBottom: 0,
+                                verticalAlign: "top",
                               }}
                             >
                               <Box

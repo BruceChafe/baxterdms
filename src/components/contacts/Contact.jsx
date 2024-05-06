@@ -5,22 +5,18 @@ import {
   Box,
   CircularProgress,
   Button,
-  BottomNavigation,
-  Backdrop,
-  Container,
-  Snackbar,
-  Alert,
+  Container
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import ContactInfo from "./ContactInfo";
 import ContactLeads from "./ContactLeads";
-import { EmailOutlined } from "@mui/icons-material";
 import EmailContact from "./EmailCustomer";
 import TabbedLayout from "../layouts/TabbedLayout";
 import TitleLayout from "../layouts/TitleLayout";
 import { useFetchContact } from "../../../hooks/FetchContact";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const Contact = () => {
   const navigate = useNavigate();
@@ -28,14 +24,9 @@ const Contact = () => {
   const { contact, setContact, loading, error } = useFetchContact(contactId);
   const [editedContact, setEditedContact] = useState({});
   const [isEmailPaperOpen, setIsEmailPaperOpen] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [contactInfoChanged, setContactInfoChanged] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
+  const { showSnackbar } = useSnackbar();
 
   const handleEmailClick = () => {
     setIsEmailPaperOpen(true);
@@ -54,8 +45,7 @@ const Contact = () => {
 
   const handleSave = async () => {
     if (!editedContact || Object.keys(editedContact).length === 0) {
-      setSnackbarMessage("No changes to save");
-      setSnackbarOpen(true);
+      showSnackbar("No changes to save", "info");
       return;
     }
 
@@ -64,13 +54,12 @@ const Contact = () => {
     try {
       await updateDoc(contactRef, editedContact);
       setContact((prev) => ({ ...prev, ...editedContact }));
-      setSnackbarMessage("Save successful");
+      showSnackbar("Save successful", "success");
       setContactInfoChanged(false);
     } catch (error) {
       console.error("Error updating contact:", error);
-      setSnackbarMessage(`Error: ${error.message}`);
+      showSnackbar(`Error: ${error.message}`, "error");
     } finally {
-      setSnackbarOpen(true);
       setIsEditable(false);
     }
   };
@@ -146,14 +135,6 @@ const Contact = () => {
           ]}
         />
       )}
-      {/* <BottomNavigation
-        sx={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 99 }}
-      >
-        <Button onClick={handleEmailClick}>
-          <EmailOutlined /> Email
-        </Button>
-      </BottomNavigation> */}
-
       {isEmailPaperOpen && (
         <EmailContact
           contact={contact}
@@ -162,13 +143,6 @@ const Contact = () => {
           onClose={handleCloseEmailPaper}
         />
       )}
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
     </Box>
   );
 };

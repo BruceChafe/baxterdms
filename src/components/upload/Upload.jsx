@@ -11,14 +11,16 @@ import {
   CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
+import { collection, doc, writeBatch } from "firebase/firestore";
 import { db } from "../../firebase";
+import { useSnackbar } from "../../context/SnackbarContext"; // Import SnackbarContext hook
 
 const UploadData = ({ showPanel, onClose, updateData, collectionName }) => {
   const [csvData, setCSVData] = useState([]);
   const [fileParsed, setFileParsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(null);
+  const { showSnackbar } = useSnackbar();
 
   const handleFileUpload = (file) => {
     setFile(file);
@@ -26,7 +28,6 @@ const UploadData = ({ showPanel, onClose, updateData, collectionName }) => {
       complete: (result) => {
         setCSVData(result.data);
         setFileParsed(true);
-        console.log("Parsed CSV Data:", result.data);
       },
       header: true,
       skipEmptyLines: true,
@@ -36,7 +37,7 @@ const UploadData = ({ showPanel, onClose, updateData, collectionName }) => {
 
   const handleUpload = async () => {
     if (!csvData.length) {
-      console.error("No data available to upload.");
+      showSnackbar("No data available to upload.", "error");
       return;
     }
 
@@ -49,11 +50,11 @@ const UploadData = ({ showPanel, onClose, updateData, collectionName }) => {
 
     try {
       await batch.commit();
-      console.log("Batch upload completed successfully");
+      showSnackbar("Batch upload completed successfully", "success");
       updateData();
       handleReset();
     } catch (error) {
-      console.error("Error uploading data:", error);
+      showSnackbar(`Error uploading data: ${error.message}`, "error");
     } finally {
       setIsLoading(false);
     }

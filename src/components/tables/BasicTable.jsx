@@ -70,7 +70,6 @@ const BasicTable = ({
             </TableHead>
             <TableBody>
               {paginatedData.map((row) => {
-                  console.log("Row:", row);
                 return (
                 <TableRow key={row.id} hover>
                   <TableCell

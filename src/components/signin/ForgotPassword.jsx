@@ -22,7 +22,9 @@ const ForgotPassword = ({ toggleView }) => {
     event.preventDefault();
     try {
       await sendPasswordResetEmail(auth, email);
-      setMessage(`If there is an account associated with ${email}, you will receive an email with instructions to reset your password.`);
+      setMessage(
+        `If there is an account associated with ${email}, you will receive an email with instructions to reset your password.`
+      );
       setOpen(true);
     } catch (error) {
       setError(error.message);
@@ -31,7 +33,12 @@ const ForgotPassword = ({ toggleView }) => {
   };
 
   return (
-    <Box component="form" noValidate sx={{ mt: 1, width: "80%" }} onSubmit={handleResetPassword}>
+    <Box
+      component="form"
+      noValidate
+      sx={{ mt: 1, width: "80%" }}
+      onSubmit={handleResetPassword}
+    >
       <TextField
         margin="normal"
         required
@@ -47,12 +54,30 @@ const ForgotPassword = ({ toggleView }) => {
         Reset Password
       </Button>
       {error && <Typography color="error">{error}</Typography>}
-      <Button startIcon={<ArrowBackIcon />} onClick={() => toggleView(false)} sx={{ mt: 1, mb: 2 }}>
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={() => toggleView(false)}
+        sx={{ mt: 1, mb: 2 }}
+      >
         Back to Sign In
       </Button>
       <Modal open={open} onClose={() => setOpen(false)}>
-        <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 400, bgcolor: "background.paper", border: "2px solid #000", p: 4 }}>
-          <IconButton onClick={() => setOpen(false)} sx={{ position: "absolute", top: 10, right: 10 }}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            p: 4,
+          }}
+        >
+          <IconButton
+            onClick={() => setOpen(false)}
+            sx={{ position: "absolute", top: 10, right: 10 }}
+          >
             <CloseIcon />
           </IconButton>
           <Typography id="password-reset-modal-description" sx={{ mt: 2 }}>

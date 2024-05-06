@@ -71,9 +71,9 @@ const ContactsDashboard = () => {
       };
     }) || [];
 
-    const handleNewContactClick = () => {
-      navigate(`/contacts/newcontact`);
-    };
+  const handleNewContactClick = () => {
+    navigate(`/contacts/newcontact`);
+  };
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
@@ -145,6 +145,7 @@ const ContactsDashboard = () => {
         updateData={reload}
         collectionName="contacts"
       />
+      <img src="src/images/vehiclePlaceholder/interior.jpeg"/>
     </Box>
   );
 };

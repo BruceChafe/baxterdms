@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { db } from "../../src/firebase";
 import {
   collection,
@@ -20,6 +20,7 @@ import {
   Paper,
   Grid,
 } from "@mui/material";
+import { useSnackbar } from "../../src/context/SnackbarContext";
 
 const SearchComponent = ({
   searchFields,
@@ -31,6 +32,7 @@ const SearchComponent = ({
     searchFields.reduce((acc, field) => ({ ...acc, [field.name]: "" }), {})
   );
   const [searchResults, setSearchResults] = useState([]);
+  const { showSnackbar } = useSnackbar();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,11 +47,16 @@ const SearchComponent = ({
 
       const contactQuery = query(collection(db, collectionPath), ...conditions);
       const querySnapshot = await getDocs(contactQuery);
-      setSearchResults(
-        querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      );
+      const results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setSearchResults(results);
+      if (results.length === 0) {
+        showSnackbar("No results found", "info");
+      } else {
+        showSnackbar("Search successful", "success");
+      }
     } catch (error) {
       console.error("Error searching:", error);
+      showSnackbar(`Error searching: ${error.message}`, "error");
     }
   };
 

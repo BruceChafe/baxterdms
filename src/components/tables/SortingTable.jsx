@@ -98,12 +98,12 @@ const SortingTable = ({
           </TableHead>
           <TableBody>
             {sortedData().map((row, rowIndex) => (
-              <TableRow 
-                key={rowIndex} 
+              <TableRow
+                key={rowIndex}
                 hover
                 sx={{
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.07)', // Example hover color
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.07)", // Example hover color
                   },
                 }}
               >

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, Grid, Paper, Button } from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import DropdownMenu from "../fields/renderDropdownMenu";
 import { useFetchLeadConfig } from "../../../hooks/FetchLeadConfig";
 
@@ -70,11 +70,6 @@ const LeadInfo = ({ lead, onSaveLeadInfo, onInfoChange }) => {
               />
             </Grid>
           ))}
-          <Grid item xs={12}>
-            <Button onClick={saveChanges} variant="outlined">
-              Save Changes
-            </Button>
-          </Grid>
         </Grid>
       </Box>
     </Paper>

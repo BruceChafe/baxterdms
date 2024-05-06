@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
-  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
