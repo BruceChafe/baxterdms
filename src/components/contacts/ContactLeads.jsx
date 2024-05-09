@@ -102,13 +102,14 @@ const ContactLeads = ({ contact }) => {
   }
 
   const leadsRows = leads.map((lead) => {
+    console.log(lead)
     const [datePart, timePart] = formatTimestamp(lead.timestamp);
     return {
       action: (
         <Tooltip title="Open Lead">
           <IconButton
             component={Link}
-            to={`/leads/${lead.leadId}`}
+            to={`/leads/${lead.id}`}
             color="primary"
             aria-label="Open Lead"
           >

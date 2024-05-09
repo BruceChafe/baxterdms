@@ -28,8 +28,10 @@ import NewLeadForm from "./NewLeadForm";
 import NewContact from "../contacts/NewContact";
 import TitleLayout from "../layouts/TitleLayout";
 import { useSnackbar } from "../../context/SnackbarContext";
+import { useNavigate } from "react-router-dom";
 
 const NewLeadComponent = () => {
+  const navigate = useNavigate();
   const [searchData, setSearchData] = useState({
     firstName: "",
     lastName: "",
@@ -96,9 +98,7 @@ const NewLeadComponent = () => {
   };
 
   const handleNewLeadClick = (contactId) => {
-    setContactIdForNewLead(contactId);
-    setShowNewLeadForm(true);
-    setShowNewContactForm(false);
+    navigate(`/leads/newlead/${contactId}`);
   };
 
   const handleCloseForm = () => {

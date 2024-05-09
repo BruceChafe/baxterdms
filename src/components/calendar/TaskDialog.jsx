@@ -7,8 +7,8 @@ import {
   Button,
   IconButton,
   TextField,
-  MenuItem,
   Box,
+  MenuItem
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { doc, updateDoc } from "firebase/firestore";
@@ -17,9 +17,9 @@ import { useFetchLeadTaskConfig } from "../../../hooks/FetchLeadTaskConfig";
 import { useSnackbar } from "../../context/SnackbarContext";
 
 const TaskDialog = ({ open, onClose, taskDetails, refetchTasks }) => {
+  console.log(taskDetails)
   const {
     leadTaskTypeOptions,
-    leadTaskPriorityOptions,
     leadTaskStatusOptions,
     loading,
     error,
@@ -54,10 +54,10 @@ const TaskDialog = ({ open, onClose, taskDetails, refetchTasks }) => {
     try {
       await updateDoc(taskRef, updatedFields);
       refetchTasks();
-      showSnackbar("Save successfull", "success");
+      showSnackbar("Save successful", "success");
       onClose();
     } catch (error) {
-      showSnackbar(Error, "error");
+      showSnackbar("Error", "error");
     } finally {
       setLoadingSave(false);
     }
@@ -92,9 +92,6 @@ const TaskDialog = ({ open, onClose, taskDetails, refetchTasks }) => {
         {Object.entries({
           leadTaskType: leadTaskTypeOptions || [],
           leadTaskStatus: leadTaskStatusOptions || [],
-          leadTaskEmployee: [],
-          leadTaskSubject: [],
-          leadTaskAdditionalInfo: [],
         }).map(([field, options]) => (
           <TextField
             key={field}
@@ -112,6 +109,30 @@ const TaskDialog = ({ open, onClose, taskDetails, refetchTasks }) => {
             ))}
           </TextField>
         ))}
+        <TextField
+          margin="dense"
+          label="Employee"
+          value={selectedTask.leadTaskEmployee || ""}
+          onChange={(e) => handleChange(e, 'leadTaskEmployee')}
+          fullWidth
+          disabled
+        />
+        <TextField
+          margin="dense"
+          label="Subject"
+          value={selectedTask.leadTaskSubject || ""}
+          onChange={(e) => handleChange(e, 'leadTaskSubject')}
+          fullWidth
+          disabled
+        />
+        <TextField
+          margin="dense"
+          label="Additional Info"
+          value={selectedTask.leadTaskAdditionalInfo || ""}
+          onChange={(e) => handleChange(e, 'leadTaskAdditionalInfo')}
+          fullWidth
+          disabled
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose()} variant="outlined">

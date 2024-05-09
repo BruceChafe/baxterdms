@@ -1,122 +1,105 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../../firebase';
-import { collection, getDoc, doc, addDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import React from "react";
 import {
-  Typography, TextField, Divider, Box, Button, Grid, MenuItem, Paper
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { CssBaseline, Grid, CircularProgress } from "@mui/material";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import Contact from "./components/contacts/Contact";
+import SignIn from "./components/signin/SignIn";
+import NewContact from "./components/contacts/NewContact";
+import ContactsDashboard from "./components/contacts/ContactsDashboard";
+import UserThemeSelection from "./components/account/UserThemeSelection";
+import AccountOverview from "./components/account/Overview";
+import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
+// import UserProfile from "./components/account/PersonalInfo";
+import UpdatePassword from "./components/account/UpdatePassword";
+import LeadsDashboard from "./components/leads/LeadsDashboard";
+import NewLeadComponent from "./components/leads/NewLead";
+import { ThemeProvider } from "./context/ThemeContext";
+import ConfigLanding from "./components/configuration/ConfigDashboard";
+import LeadsConfig from "./components/configuration/LeadsConfig";
+import Lead from "./components/leads/Lead";
+import LeadTaskConfig from "./components/configuration/LeadTaskConfig";
+import WeeklyCalendar from "./components/calendar/WeeklyCalendar";
+import InventoryDashboard from "./components/inventory/InventoryDashboard";
+import Inventory from "./components/inventory/Inventory";
+import { SnackbarProvider } from "./context/SnackbarContext";
 
-const NewLeadForm = ({ onCloseForm, contactId }) => {
-  const [formData, setFormData] = useState({});
-  const [optionsMap, setOptionsMap] = useState({});
-  const [message, setMessage] = useState('');
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchConfigData = async () => {
-      const docRef = doc(db, "configData", "leadsConfig");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setOptionsMap({
-          leadDealership: docSnap.data().leadDealershipActive,
-          leadSource: docSnap.data().leadSourceActive,
-          leadType: docSnap.data().leadTypeActive,
-          leadStatus: docSnap.data().leadStatusActive,
-          leadSalesConsultant: ["Fred"],
-        });
-      } else {
-        console.log("No such document!");
-      }
-    };
-    fetchConfigData();
-  }, []);
-
-  const handleInputChange = (key, value) => {
-    setFormData((prevData) => ({ ...prevData, [key]: value }));
-  };
-
-  const handleCreate = async () => {
-    setFormSubmitted(true);
-    const allMandatoryFieldsFilled = Object.keys(optionsMap).every(
-      (key) => optionsMap[key].includes(formData[key])
-    );
-    if (allMandatoryFieldsFilled) {
-      try {
-        const newLeadRef = await addDoc(collection(db, "leads"), {
-          ...formData,
-          contactIDs: [contactId],
-          timestamp: new Date(),
-        });
-        await updateDoc(doc(db, "contacts", contactId), {
-          leadIDs: arrayUnion(newLeadRef.id),
-        });
-        setMessage("Lead created successfully!");
-        setFormData({});
-        onCloseForm();
-        navigate(`/leads/${newLeadRef.id}`);
-      } catch (error) {
-        console.error("Error creating lead:", error);
-        setMessage("Error creating lead: " + error.message);
-      }
-    } else {
-      setMessage("Please fill out all mandatory fields.");
-    }
-  };
-
-  const renderTextField = (label, key) => (
-    <TextField
-      select
-      fullWidth
-      label={label}
-      value={formData[key] || ""}
-      onChange={(e) => handleInputChange(key, e.target.value)}
-      required={optionsMap[key] && optionsMap[key].length > 0}
-      error={formSubmitted && !formData[key]}
-      helperText={
-        formSubmitted && !formData[key] ? "This field is required." : ""
-      }
-      sx={{ mb: 2, width: "100%" }}
-    >
-      {optionsMap[key]?.map((option) => (
-        <MenuItem key={option} value={option}>
-          {option}
-        </MenuItem>
-      ))}
-    </TextField>
-  );
-
+const App = () => {
   return (
-    <Box sx={{ mt: 3, mr: 8 }}>
-      <Typography variant="h4" mb={2}>
-        New Lead
-      </Typography>
-      <Divider />
-      <Paper sx={{ p: 1, mt: 2, mb: 2 }}>
-        {Object.keys(optionsMap).map((key) => (
-          <Grid item xs={12} sm={6} key={key}>
-            {optionsMap[key] && renderTextField(`Lead ${key.replace("lead", "")}`, key)}
-          </Grid>
-        ))}
-      </Paper>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleCreate}
-        sx={{ mt: 2 }}
-      >
-        Create
-      </Button>
-      <Button variant="outlined" onClick={onCloseForm} sx={{ mt: 2, ml: 2 }}>
-        Cancel
-      </Button>
-      {message && (
-        <Typography color="error" sx={{ mt: 2 }}>
-          {message}
-        </Typography>
-      )}
-    </Box>
+    <AuthProvider>
+      <ThemeProvider>
+        <SnackbarProvider>
+          <CssBaseline />
+          <Router>
+            <AppRoutes />
+          </Router>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 };
 
-export default NewLeadForm;
+const AppRoutes = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (user === undefined) {
+    return null;
+  }
+
+  return user ? (
+    <Grid container>
+      <Grid item xs={12} md={3} lg={2}>
+        <SidebarSwitcher />
+      </Grid>
+      <Grid item xs={12} md={9} lg={10}>
+        <Routes>
+          <Route path="/home" element={<WeeklyCalendar />} />
+          <Route
+            path="/contacts/:contactId/*"
+            element={<Navigate to={`/contacts/:contactId`} target="_blank" />}
+          />
+          <Route path="/contacts/*" element={<ContactsDashboard />} />
+          <Route path="/contacts/newcontact" element={<NewContact />} />
+          <Route path="/account/overview" element={<AccountOverview />} />
+          <Route path="/account/theme" element={<UserThemeSelection />} />
+          {/* <Route path="/account/userprofile" element={<UserProfile />} /> */}
+          <Route path="/account/updatepassword" element={<UpdatePassword />} />
+          <Route path="/leads" element={<LeadsDashboard />} />
+          <Route path="/leads/newlead" element={<NewLeadComponent />} />
+          <Route path="/configuration" element={<ConfigLanding />} />
+          <Route path="/configuration/leads" element={<LeadsConfig />} />
+          <Route path="/configuration/leadtasks" element={<LeadTaskConfig />} />
+          <Route path="/contacts/:contactId" element={<Contact />} />
+          <Route path="/leads/:leadNumber" element={<Lead />} />
+          <Route path="/inventory" element={<InventoryDashboard />} />
+          <Route path="/inventory/:inventoryId" element={<Inventory />} />
+          <Route path="*" element={<Navigate to="/home" />} />
+        </Routes>
+      </Grid>
+    </Grid>
+  ) : (
+    <Routes>
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="*" element={<Navigate to="/signin" />} />
+    </Routes>
+  );
+};
+
+export default App;

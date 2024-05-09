@@ -19,6 +19,7 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const NewLeadFields = [
   { label: "Dealership", key: "leadDealership" },
@@ -28,7 +29,8 @@ const NewLeadFields = [
   { label: "Status", key: "leadStatus" },
 ];
 
-const NewLeadForm = ({ onCloseForm, contactId }) => {
+const NewLeadForm = ({ onCloseForm }) => {
+  const { contactId } = useParams(); 
   const [formData, setFormData] = useState({});
   const [optionsMap, setOptionsMap] = useState({});
   const [message, setMessage] = useState("");

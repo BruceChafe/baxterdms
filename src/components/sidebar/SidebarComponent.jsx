@@ -1,25 +1,27 @@
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../../firebase";
 import {
   Box,
-  Drawer,
   CssBaseline,
-  Toolbar,
+  Drawer,
   List,
-  Typography,
-  Divider,
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Typography,
+  Divider,
+  IconButton,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../../firebase";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const drawerWidth = 240;
 
-const SidebarComponent = ({ pageName, navigationLinks }) => {
+const SidebarComponent = ({ navigationLinks, collapsed, setCollapsed }) => {
   const navigate = useNavigate();
+
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -29,59 +31,71 @@ const SidebarComponent = ({ pageName, navigationLinks }) => {
     }
   };
 
+  const toggleDrawer = () => {
+    setCollapsed(!collapsed);
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <Drawer
+        variant="permanent"
         sx={{
-          width: drawerWidth,
+          width: collapsed ? 80 : drawerWidth,
           flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width: drawerWidth,
+            width: collapsed ? 80 : drawerWidth,
             boxSizing: "border-box",
+            display: "flex",
+            flexDirection: "column",
           },
         }}
-        variant="permanent"
-        anchor="left"
       >
-        <Toolbar>
-          <Typography
-            variant="h6"
-            component={Link}
-            to="/home"
-            sx={{ color: "white", textDecoration: "none" }}
-          >
-            baxter.
-          </Typography>
-        </Toolbar>
+<Box
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    padding: 2,
+    flexGrow: 0,
+  }}
+>
+  {collapsed ? null : (
+    <Typography
+      variant="h6"
+      component={Link}
+      to="/home"
+      sx={{ textDecoration: "none", color: "inherit" }}
+    >
+      baxter.
+    </Typography>
+  )}
+</Box>
+
         <Divider />
         <List>
-          {navigationLinks?.map((link, index) => (
-            <ListItem
-              key={link.to}
-              disablePadding
-              component={Link}
-              to={link.to}
-              sx={{ color: link.color || "inherit" }}
-            >
-              <ListItemButton>
-                <ListItemText primary={link.text} />
+          {navigationLinks.map((link) => (
+            <ListItem key={link.to} disablePadding>
+              <ListItemButton component={Link} to={link.to}>
+                {/* <ListItemIcon> */}
+                  {/* Optional: Display an icon here if each link has associated icons */}
+                {/* </ListItemIcon> */}
+                <ListItemText primary={collapsed ? "" : link.text} />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
         <Divider />
-        <Box sx={{ flexGrow: 1 }} />
-        <List>
-          <ListItem>
-            <ListItemButton onClick={handleLogout}>
-              <ListItemIcon>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText primary="Logout" />
-            </ListItemButton>
-          </ListItem>
-        </List>
+        {/* <IconButton onClick={toggleDrawer}>
+          <MenuIcon />
+        </IconButton> */}
+        <Box
+          sx={{ mt: "auto", mb: 2, display: "flex", justifyContent: "center" }}
+        >
+          <IconButton onClick={handleLogout}>
+            <LogoutIcon />
+          </IconButton>
+        </Box>
       </Drawer>
     </Box>
   );

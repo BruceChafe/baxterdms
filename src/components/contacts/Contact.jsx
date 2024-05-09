@@ -69,7 +69,7 @@ const Contact = () => {
   };
 
   const handleNewLeadClick = () => {
-    navigate(`/leads/newlead`);
+    navigate(`/leads/newlead/${contactId}`);
   };
 
   return (

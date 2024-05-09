@@ -50,11 +50,18 @@ const SidebarItems = {
   },
 };
 
-const SidebarSwitcher = () => {
+const SidebarSwitcher = ({ collapsed, setCollapsed }) => {
   const location = useLocation();
-  const path = location.pathname.split("/")[1];
+  const path = location.pathname.split('/')[1] || 'home';
 
-  return <SidebarComponent {...SidebarItems[path]} />;
+  return (
+    <SidebarComponent
+      {...(SidebarItems[path] || SidebarItems.home)}
+      collapsed={collapsed}
+      setCollapsed={setCollapsed}
+    />
+  );
 };
+
 
 export default SidebarSwitcher;

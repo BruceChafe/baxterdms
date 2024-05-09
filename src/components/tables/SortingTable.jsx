@@ -103,7 +103,7 @@ const SortingTable = ({
                 hover
                 sx={{
                   "&:hover": {
-                    backgroundColor: "rgba(0, 0, 0, 0.07)", // Example hover color
+                    backgroundColor: "rgba(0, 0, 0, 0.07)",
                   },
                 }}
               >
