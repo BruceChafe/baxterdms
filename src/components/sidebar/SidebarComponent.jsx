@@ -86,9 +86,9 @@ const SidebarComponent = ({ navigationLinks, collapsed, setCollapsed }) => {
           ))}
         </List>
         <Divider />
-        {/* <IconButton onClick={toggleDrawer}>
+        <IconButton onClick={toggleDrawer}>
           <MenuIcon />
-        </IconButton> */}
+        </IconButton>
         <Box
           sx={{ mt: "auto", mb: 2, display: "flex", justifyContent: "center" }}
         >

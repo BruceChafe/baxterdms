@@ -27,6 +27,7 @@ import InventoryDashboard from "./components/inventory/InventoryDashboard";
 import Inventory from "./components/inventory/Inventory";
 import { SnackbarProvider } from "./context/SnackbarContext";
 import NewLeadForm from "./components/leads/NewLeadForm";
+import DocumentDashboard from "./components/documentArchive/DocumentDashboard";
 
 const App = () => {
   return (
@@ -110,6 +111,7 @@ const AppRoutes = () => {
             <Route path="/inventory" element={<InventoryDashboard />} />
             <Route path="/inventory/:inventoryId" element={<Inventory />} />
             <Route path="*" element={<Navigate to="/home" />} />
+            <Route path="/documentarchive" element={<DocumentDashboard />} />
           </Routes>
         </Box>
       </Grid>

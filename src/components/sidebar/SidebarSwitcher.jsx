@@ -10,7 +10,7 @@ const SidebarItems = {
       { text: "Account Overview", to: "/account/overview"},
       { text: "Configuration", to: "/configuration"},
       { text: "Inventory", to: "/inventory"},
-
+      { text: "Document Archive", to: "/documentarchive"},
     ],
   },
   account: {
@@ -48,6 +48,12 @@ const SidebarItems = {
       { text: "Inventory", to: "/inventory" },
     ],
   },
+  documentArchive: {
+    pageName: "Document Archive",
+    navigationLinks: [
+      { text: "Document Archive", to: "/documentarchive" },
+    ],
+  }
 };
 
 const SidebarSwitcher = ({ collapsed, setCollapsed }) => {

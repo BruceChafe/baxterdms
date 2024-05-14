@@ -31,7 +31,7 @@ const TabbedLayout = ({ tabs }) => {
             value={String(index + 1)}
             key={index}
             sx={{
-              height: "8vh",
+              height: "80vh",
               width: "100%",
             }}
           >
