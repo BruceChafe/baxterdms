@@ -23,7 +23,7 @@ function DocumentList({ onSelectDocument }) {
     console.log(`Attempting to delete document with id: ${id}`);
     try {
       await axios.delete(`http://localhost:3001/documents/${id}`);
-      setDocuments(documents.filter((doc) => doc.id !== id));
+      setDocuments(documents.filter((doc) => doc.documentId !== id));
     } catch (error) {
       console.error('Error deleting document:', error);
     }
@@ -36,9 +36,9 @@ function DocumentList({ onSelectDocument }) {
         </Typography>
         <List>
           {documents.map((doc) => (
-            <ListItem button key={doc.id} onClick={() => onSelectDocument(doc)}>
+            <ListItem button key={doc.documentId} onClick={() => onSelectDocument(doc)}>
               <ListItemText primary={doc.documentType} secondary={new Date(doc.uploadDate).toLocaleString()} />
-              <Button variant="outlined" color="error" onClick={() => handleDelete(doc.id)}>
+              <Button variant="outlined" color="error" onClick={(e) => { e.stopPropagation(); handleDelete(doc.documentId); }}>
                 Delete
               </Button>
             </ListItem>
