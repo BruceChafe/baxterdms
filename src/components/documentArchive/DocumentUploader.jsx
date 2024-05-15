@@ -1,23 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
-import {
-  Button,
-  Typography,
-  Box,
-  Stack,
-  Snackbar,
-  Alert,
-  LinearProgress,
-  Input,
-} from "@mui/material";
+import { Button, Typography, Box, Stack, LinearProgress, Input } from "@mui/material";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
+import { useSnackbar } from '../../context/SnackbarContext';
 
 function DocumentUploader() {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const { showSnackbar } = useSnackbar();
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -40,20 +30,16 @@ function DocumentUploader() {
           }
         );
 
-        setSnackbarMessage(`File uploaded successfully. URL: ${uploadResponse.data.url}`);
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
+        showSnackbar(`File uploaded successfully. URL: ${uploadResponse.data.url}`, "success");
         await analyzeDocument(uploadResponse.data.url);
       } catch (error) {
         console.error("Error uploading file:", error);
         if (error.response) {
           console.error("Response data:", error.response.data);
-          setSnackbarMessage(`Error uploading file: ${error.response.data.error || error.response.data.message}`);
+          showSnackbar(`Error uploading file: ${error.response.data.error || error.response.data.message}`, "error");
         } else {
-          setSnackbarMessage(`Error uploading file: ${error.message}`);
+          showSnackbar(`Error uploading file: ${error.message}`, "error");
         }
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
       } finally {
         setUploading(false);
       }
@@ -64,25 +50,21 @@ function DocumentUploader() {
     try {
       const response = await axios.post("http://localhost:3001/analyze", { url: sasUrl });
       console.log("Analysis success:", response.data);
-      setSnackbarMessage("Document analysis completed successfully.");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      showSnackbar("Document analysis completed successfully.", "success");
     } catch (error) {
       console.error("Analysis failed:", error);
       if (error.response) {
         console.error("Response data:", error.response.data);
-        setSnackbarMessage(`Error analyzing document: ${error.response.data.error || error.response.data.message}`);
+        showSnackbar(`Error analyzing document: ${error.response.data.error || error.response.data.message}`, "error");
       } else {
-        setSnackbarMessage(`Error analyzing document: ${error.message}`);
+        showSnackbar(`Error analyzing document: ${error.message}`, "error");
       }
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
     }
   };
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h5" mb={2}>
         Upload your document
       </Typography>
       <Stack direction="column" spacing={2} alignItems="center">
@@ -112,19 +94,6 @@ function DocumentUploader() {
         </Button>
         {uploading && <LinearProgress sx={{ width: "100%", mt: 2 }} />}
       </Stack>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-      >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }
