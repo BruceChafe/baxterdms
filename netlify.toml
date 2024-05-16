@@ -17,3 +17,6 @@
   command = "npm run dev-vite"
   targetPort = 5173
   port = 8888
+
+[functions]
+  node_bundler = "esbuild" 

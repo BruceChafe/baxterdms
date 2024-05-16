@@ -5,7 +5,7 @@ const multer = require('multer');
 const path = require('path');
 const dotenv = require('dotenv');
 
-const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities');
+const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities.cjs');
 
 const { CosmosClient } = require('@azure/cosmos');
 const { DocumentAnalysisClient, AzureKeyCredential } = require('@azure/ai-form-recognizer');
