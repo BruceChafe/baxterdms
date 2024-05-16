@@ -2,13 +2,14 @@ const express = require('express');
 const serverless = require('serverless-http');
 const cors = require('cors');
 const multer = require('multer');
-console.log('Running index.cjs');
-const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities');
-console.log('Loaded utilities module');
-const { CosmosClient } = require('@azure/cosmos');
-const { DocumentAnalysisClient, AzureKeyCredential } = require('@azure/ai-form-recognizer');
 const path = require('path');
 const dotenv = require('dotenv');
+
+// Explicitly requiring the utilities file
+const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities');
+
+const { CosmosClient } = require('@azure/cosmos');
+const { DocumentAnalysisClient, AzureKeyCredential } = require('@azure/ai-form-recognizer');
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
@@ -89,7 +90,7 @@ router.delete('/documents/:id', async (req, res) => {
 
     res.status(200).send('Document and blob deleted successfully');
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    res.status{(500).send({ error: error.message });
   }
 });
 
