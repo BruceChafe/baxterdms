@@ -5,7 +5,6 @@ const multer = require('multer');
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Explicitly requiring the utilities file
 const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities');
 
 const { CosmosClient } = require('@azure/cosmos');
