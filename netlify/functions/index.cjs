@@ -1,8 +1,8 @@
 const express = require('express');
 const serverless = require('serverless-http');
-const cors = require('cors');
+const cors = require('cors');  // Add this line
 const multer = require('multer');
-const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities.cjs');
+const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities');
 const { CosmosClient } = require('@azure/cosmos');
 const { DocumentAnalysisClient, AzureKeyCredential } = require('@azure/ai-form-recognizer');
 const path = require('path');
@@ -27,7 +27,7 @@ const database = cosmosClient.database(cosmosDatabaseId);
 const container = database.container(cosmosContainerId);
 const formClient = new DocumentAnalysisClient(formRecognizerEndpoint, new AzureKeyCredential(formRecognizerKey));
 
-app.use(cors());
+app.use(cors());  // Add this line
 app.use(express.json());
 
 router.post('/upload', upload.single('file'), async (req, res) => {
