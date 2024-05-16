@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "../../axios";
 import { List, ListItem, ListItemText, Button, Typography, Box, Paper, Divider } from '@mui/material';
 import { useSnackbar } from '../../context/SnackbarContext';
 
@@ -10,7 +10,7 @@ function DocumentList({ onSelectDocument }) {
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/documents');
+        const response = await axios.get('/documents');
         console.log('Fetched documents:', response.data);
         setDocuments(response.data);
       } catch (error) {
@@ -25,7 +25,7 @@ function DocumentList({ onSelectDocument }) {
   const handleDelete = async (id) => {
     console.log(`Attempting to delete document with id: ${id}`);
     try {
-      await axios.delete(`http://localhost:3001/documents/${id}`);
+      await axios.delete(`/documents/${id}`);
       setDocuments(documents.filter((doc) => doc.documentId !== id));
       showSnackbar('Document deleted successfully', 'success');
     } catch (error) {

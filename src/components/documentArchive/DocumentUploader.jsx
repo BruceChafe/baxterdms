@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../axios";
 import { Button, Typography, Box, Stack, LinearProgress, Input } from "@mui/material";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
 import { useSnackbar } from '../../context/SnackbarContext';
@@ -21,7 +21,7 @@ function DocumentUploader() {
 
       try {
         const uploadResponse = await axios.post(
-          "http://localhost:3001/upload",
+          "/upload",
           formData,
           {
             headers: {
@@ -48,7 +48,7 @@ function DocumentUploader() {
 
   const analyzeDocument = async (sasUrl) => {
     try {
-      const response = await axios.post("http://localhost:3001/analyze", { url: sasUrl });
+      const response = await axios.post("/analyze", { url: sasUrl });
       console.log("Analysis success:", response.data);
       showSnackbar("Document analysis completed successfully.", "success");
     } catch (error) {
