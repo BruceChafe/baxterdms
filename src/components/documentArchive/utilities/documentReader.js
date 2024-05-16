@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { DocumentAnalysisClient, AzureKeyCredential } from '@azure/ai-form-recognizer';
 
 const endpoint = process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT;
