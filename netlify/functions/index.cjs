@@ -1,6 +1,6 @@
 const express = require('express');
 const serverless = require('serverless-http');
-const cors = require('cors');  // Add this line
+const cors = require('cors');
 const multer = require('multer');
 const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities');
 const { CosmosClient } = require('@azure/cosmos');
@@ -14,20 +14,20 @@ const app = express();
 const router = express.Router();
 const upload = multer();
 
-const accountName = process.env.AZURE_ACCOUNT_NAME;
-const accountKey = process.env.AZURE_ACCOUNT_KEY;
-const cosmosConnectionString = process.env.COSMOS_CONNECTION_STRING;
+const accountName = process.env.VITE_AZURE_ACCOUNT_NAME;
+const accountKey = process.env.VITE_AZURE_ACCOUNT_KEY;
+const cosmosConnectionString = process.env.VITE_COSMOS_CONNECTION_STRING;
 const formRecognizerEndpoint = process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT;
 const formRecognizerKey = process.env.VITE_AZURE_FORM_RECOGNIZER_KEY;
-const cosmosDatabaseId = process.env.COSMOS_DATABASE_ID;
-const cosmosContainerId = process.env.COSMOS_CONTAINER_ID;
+const cosmosDatabaseId = process.env.VITE_COSMOS_DATABASE_ID;
+const cosmosContainerId = process.env.VITE_COSMOS_CONTAINER_ID;
 
 const cosmosClient = new CosmosClient(cosmosConnectionString);
 const database = cosmosClient.database(cosmosDatabaseId);
 const container = database.container(cosmosContainerId);
 const formClient = new DocumentAnalysisClient(formRecognizerEndpoint, new AzureKeyCredential(formRecognizerKey));
 
-app.use(cors());  // Add this line
+app.use(cors({ origin: ['http://localhost:5173', 'https://classy-zuccutto-c75876.netlify.app'] }));
 app.use(express.json());
 
 router.post('/upload', upload.single('file'), async (req, res) => {
