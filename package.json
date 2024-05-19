@@ -7,7 +7,7 @@
     "dev-vite": "vite",
     "dev-server": "npx netlify dev",
     "dev": "concurrently \"npm run dev-vite\" \"npm run dev-server\"",
-    "build": "vite build",
+    "build": "vite build && cp _redirects dist/",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

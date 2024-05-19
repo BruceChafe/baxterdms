@@ -2,8 +2,8 @@ const express = require('express');
 const serverless = require('serverless-http');
 const cors = require('cors');
 const multer = require('multer');
-const path = require('path');
 const dotenv = require('dotenv');
+const path = require('path');
 
 const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities.cjs');
 const { CosmosClient } = require('@azure/cosmos');
@@ -15,19 +15,20 @@ const app = express();
 const router = express.Router();
 const upload = multer();
 
-const accountName = process.env.VITE_AZURE_ACCOUNT_NAME;
-const accountKey = process.env.VITE_AZURE_ACCOUNT_KEY;
-const cosmosConnectionString = process.env.VITE_COSMOS_CONNECTION_STRING;
-const formRecognizerEndpoint = process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT;
-const formRecognizerKey = process.env.VITE_AZURE_FORM_RECOGNIZER_KEY;
-const cosmosDatabaseId = process.env.VITE_COSMOS_DATABASE_ID;
-const cosmosContainerId = process.env.VITE_COSMOS_CONTAINER_ID;
+const accountName = process.env.AZURE_ACCOUNT_NAME || process.env.VITE_AZURE_ACCOUNT_NAME;
+const accountKey = process.env.AZURE_ACCOUNT_KEY || process.env.VITE_AZURE_ACCOUNT_KEY;
+const cosmosEndpoint = process.env.COSMOS_ENDPOINT || process.env.VITE_COSMOS_ENDPOINT;
+const cosmosKey = process.env.COSMOS_KEY || process.env.VITE_COSMOS_KEY;
+const cosmosDatabaseId = process.env.COSMOS_DATABASE_ID || process.env.VITE_COSMOS_DATABASE_ID;
+const cosmosContainerId = process.env.COSMOS_CONTAINER_ID || process.env.VITE_COSMOS_CONTAINER_ID;
+const formRecognizerEndpoint = process.env.AZURE_FORM_RECOGNIZER_ENDPOINT || process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT;
+const formRecognizerKey = process.env.AZURE_FORM_RECOGNIZER_KEY || process.env.VITE_AZURE_FORM_RECOGNIZER_KEY;
 
-if (!accountName || !accountKey || !cosmosConnectionString || !formRecognizerEndpoint || !formRecognizerKey || !cosmosDatabaseId || !cosmosContainerId) {
+if (!accountName || !accountKey || !cosmosEndpoint || !cosmosKey || !cosmosDatabaseId || !cosmosContainerId || !formRecognizerEndpoint || !formRecognizerKey) {
   throw new Error("Missing required environment variables");
 }
 
-const cosmosClient = new CosmosClient(cosmosConnectionString);
+const cosmosClient = new CosmosClient({ endpoint: cosmosEndpoint, key: cosmosKey });
 const database = cosmosClient.database(cosmosDatabaseId);
 const container = database.container(cosmosContainerId);
 const formClient = new DocumentAnalysisClient(formRecognizerEndpoint, new AzureKeyCredential(formRecognizerKey));
@@ -70,9 +71,7 @@ router.post('/analyze', async (req, res) => {
 
 router.get('/documents', async (req, res) => {
   try {
-    console.log('Received request for documents');
     const { resources: documents } = await container.items.readAll().fetchAll();
-    console.log('Fetched documents:', documents);
     res.status(200).json(documents);
   } catch (error) {
     console.error('Error fetching documents:', error);

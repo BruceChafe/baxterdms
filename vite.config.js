@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
 
-// Get the directory of the current file (vite.config.js)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
