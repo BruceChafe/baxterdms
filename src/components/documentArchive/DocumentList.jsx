@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import axios from "../../axios";
-import { List, ListItem, ListItemText, Button, Typography, Box, Paper, Divider } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import axios from "../../axios"; // Ensure this imports the configured axios instance
+import { List, ListItem, ListItemText, Button, Typography, Box, Paper, Divider, CircularProgress } from '@mui/material';
 import { useSnackbar } from '../../context/SnackbarContext';
 
 function DocumentList({ onSelectDocument }) {
   const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -12,27 +14,43 @@ function DocumentList({ onSelectDocument }) {
       try {
         const response = await axios.get('/documents');
         console.log('Fetched documents:', response.data);
-        setDocuments(response.data);
+
+        if (Array.isArray(response.data)) {
+          setDocuments(response.data);
+        } else {
+          console.error('Expected an array of documents but received:', response);
+          showSnackbar('Error fetching documents: Invalid response format', 'error');
+        }
       } catch (error) {
         console.error('Error fetching documents:', error);
         showSnackbar('Error fetching documents', 'error');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchDocuments();
-  }, []);
+  }, [showSnackbar]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = useCallback(async (id) => {
     console.log(`Attempting to delete document with id: ${id}`);
     try {
       await axios.delete(`/documents/${id}`);
-      setDocuments(documents.filter((doc) => doc.documentId !== id));
+      setDocuments((prevDocs) => prevDocs.filter((doc) => doc.documentId !== id));
       showSnackbar('Document deleted successfully', 'success');
     } catch (error) {
       console.error('Error deleting document:', error);
       showSnackbar('Error deleting document', 'error');
     }
-  };
+  }, [showSnackbar]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -44,7 +62,11 @@ function DocumentList({ onSelectDocument }) {
           <Paper key={doc.documentId} sx={{ mb: 2 }}>
             <ListItem button onClick={() => onSelectDocument(doc)}>
               <ListItemText primary={doc.documentType} secondary={new Date(doc.uploadDate).toLocaleString()} />
-              <Button variant="outlined" color="error" onClick={(e) => { e.stopPropagation(); handleDelete(doc.documentId); }}>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={(e) => { e.stopPropagation(); handleDelete(doc.documentId); }}
+              >
                 Delete
               </Button>
             </ListItem>
@@ -55,5 +77,9 @@ function DocumentList({ onSelectDocument }) {
     </Box>
   );
 }
+
+DocumentList.propTypes = {
+  onSelectDocument: PropTypes.func.isRequired,
+};
 
 export default DocumentList;

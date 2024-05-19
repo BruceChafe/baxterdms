@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { Typography, Box, List, ListItem, ListItemText, Divider, Link } from "@mui/material";
 
 function DocumentDetail({ document }) {
@@ -83,10 +84,14 @@ function DocumentDetail({ document }) {
           />
         </ListItem>
         <Divider />
-        {renderFields(document.analysisResult[0].fields)}
+        {document.analysisResult && document.analysisResult.length > 0 && renderFields(document.analysisResult[0].fields)}
       </List>
     </Box>
   );
 }
+
+DocumentDetail.propTypes = {
+  document: PropTypes.object,
+};
 
 export default DocumentDetail;

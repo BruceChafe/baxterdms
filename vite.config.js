@@ -25,6 +25,15 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8888',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
   buildEnd() {
     const srcPath = path.resolve(__dirname, '_redirects');
     const destPath = path.resolve(__dirname, 'dist', '_redirects');
@@ -34,5 +43,5 @@ export default defineConfig({
     } else {
       console.error('Error: _redirects file not found.');
     }
-  }
+  },
 });

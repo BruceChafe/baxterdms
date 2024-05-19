@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types';
 import { CircularProgress, Box, Typography, Paper, Alert, Container, Grid } from "@mui/material";
 import DocumentUploader from "./DocumentUploader";
 import DocumentList from "./DocumentList";
@@ -33,6 +34,10 @@ const DocumentDashboard = () => {
       </Box>
     </Box>
   );
+};
+
+DocumentDashboard.propTypes = {
+  selectedDocument: PropTypes.object
 };
 
 export default DocumentDashboard;

@@ -6,7 +6,6 @@ const path = require('path');
 const dotenv = require('dotenv');
 
 const { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } = require('./utilities.cjs');
-
 const { CosmosClient } = require('@azure/cosmos');
 const { DocumentAnalysisClient, AzureKeyCredential } = require('@azure/ai-form-recognizer');
 
@@ -24,6 +23,10 @@ const formRecognizerKey = process.env.VITE_AZURE_FORM_RECOGNIZER_KEY;
 const cosmosDatabaseId = process.env.VITE_COSMOS_DATABASE_ID;
 const cosmosContainerId = process.env.VITE_COSMOS_CONTAINER_ID;
 
+if (!accountName || !accountKey || !cosmosConnectionString || !formRecognizerEndpoint || !formRecognizerKey || !cosmosDatabaseId || !cosmosContainerId) {
+  throw new Error("Missing required environment variables");
+}
+
 const cosmosClient = new CosmosClient(cosmosConnectionString);
 const database = cosmosClient.database(cosmosDatabaseId);
 const container = database.container(cosmosContainerId);
@@ -39,6 +42,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     const sasUrl = await generateSasToken(containerName, req.file.originalname);
     res.status(200).send({ url: sasUrl });
   } catch (error) {
+    console.error('Error uploading file:', error);
     res.status(500).send({ error: error.message });
   }
 });
@@ -59,15 +63,19 @@ router.post('/analyze', async (req, res) => {
     await container.items.create(document);
     res.status(200).send(document);
   } catch (error) {
+    console.error('Error analyzing document:', error);
     res.status(500).send({ error: error.message });
   }
 });
 
 router.get('/documents', async (req, res) => {
   try {
+    console.log('Received request for documents');
     const { resources: documents } = await container.items.readAll().fetchAll();
-    res.status(200).send(documents);
+    console.log('Fetched documents:', documents);
+    res.status(200).json(documents);
   } catch (error) {
+    console.error('Error fetching documents:', error);
     res.status(500).send({ error: error.message });
   }
 });
@@ -89,6 +97,7 @@ router.delete('/documents/:id', async (req, res) => {
 
     res.status(200).send('Document and blob deleted successfully');
   } catch (error) {
+    console.error('Error deleting document:', error);
     res.status(500).send({ error: error.message });
   }
 });
