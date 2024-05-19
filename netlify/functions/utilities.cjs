@@ -5,12 +5,12 @@ const path = require('path');
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-const accountName = process.env.AZURE_ACCOUNT_NAME;
-const accountKey = process.env.AZURE_ACCOUNT_KEY;
-const cosmosEndpoint = process.env.COSMOS_ENDPOINT;
-const cosmosKey = process.env.COSMOS_KEY;
-const cosmosDatabaseId = process.env.COSMOS_DATABASE_ID;
-const cosmosContainerId = process.env.COSMOS_CONTAINER_ID;
+const accountName = process.env.AZURE_ACCOUNT_NAME || process.env.VITE_AZURE_ACCOUNT_NAME;
+const accountKey = process.env.AZURE_ACCOUNT_KEY || process.env.VITE_AZURE_ACCOUNT_KEY;
+const cosmosEndpoint = process.env.COSMOS_ENDPOINT || process.env.VITE_COSMOS_ENDPOINT;
+const cosmosKey = process.env.COSMOS_KEY || process.env.VITE_COSMOS_KEY;
+const cosmosDatabaseId = process.env.COSMOS_DATABASE_ID || process.env.VITE_COSMOS_DATABASE_ID;
+const cosmosContainerId = process.env.COSMOS_CONTAINER_ID || process.env.VITE_COSMOS_CONTAINER_ID;
 
 if (!accountName || !accountKey || !cosmosEndpoint || !cosmosKey || !cosmosDatabaseId || !cosmosContainerId) {
   throw new Error("Azure account or Cosmos DB details are not defined in the environment variables.");
