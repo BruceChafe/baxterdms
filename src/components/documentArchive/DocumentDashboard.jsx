@@ -40,8 +40,4 @@ const DocumentDashboard = () => {
   );
 };
 
-DocumentDashboard.propTypes = {
-  selectedDocument: PropTypes.object
-};
-
 export default DocumentDashboard;
