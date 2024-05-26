@@ -1,8 +1,7 @@
-import React from "react";
-import PropTypes from 'prop-types';
-import { Typography, Box, List, ListItem, ListItemText, Divider, Link } from "@mui/material";
+import React from 'react';
+import { Typography, Box, List, ListItem, ListItemText, Divider } from '@mui/material';
 
-function DocumentDetail({ document }) {
+const DocumentDetail = ({ document }) => {
   if (!document) {
     return (
       <Box sx={{ padding: 2 }}>
@@ -49,26 +48,20 @@ function DocumentDetail({ document }) {
       </Typography>
       <List>
         <ListItem>
-          <ListItemText
-            primary="Document Type"
-            secondary={document.documentType}
-          />
+          <ListItemText primary="Document Type" secondary={document.documentType} />
         </ListItem>
         <Divider />
         <ListItem>
-          <ListItemText
-            primary="Upload Date"
-            secondary={new Date(document.uploadDate).toLocaleString()}
-          />
+          <ListItemText primary="Upload Date" secondary={new Date(document.uploadDate).toLocaleString()} />
         </ListItem>
         <Divider />
         <ListItem>
           <ListItemText
             primary="Original URL"
             secondary={
-              <Link href={document.originalUrl} target="_blank" rel="noopener noreferrer">
+              <a href={document.originalUrl} target="_blank" rel="noopener noreferrer">
                 {document.originalUrl}
-              </Link>
+              </a>
             }
           />
         </ListItem>
@@ -77,21 +70,17 @@ function DocumentDetail({ document }) {
           <ListItemText
             primary="Archived URL"
             secondary={
-              <Link href={document.archivedUrl} target="_blank" rel="noopener noreferrer">
+              <a href={document.archivedUrl} target="_blank" rel="noopener noreferrer">
                 {document.archivedUrl}
-              </Link>
+              </a>
             }
           />
         </ListItem>
         <Divider />
-        {document.analysisResult && document.analysisResult.length > 0 && renderFields(document.analysisResult[0].fields)}
+        {renderFields(document.analysisResult[0].fields)}
       </List>
     </Box>
   );
-}
-
-DocumentDetail.propTypes = {
-  document: PropTypes.object,
 };
 
 export default DocumentDetail;

@@ -1,15 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+<<<<<<< HEAD
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+=======
+>>>>>>> back-up
 
 export default defineConfig({
   plugins: [react()],
   build: {
+<<<<<<< HEAD
     rollupOptions: {
       output: {
         manualChunks: undefined,
@@ -43,4 +47,8 @@ export default defineConfig({
       console.error('Error: _redirects file not found.');
     }
   },
+=======
+    outDir: 'dist'
+  }
+>>>>>>> back-up
 });

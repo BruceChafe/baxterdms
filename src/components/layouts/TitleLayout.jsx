@@ -1,12 +1,7 @@
 import React from "react";
-import { Box, Button, Divider } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 
-const TitleLayout = ({
-  title,
-  actionButtons = [],
-  isEditable,
-  onToggleEdit,
-}) => {
+const TitleLayout = ({ title, actionButtons = [], isEditable, onToggleEdit }) => {
   return (
     <Box>
       <Box
@@ -25,14 +20,9 @@ const TitleLayout = ({
             </Button>
           )}
           {actionButtons.map((button, index) => (
-            <Button
-              key={index}
-              onClick={button.onClick}
-              variant={button.variant || "outlined"}
-              sx={{ mr: 2 }}
-            >
-              {button.label}
-            </Button>
+            <Box key={index} sx={{ mr: 2 }}>
+              {button}
+            </Box>
           ))}
         </Box>
       </Box>

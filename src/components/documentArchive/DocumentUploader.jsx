@@ -4,7 +4,7 @@ import { Button, Typography, Box, Stack, LinearProgress, Input } from "@mui/mate
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
 import { useSnackbar } from '../../context/SnackbarContext';
 
-function DocumentUploader() {
+const DocumentUploader = ({ onUploadSuccess }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const { showSnackbar } = useSnackbar();
@@ -32,6 +32,7 @@ function DocumentUploader() {
 
         showSnackbar(`File uploaded successfully. URL: ${uploadResponse.data.url}`, "success");
         await analyzeDocument(uploadResponse.data.url);
+        onUploadSuccess(); // Refresh document list on successful upload and analysis
       } catch (error) {
         console.error("Error uploading file:", error);
         if (error.response) {

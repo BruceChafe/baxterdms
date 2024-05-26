@@ -5,20 +5,20 @@ import SidebarComponent from "./SidebarComponent";
 const SidebarItems = {
   home: {
     navigationLinks: [
-      { text: "Contacts", to: "/contacts"},
-      { text: 'Leads', to: "/leads"},
-      { text: "Account Overview", to: "/account/overview"},
-      { text: "Configuration", to: "/configuration"},
-      { text: "Inventory", to: "/inventory"},
-      { text: "Document Archive", to: "/documentarchive"},
+      { text: "Contacts", to: "/contacts" },
+      { text: 'Leads', to: "/leads" },
+      { text: "Account Overview", to: "/account/overview" },
+      { text: "Configuration", to: "/configuration" },
+      { text: "Inventory", to: "/inventory" },
+      { text: "Document Archive", to: "/documentarchive" },
     ],
   },
   account: {
     pageName: "Account",
     navigationLinks: [
       { text: "Overview", to: "/account/overview", color: "white" },
-      // { text: "Personal Info", to: "/account/userprofile"},
-      // { text: "Theme", to: "/account/theme"},
+      // { text: "Personal Info", to: "/account/userprofile" },
+      // { text: "Theme", to: "/account/theme" },
       // { text: "Update Password", to: "/account/updatepassword" },
     ],
   },
@@ -39,7 +39,7 @@ const SidebarItems = {
   configuration: {
     pageName: "Configuration",
     navigationLinks: [
-      { text: "Configuration", to: "/configuration"},
+      { text: "Configuration", to: "/configuration" },
     ],
   },
   inventory: {
@@ -53,7 +53,7 @@ const SidebarItems = {
     navigationLinks: [
       { text: "Document Archive", to: "/documentarchive" },
     ],
-  }
+  },
 };
 
 const SidebarSwitcher = ({ collapsed, setCollapsed }) => {
@@ -68,6 +68,5 @@ const SidebarSwitcher = ({ collapsed, setCollapsed }) => {
     />
   );
 };
-
 
 export default SidebarSwitcher;
