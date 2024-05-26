@@ -1,3 +1,5 @@
+// App.js
+
 import React, { useState } from "react";
 import {
   BrowserRouter as Router,
@@ -84,10 +86,7 @@ const AppRoutes = () => {
         <Box sx={{ width: "100%", overflow: "auto" }}>
           <Routes>
             <Route path="/home" element={<WeeklyCalendar />} />
-            <Route
-              path="/contacts/:contactId/*"
-              element={<Navigate to={`/contacts/:contactId`} target="_blank" />}
-            />
+            <Route path="/contacts/:contactId" element={<Contact />} />
             <Route path="/contacts/*" element={<ContactsDashboard />} />
             <Route path="/contacts/newcontact" element={<NewContact />} />
             <Route path="/account/overview" element={<AccountOverview />} />
@@ -99,28 +98,24 @@ const AppRoutes = () => {
             />
             <Route path="/leads" element={<LeadsDashboard />} />
             <Route path="/leads/newlead" element={<NewLeadComponent />} />
-            <Route path="leads/newlead/:contactId" element={<NewLeadForm />} />
+            <Route path="/leads/newlead/:contactId" element={<NewLeadForm />} />
             <Route path="/configuration" element={<ConfigLanding />} />
             <Route path="/configuration/leads" element={<LeadsConfig />} />
-            <Route
-              path="/configuration/leadtasks"
-              element={<LeadTaskConfig />}
-            />
-            <Route path="/contacts/:contactId" element={<Contact />} />
+            <Route path="/configuration/leadtasks" element={<LeadTaskConfig />} />
             <Route path="/leads/:leadNumber" element={<Lead />} />
             <Route path="/inventory" element={<InventoryDashboard />} />
             <Route path="/inventory/:inventoryId" element={<Inventory />} />
-            <Route path="*" element={<Navigate to="/home" />} />
             <Route path="/documentarchive" element={<DocumentDashboard />} />
+            <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
         </Box>
       </Grid>
     </Grid>
   ) : (
-<Routes>
-  <Route path="/signin" element={<SignIn />} />
-  <Route path="*" element={<Navigate to="/signin" />} />
-</Routes>
+    <Routes>
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="*" element={<Navigate to="/signin" />} />
+    </Routes>
   );
 };
 

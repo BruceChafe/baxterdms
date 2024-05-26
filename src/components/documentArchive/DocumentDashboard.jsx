@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CircularProgress, Box, Typography, Paper, Alert, Container, Grid } from "@mui/material";
+import { Box, Typography, Paper, Grid } from "@mui/material";
 import DocumentUploader from "./DocumentUploader";
 import DocumentList from "./DocumentList";
 import DocumentDetail from "./DocumentDetail";
@@ -7,6 +7,11 @@ import TitleLayout from "../layouts/TitleLayout";
 
 const DocumentDashboard = () => {
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refreshDocuments = () => {
+    setRefreshKey((prevKey) => prevKey + 1);
+  };
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
@@ -18,10 +23,10 @@ const DocumentDashboard = () => {
         <Grid container spacing={5}>
           <Grid item xs={12} md={4}>
             <Paper sx={{ border: "solid", borderColor: "divider", mb: 2 }}>
-              <DocumentUploader />
+              <DocumentUploader onUploadSuccess={refreshDocuments} />
             </Paper>
             <Paper sx={{ border: "solid", borderColor: "divider" }}>
-              <DocumentList onSelectDocument={setSelectedDocument} />
+              <DocumentList key={refreshKey} onSelectDocument={setSelectedDocument} />
             </Paper>
           </Grid>
           <Grid item xs={12} md={8}>

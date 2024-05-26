@@ -8,7 +8,6 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
   Typography,
   Divider,
@@ -51,33 +50,32 @@ const SidebarComponent = ({ navigationLinks, collapsed, setCollapsed }) => {
           },
         }}
       >
-<Box
-  sx={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    padding: 2,
-    flexGrow: 0,
-  }}
->
-  {collapsed ? null : (
-    <Typography
-      variant="h6"
-      component={Link}
-      to="/home"
-      sx={{ textDecoration: "none", color: "inherit" }}
-    >
-      baxter.
-    </Typography>
-  )}
-</Box>
-
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            padding: 2,
+            flexGrow: 0,
+          }}
+        >
+          {collapsed ? null : (
+            <Typography
+              variant="h6"
+              component={Link}
+              to="/home"
+              sx={{ textDecoration: "none", color: "inherit" }}
+            >
+              baxter.
+            </Typography>
+          )}
+        </Box>
         <Divider />
         <List>
           {navigationLinks.map((link) => (
             <ListItem key={link.to} disablePadding>
               <ListItemButton component={Link} to={link.to}>
-                {/* <ListItemIcon> */}
+                {/* <ListItemIcon>
                   {/* Optional: Display an icon here if each link has associated icons */}
                 {/* </ListItemIcon> */}
                 <ListItemText primary={collapsed ? "" : link.text} />

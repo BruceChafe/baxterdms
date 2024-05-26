@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { List, ListItem, ListItemText, Button, Typography, Box } from '@mui/material';
 
-function DocumentList({ onSelectDocument }) {
+const DocumentList = ({ onSelectDocument }) => {
   const [documents, setDocuments] = useState([]);
 
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
         const response = await axios.get('http://localhost:3001/documents');
-        console.log('Fetched documents:', response.data); // Add logging here
+        console.log('Fetched documents:', response.data);
         setDocuments(response.data);
       } catch (error) {
         console.error('Error fetching documents:', error);
@@ -23,7 +23,7 @@ function DocumentList({ onSelectDocument }) {
     console.log(`Attempting to delete document with id: ${id}`);
     try {
       await axios.delete(`http://localhost:3001/documents/${id}`);
-      setDocuments(documents.filter((doc) => doc.id !== id));
+      setDocuments(documents.filter((doc) => doc.documentId !== id));
     } catch (error) {
       console.error('Error deleting document:', error);
     }
@@ -31,19 +31,26 @@ function DocumentList({ onSelectDocument }) {
 
   return (
     <Box sx={{ padding: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Archived Documents
-        </Typography>
-        <List>
-          {documents.map((doc) => (
-            <ListItem button key={doc.id} onClick={() => onSelectDocument(doc)}>
-              <ListItemText primary={doc.documentType} secondary={new Date(doc.uploadDate).toLocaleString()} />
-              <Button variant="outlined" color="error" onClick={() => handleDelete(doc.id)}>
-                Delete
-              </Button>
-            </ListItem>
-          ))}
-        </List>
+      <Typography variant="h6" gutterBottom>
+        Archived Documents
+      </Typography>
+      <List>
+        {documents.map((doc) => (
+          <ListItem button key={doc.documentId} onClick={() => onSelectDocument(doc)}>
+            <ListItemText primary={doc.documentType} secondary={new Date(doc.uploadDate).toLocaleString()} />
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(doc.documentId);
+              }}
+            >
+              Delete
+            </Button>
+          </ListItem>
+        ))}
+      </List>
     </Box>
   );
 }

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
 
-function DocumentUploader() {
+const DocumentUploader = ({ onUploadSuccess }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -44,6 +44,7 @@ function DocumentUploader() {
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
         await analyzeDocument(uploadResponse.data.url);
+        onUploadSuccess(); // Refresh document list on successful upload and analysis
       } catch (error) {
         console.error("Error uploading file:", error);
         if (error.response) {

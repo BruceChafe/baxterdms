@@ -1,43 +1,23 @@
-import dotenv from 'dotenv';
-import path from 'path';
 import express from 'express';
+import serverless from 'serverless-http';
 import multer from 'multer';
 import cors from 'cors';
-import { uploadFileToBlobStorage, generateSasToken } from './src/components/documentArchive/utilies/useBlobStorageClient.js';
+import { uploadFileToBlobStorage, generateSasToken, deleteBlob, deleteDocument } from '../src/components/documentArchive/utilities/useBlobStorageClient.js';
 import { CosmosClient } from '@azure/cosmos';
 import { DocumentAnalysisClient, AzureKeyCredential } from '@azure/ai-form-recognizer';
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-
-const accountName = process.env.AZURE_ACCOUNT_NAME;
-const accountKey = process.env.AZURE_ACCOUNT_KEY;
-const cosmosConnectionString = process.env.COSMOS_CONNECTION_STRING;
-const formRecognizerEndpoint = process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT;
-const formRecognizerKey = process.env.VITE_AZURE_FORM_RECOGNIZER_KEY;
-
-if (!accountName || !accountKey || !cosmosConnectionString || !formRecognizerEndpoint || !formRecognizerKey) {
-    throw new Error("Some required environment variables are not defined.");
-}
-
 const app = express();
-const port = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req, res) => {
-    res.send('Server is running');
-});
-
 const upload = multer();
 
-// Initialize Cosmos DB client
-const cosmosClient = new CosmosClient(cosmosConnectionString);
-const database = cosmosClient.database('documentArchive');
-const container = database.container('documents');
+const cosmosClient = new CosmosClient(process.env.VITE_COSMOS_CONNECTION_STRING);
+const database = cosmosClient.database(process.env.VITE_COSMOS_DATABASE_ID);
+const container = database.container(process.env.VITE_COSMOS_CONTAINER_ID);
 
-// Initialize Form Recognizer client
-const client = new DocumentAnalysisClient(formRecognizerEndpoint, new AzureKeyCredential(formRecognizerKey));
+const client = new DocumentAnalysisClient(process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT, new AzureKeyCredential(process.env.VITE_AZURE_FORM_RECOGNIZER_KEY));
 
 const analyzeDocument = async (sasUrl) => {
     const poller = await client.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sasUrl);
@@ -95,31 +75,37 @@ app.get('/documents', async (req, res) => {
 app.delete('/documents/:id', async (req, res) => {
     const documentId = req.params.id;
     try {
-        const { resource: document } = await container.item(documentId, documentId).read();
-        if (!document) {
-            console.error(`Document with id ${documentId} not found`);
-            return res.status(404).send({ error: 'Document not found' });
+        console.log(`Attempting to delete document with ID: ${documentId}`);
+        
+        const { resources: documents } = await container.items.query({
+            query: "SELECT * FROM c WHERE c.documentId = @documentId",
+            parameters: [
+                { name: "@documentId", value: documentId }
+            ]
+        }).fetchAll();
+        
+        if (documents.length === 0) {
+            console.log(`Document with ID: ${documentId} not found.`);
+            return res.status(404).send('Document not found');
         }
+
+        const document = documents[0];
+        const blobUrl = document.originalUrl;
+        const partitionKey = document.documentId;
+        console.log(`Retrieved Blob URL: ${blobUrl}`);
+        console.log(`Partition Key: ${partitionKey}`);
+
+        console.log(`Deleting document with URL: ${container.url}/docs/${partitionKey}`);
         
-        console.log(`Document found: ${JSON.stringify(document)}`);
-        
-        const blobUrl = new URL(document.archivedUrl);
-        const blobName = blobUrl.pathname.split('/').pop();
-        const containerName = blobUrl.pathname.split('/')[1];
+        await deleteDocument(document.id, partitionKey);
+        await deleteBlob(blobUrl);
 
-        const containerClient = blobServiceClient.getContainerClient(containerName);
-        const blobClient = containerClient.getBlobClient(blobName);
-
-        await blobClient.delete();
-        await container.item(documentId, documentId).delete();
-
-        res.status(200).send({ message: 'Document deleted successfully' });
+        res.status(200).send('Document and blob deleted successfully');
     } catch (error) {
-        console.error('Error deleting document:', error.message);
-        res.status(500).send({ error: error.message });
+        console.error('Error deleting document and blob:', error.message);
+        res.status(500).send('Error deleting document and blob');
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-});
+module.exports = app;
+module.exports.handler = serverless(app);
