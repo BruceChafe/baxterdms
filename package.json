@@ -4,8 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev-vite": "vite",
-    "dev-server": "npx netlify dev",
     "dev": "concurrently \"npm run dev-vite\" \"npm run dev-server\"",
     "dev-vite": "vite",
     "dev-server": "node api/index.js",

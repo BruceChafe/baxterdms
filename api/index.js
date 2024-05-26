@@ -13,10 +13,12 @@ app.use(cors());
 
 const upload = multer();
 
+// Initialize Cosmos DB client
 const cosmosClient = new CosmosClient(process.env.VITE_COSMOS_CONNECTION_STRING);
 const database = cosmosClient.database(process.env.VITE_COSMOS_DATABASE_ID);
 const container = database.container(process.env.VITE_COSMOS_CONTAINER_ID);
 
+// Initialize Form Recognizer client
 const client = new DocumentAnalysisClient(process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT, new AzureKeyCredential(process.env.VITE_AZURE_FORM_RECOGNIZER_KEY));
 
 const analyzeDocument = async (sasUrl) => {
@@ -107,5 +109,5 @@ app.delete('/documents/:id', async (req, res) => {
     }
 });
 
-module.exports = app;
-module.exports.handler = serverless(app);
+export default app;
+export const handler = serverless(app);
