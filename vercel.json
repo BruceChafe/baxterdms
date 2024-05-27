@@ -1,10 +1,16 @@
 {
   "version": 2,
+  "functions": {
+    "api/*": {
+      "runtime": "nodejs16.x",
+      "maxDuration": 90
+    }
+  },
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/index.js" },
+    { "src": "/(.*)", "dest": "/dist/$1" }
+  ],
   "builds": [
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    },
     {
       "src": "package.json",
       "use": "@vercel/static-build",
@@ -12,17 +18,5 @@
         "distDir": "dist"
       }
     }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/index.js" },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
-    }
-  ],
-  "functions": {
-    "api/*": {
-      "maxDuration": 60
-    }
-  }
+  ]
 }
