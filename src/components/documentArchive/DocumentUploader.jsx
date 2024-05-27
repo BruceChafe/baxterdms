@@ -13,39 +13,40 @@ const DocumentUploader = ({ onUploadSuccess }) => {
     setFile(event.target.files[0]);
   };
 
-  const handleUpload = async () => {
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      setUploading(true);
+const handleUpload = async () => {
+  if (file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    setUploading(true);
 
-      try {
-        const uploadResponse = await axios.post(
-          "/upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        showSnackbar(`File uploaded successfully. URL: ${uploadResponse.data.url}`, "success");
-        await analyzeDocument(uploadResponse.data.url);
-        onUploadSuccess(); // Refresh document list on successful upload and analysis
-      } catch (error) {
-        console.error("Error uploading file:", error);
-        if (error.response) {
-          console.error("Response data:", error.response.data);
-          showSnackbar(`Error uploading file: ${error.response.data.error || error.response.data.message}`, "error");
-        } else {
-          showSnackbar(`Error uploading file: ${error.message}`, "error");
+    try {
+      const uploadResponse = await axios.post(
+        "/api/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      } finally {
-        setUploading(false);
+      );
+
+      showSnackbar(`File uploaded successfully. URL: ${uploadResponse.data.url}`, "success");
+      await analyzeDocument(uploadResponse.data.url);
+      onUploadSuccess(); // Refresh document list on successful upload and analysis
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+        showSnackbar(`Error uploading file: ${error.response.data.error || error.response.data.message}`, "error");
+      } else {
+        showSnackbar(`Error uploading file: ${error.message}`, "error");
       }
+    } finally {
+      setUploading(false);
     }
-  };
+  }
+};
+
 
   const analyzeDocument = async (sasUrl) => {
     try {
