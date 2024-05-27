@@ -26,14 +26,12 @@ const container = database.container(process.env.VITE_COSMOS_CONTAINER_ID);
 const client = new DocumentAnalysisClient(process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT, new AzureKeyCredential(process.env.VITE_AZURE_FORM_RECOGNIZER_KEY));
 
 const analyzeDocument = async (sasUrl) => {
-    console.log(`Starting analysis for URL: ${sasUrl}`);
     const poller = await client.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sasUrl);
-    const result = await poller.pollUntilDone();
-    console.log(`Analysis complete for URL: ${sasUrl}`);
-    return result.documents;
+    const { documents } = await poller.pollUntilDone();
+    return documents;
 };
 
-app.post('/upload', upload.single('file'), async (req, res) => {
+app.post('/api/upload', upload.single('file'), async (req, res) => {
     try {
         if (!req.file) throw new Error('No file uploaded');
         const containerName = 'data-archive-skeezer-motors';
@@ -46,7 +44,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
 });
 
-app.post('/analyze', async (req, res) => {
+app.post('/api/analyze', async (req, res) => {
     try {
         const { url } = req.body;
         if (!url) {
@@ -70,7 +68,7 @@ app.post('/analyze', async (req, res) => {
     }
 });
 
-app.get('/documents', async (req, res) => {
+app.get('/api/documents', async (req, res) => {
     try {
         const { resources: documents } = await container.items.readAll().fetchAll();
         res.status(200).send(documents);
@@ -80,7 +78,7 @@ app.get('/documents', async (req, res) => {
     }
 });
 
-app.delete('/documents/:id', async (req, res) => {
+app.delete('/api/documents/:id', async (req, res) => {
     const documentId = req.params.id;
     try {
         console.log(`Attempting to delete document with ID: ${documentId}`);
