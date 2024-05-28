@@ -21,7 +21,7 @@ const DocumentUploader = ({ onUploadSuccess }) => {
 
       try {
         const uploadResponse = await axiosInstance.post(
-          "/upload",
+          "/api/upload",
           formData,
           {
             headers: {
@@ -48,18 +48,13 @@ const DocumentUploader = ({ onUploadSuccess }) => {
   };
 
   const analyzeDocument = async (sasUrl) => {
+    console.log(`Starting analysis for URL: ${sasUrl}`);
     try {
-      const response = await axiosInstance.post("/analyze", { url: sasUrl });
-      console.log("Analysis success:", response.data);
-      showSnackbar("Document analysis completed successfully.", "success");
+      const response = await axiosInstance.post("/api/analyze", { url: sasUrl });
+      console.log(`Analysis complete: ${JSON.stringify(response.data)}`);
     } catch (error) {
-      console.error("Analysis failed:", error);
-      if (error.response) {
-        console.error("Response data:", error.response.data);
-        showSnackbar(`Error analyzing document: ${error.response.data.error || error.response.data.message}`, "error");
-      } else {
-        showSnackbar(`Error analyzing document: ${error.message}`, "error");
-      }
+      console.error('Error during document analysis:', error.message);
+      throw error;
     }
   };
 

@@ -36,14 +36,22 @@ const database = cosmosClient.database(process.env.VITE_COSMOS_DATABASE_ID);
 const container = database.container(process.env.VITE_COSMOS_CONTAINER_ID);
 
 // Initialize Form Recognizer client
-const client = new DocumentAnalysisClient(process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT, new AzureKeyCredential(process.env.VITE_AZURE_FORM_RECOGNIZER_KEY));
+const client = new DocumentAnalysisClient(
+  process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT,
+  new AzureKeyCredential(process.env.VITE_AZURE_FORM_RECOGNIZER_KEY)
+);
 
 const analyzeDocument = async (sasUrl) => {
     console.log(`Starting analysis for URL: ${sasUrl}`);
-    const poller = await client.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sasUrl);
-    const result = await poller.pollUntilDone();
-    console.log(`Analysis complete for URL: ${sasUrl}`);
-    return result.documents;
+    try {
+        const poller = await client.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sasUrl);
+        const result = await poller.pollUntilDone();
+        console.log(`Analysis complete for URL: ${sasUrl}`);
+        return result.documents;
+    } catch (error) {
+        console.error('Error during document analysis:', error.message);
+        throw error;
+    }
 };
 
 app.post('/api/upload', upload.single('file'), async (req, res) => {
