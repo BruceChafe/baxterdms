@@ -33,7 +33,7 @@ const analyzeDocument = async (sasUrl) => {
     return result.documents;
 };
 
-app.post('/upload', upload.single('file'), async (req, res) => {
+app.post('/api/upload', upload.single('file'), async (req, res) => {
     try {
         if (!req.file) throw new Error('No file uploaded');
         const containerName = 'data-archive-skeezer-motors';
@@ -46,7 +46,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
 });
 
-app.post('/analyze', async (req, res) => {
+app.post('/api/analyze', async (req, res) => {
     try {
         const { url } = req.body;
         if (!url) {
@@ -70,7 +70,7 @@ app.post('/analyze', async (req, res) => {
     }
 });
 
-app.get('/documents', async (req, res) => {
+app.get('/api/documents', async (req, res) => {
     try {
         const { resources: documents } = await container.items.readAll().fetchAll();
         res.status(200).send(documents);
@@ -80,7 +80,7 @@ app.get('/documents', async (req, res) => {
     }
 });
 
-app.delete('/documents/:id', async (req, res) => {
+app.delete('/api/documents/:id', async (req, res) => {
     const documentId = req.params.id;
     try {
         console.log(`Attempting to delete document with ID: ${documentId}`);
