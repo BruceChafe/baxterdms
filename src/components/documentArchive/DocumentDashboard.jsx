@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Paper, Grid } from "@mui/material";
 import DocumentUploader from "./DocumentUploader";
 import DocumentList from "./DocumentList";
 import DocumentDetail from "./DocumentDetail";
 import TitleLayout from "../layouts/TitleLayout";
+import axiosInstance from "../../axios";
 
 const DocumentDashboard = () => {
   const [selectedDocument, setSelectedDocument] = useState(null);
@@ -12,6 +13,19 @@ const DocumentDashboard = () => {
   const refreshDocuments = () => {
     setRefreshKey((prevKey) => prevKey + 1);
   };
+
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      try {
+        const response = await axiosInstance.get('/documents');
+        console.log('Fetched documents:', response.data);
+      } catch (error) {
+        console.error('Error fetching documents:', error);
+      }
+    };
+
+    fetchDocuments();
+  }, [refreshKey]);
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
