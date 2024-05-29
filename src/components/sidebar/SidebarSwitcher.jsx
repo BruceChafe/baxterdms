@@ -11,6 +11,8 @@ const SidebarItems = {
       { text: "Configuration", to: "/configuration" },
       { text: "Inventory", to: "/inventory" },
       { text: "Document Archive", to: "/documentarchive" },
+      { text: "License Scanner", to: "/licensescanner" },
+
     ],
   },
   account: {
