@@ -104,40 +104,49 @@ app.get('/api/documents', async (req, res) => {
 app.delete('/api/documents/:id', async (req, res) => {
     const documentId = req.params.id;
     try {
-        console.log(`Attempting to delete document with ID: ${documentId}`);
-        
-        const { resources: documents } = await container.items.query({
-            query: "SELECT * FROM c WHERE c.documentId = @documentId",
-            parameters: [
-                { name: "@documentId", value: documentId }
-            ]
-        }).fetchAll();
-        
-        if (documents.length === 0) {
-            console.log(`Document with ID: ${documentId} not found.`);
-            return res.status(404).send('Document not found');
-        }
-
-        const document = documents[0];
-        const blobUrl = document.originalUrl;
-        const partitionKey = document.documentId;
-        console.log(`Retrieved Blob URL: ${blobUrl}`);
-        console.log(`Partition Key: ${partitionKey}`);
-
-        console.log(`Deleting document with URL: ${container.url}/docs/${partitionKey}`);
-        
-        await deleteDocument(document.id, partitionKey);
-        await deleteBlob(blobUrl);
-
-        res.status(200).send('Document and blob deleted successfully');
+      console.log(`Received request to delete document with ID: ${documentId}`);
+  
+      // Fetch the document from Cosmos DB by its documentId
+      const querySpec = {
+        query: "SELECT * FROM c WHERE c.documentId = @documentId",
+        parameters: [
+          { name: "@documentId", value: documentId }
+        ]
+      };
+  
+      console.log(`Query spec: ${JSON.stringify(querySpec)}`);
+  
+      const { resources: documents } = await container.items.query(querySpec).fetchAll();
+  
+      console.log(`Query result: ${JSON.stringify(documents)}`);
+  
+      if (documents.length === 0) {
+        console.log(`Document with ID: ${documentId} not found.`);
+        return res.status(404).send('Document not found');
+      }
+  
+      const document = documents[0];
+      const blobUrl = document.originalUrl;
+      console.log(`Retrieved Blob URL: ${blobUrl}`);
+      console.log(`Document to delete: ${JSON.stringify(document)}`);
+  
+      // Delete the document from Cosmos DB
+      const deleteDocResponse = await deleteDocument(document.documentId);
+      console.log(`Document delete response: ${JSON.stringify(deleteDocResponse)}`);
+  
+      // Delete the blob from Azure Blob Storage
+      const deleteBlobResponse = await deleteBlob(blobUrl);
+      console.log(`Blob delete response: ${JSON.stringify(deleteBlobResponse)}`);
+  
+      res.status(200).send('Document and blob deleted successfully');
     } catch (error) {
-        console.error('Error deleting document and blob:', error.message);
-        res.status(500).send('Error deleting document and blob');
+      console.error('Error deleting document and blob:', error.message);
+      res.status(500).send('Error deleting document and blob');
     }
-});
-
-// Only run the server if not in a serverless environment
-if (process.env.NODE_ENV !== 'serverless') {
+  });
+  
+  
+  if (process.env.NODE_ENV !== 'serverless') {
   const port = process.env.PORT || 3001;
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import axiosInstance from "../../axios";
 import { Button, Typography, Box, Stack, LinearProgress, Input } from "@mui/material";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
@@ -13,7 +13,7 @@ const DocumentUploader = ({ onUploadSuccess }) => {
     setFile(event.target.files[0]);
   };
 
-  const handleUpload = async () => {
+  const handleUpload = useCallback(async () => {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
@@ -45,9 +45,9 @@ const DocumentUploader = ({ onUploadSuccess }) => {
         setUploading(false);
       }
     }
-  };
+  }, [file, onUploadSuccess, showSnackbar]);
 
-  const analyzeDocument = async (sasUrl) => {
+  const analyzeDocument = useCallback(async (sasUrl) => {
     console.log(`Starting analysis for URL: ${sasUrl}`);
     try {
       const response = await axiosInstance.post("/analyze", { url: sasUrl });
@@ -56,7 +56,7 @@ const DocumentUploader = ({ onUploadSuccess }) => {
       console.error('Error during document analysis:', error.message);
       throw error;
     }
-  };
+  }, []);
 
   return (
     <Box sx={{ padding: 2 }}>

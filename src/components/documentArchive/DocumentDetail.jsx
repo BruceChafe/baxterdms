@@ -1,7 +1,35 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Typography, Box, List, ListItem, ListItemText, Divider } from '@mui/material';
 
+const formatField = (field) => {
+  switch (field.kind) {
+    case "currency":
+      return `${field.value.currencySymbol}${field.value.amount} (${field.value.currencyCode})`;
+    case "date":
+      return new Date(field.value).toLocaleDateString();
+    case "address":
+      return `${field.value.streetAddress}, ${field.value.city}, ${field.value.state}, ${field.value.postalCode}`;
+    default:
+      return field.value;
+  }
+};
+
+const renderFields = (fields) => {
+  return Object.entries(fields).map(([key, field]) => (
+    <React.Fragment key={key}>
+      <ListItem>
+        <ListItemText primary={key} secondary={formatField(field)} />
+      </ListItem>
+      <Divider />
+    </React.Fragment>
+  ));
+};
+
 const DocumentDetail = ({ document }) => {
+  const fieldElements = useMemo(() => {
+    return document ? renderFields(document.analysisResult[0].fields) : null;
+  }, [document]);
+
   if (!document) {
     return (
       <Box sx={{ padding: 2 }}>
@@ -11,35 +39,6 @@ const DocumentDetail = ({ document }) => {
       </Box>
     );
   }
-
-  const renderFields = (fields) => {
-    return Object.entries(fields).map(([key, field]) => {
-      let value;
-      switch (field.kind) {
-        case "currency":
-          value = `${field.value.currencySymbol}${field.value.amount} (${field.value.currencyCode})`;
-          break;
-        case "date":
-          value = new Date(field.value).toLocaleDateString();
-          break;
-        case "address":
-          value = `${field.value.streetAddress}, ${field.value.city}, ${field.value.state}, ${field.value.postalCode}`;
-          break;
-        default:
-          value = field.value;
-          break;
-      }
-
-      return (
-        <React.Fragment key={key}>
-          <ListItem>
-            <ListItemText primary={key} secondary={value} />
-          </ListItem>
-          <Divider />
-        </React.Fragment>
-      );
-    });
-  };
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -77,7 +76,7 @@ const DocumentDetail = ({ document }) => {
           />
         </ListItem>
         <Divider />
-        {renderFields(document.analysisResult[0].fields)}
+        {fieldElements}
       </List>
     </Box>
   );

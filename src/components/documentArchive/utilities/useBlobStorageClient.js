@@ -104,22 +104,41 @@ async function deleteBlob(blobUrl) {
   }
 }
 
-async function deleteDocument(documentId, partitionKey) {
+async function deleteDocument(documentId) {
   try {
     const database = cosmosClient.database(cosmosDatabaseId);
     const container = database.container(cosmosContainerId);
 
-    console.log(`Attempting to delete document with ID: ${documentId}, Partition Key: ${partitionKey}`);
+    console.log(`Attempting to delete document with documentId: ${documentId}`);
 
-    // Check if the document exists before attempting to delete
-    const { resource: existingDocument } = await container.item(documentId, partitionKey).read();
-    if (existingDocument) {
-      console.log(`Document found: ${JSON.stringify(existingDocument)}`);
-      await container.item(documentId, partitionKey).delete();
-      console.log('Document deleted successfully');
-    } else {
-      console.log('Document already deleted or not found.');
+    // Query the document from Cosmos DB by documentId
+    const querySpec = {
+      query: "SELECT * FROM c WHERE c.documentId = @documentId",
+      parameters: [
+        { name: "@documentId", value: documentId }
+      ]
+    };
+
+    console.log(`Query spec: ${JSON.stringify(querySpec)}`);
+
+    const { resources: documents } = await container.items.query(querySpec).fetchAll();
+
+    console.log(`Query result: ${JSON.stringify(documents)}`);
+
+    if (documents.length === 0) {
+      console.log(`Document with documentId: ${documentId} not found.`);
+      return null;
     }
+
+    const document = documents[0];
+    console.log(`Document to delete: ${JSON.stringify(document)}`);
+
+    // Delete the document from Cosmos DB using documentId as the partition key
+    const deleteResponse = await container.item(document.id, document.documentId).delete();
+    console.log(`Delete response: ${JSON.stringify(deleteResponse)}`);
+    console.log('Document deleted successfully');
+
+    return document;
   } catch (error) {
     if (error.code === 404) {
       console.log('Document not found or already deleted.');

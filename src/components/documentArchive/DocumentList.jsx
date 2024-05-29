@@ -1,49 +1,111 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../axios';
-import { List, ListItem, ListItemText, Button, Typography, Box } from '@mui/material';
+import React, { useState, useEffect, useCallback } from "react";
+import axiosInstance from "../../axios";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  Typography,
+  Box,
+  CircularProgress,
+  Alert,
+  Divider,
+} from "@mui/material";
+import { useSnackbar } from '../../context/SnackbarContext';
 
-function DocumentList({ onSelectDocument }) {
+const DocumentList = ({ onSelectDocument }) => {
   const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(null);
+  const { showSnackbar } = useSnackbar();
+
+  const fetchDocuments = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get("/documents");
+      console.log("Fetched documents:", response.data);
+      setDocuments(response.data);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      showSnackbar(`Error fetching documents: ${error.message}`, "error");
+    } finally {
+      setLoading(false);
+    }
+  }, [showSnackbar]);
 
   useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        const response = await axiosInstance.get('/documents');
-        console.log('Fetched documents:', response.data); // Add logging here
-        setDocuments(response.data);
-      } catch (error) {
-        console.error('Error fetching documents:', error);
-      }
-    };
-
     fetchDocuments();
-  }, []);
+  }, [fetchDocuments]);
 
-  const handleDelete = async (id) => {
-    console.log(`Attempting to delete document with id: ${id}`);
+  const handleDelete = useCallback(async (document, event) => {
+    event.stopPropagation();
+    const { documentId, originalUrl, archivedUrl } = document;
+    console.log(`Attempting to delete document with documentId: ${documentId}`);
+    setDeleting(documentId);
+
     try {
-      await axiosInstance.delete(`/documents/${id}`);
-      setDocuments(documents.filter((doc) => doc.id !== id));
+      const deleteResponse = await axiosInstance.delete(`/documents/${documentId}`, {
+        data: { originalUrl, archivedUrl }
+      });
+
+      console.log(`Delete response: ${JSON.stringify(deleteResponse.data)}`);
+
+      setDocuments(documents.filter((doc) => doc.documentId !== documentId));
+      showSnackbar(`Document deleted successfully.`, "success");
     } catch (error) {
       console.error('Error deleting document:', error);
+      showSnackbar(`Error deleting document: ${error.message}`, "error");
+    } finally {
+      setDeleting(null);
     }
-  };
+  }, [documents, showSnackbar]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ padding: 2 }}>
       <Typography variant="h6" gutterBottom>
         Archived Documents
       </Typography>
-      <List>
-        {documents.map((doc) => (
-          <ListItem button key={doc.id} onClick={() => onSelectDocument(doc)}>
-            <ListItemText primary={doc.documentType} secondary={new Date(doc.uploadDate).toLocaleString()} />
-            <Button variant="outlined" color="error" onClick={() => handleDelete(doc.id)}>
-              Delete
-            </Button>
-          </ListItem>
-        ))}
-      </List>
+      {documents.length === 0 ? (
+        <Alert severity="info">No documents available.</Alert>
+      ) : (
+        <List>
+          {documents.map((doc) => (
+            <React.Fragment key={doc.documentId}>
+              <ListItem button onClick={() => onSelectDocument(doc)}>
+                <ListItemText
+                  primary={doc.documentType}
+                  secondary={new Date(doc.uploadDate).toLocaleString()}
+                />
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={(event) => handleDelete(doc, event)}
+                  disabled={deleting === doc.documentId}
+                  sx={{ ml: 2 }}
+                >
+                  {deleting === doc.documentId ? <CircularProgress size={24} /> : "Delete"}
+                </Button>
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+          ))}
+        </List>
+      )}
     </Box>
   );
 }
