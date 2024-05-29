@@ -8,6 +8,7 @@ import {
   Paper,
   Alert,
   Container,
+  Button
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchContacts } from "../../../hooks/FetchContacts";
@@ -75,20 +76,20 @@ const ContactsDashboard = () => {
     navigate(`/contacts/newcontact`);
   };
 
+  const actionButtons = [
+    <Button key="import" onClick={handleImportClick} variant="outlined">
+      Import
+    </Button>,
+    <Button key="newContact" onClick={handleNewContactClick} variant="contained">
+      New Contact
+    </Button>
+  ];
+
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
         title={<Typography variant="h4">Contacts</Typography>}
-        actionButtons={[
-          {
-            label: "Import",
-            onClick: handleImportClick,
-          },
-          {
-            label: "New Contact",
-            onClick: handleNewContactClick,
-          },
-        ]}
+        actionButtons={actionButtons}
       />
       {loading ? (
         <Container>

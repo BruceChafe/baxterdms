@@ -16,8 +16,8 @@ const LicenseScannerDashboard = () => {
   };
 
   const sendToAzure = async (imageSrc) => {
-    const formRecognizerEndpoint = process.env.REACT_APP_AZURE_FORM_RECOGNIZER_ENDPOINT;
-    const formRecognizerKey = process.env.REACT_APP_AZURE_FORM_RECOGNIZER_KEY;
+    const formRecognizerEndpoint = process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT;
+    const formRecognizerKey = process.env.VITE_AZURE_FORM_RECOGNIZER_KEY;
     const endpoint = `${formRecognizerEndpoint}/formrecognizer/v2.1/prebuilt/idDocument/analyze`;
 
     setIsLoading(true);

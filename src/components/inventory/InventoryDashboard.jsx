@@ -7,6 +7,7 @@ import {
   Paper,
   Alert,
   Container,
+  Button
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import { useFetchInventory } from "../../../hooks/FetchInventory";
@@ -39,16 +40,17 @@ const InventoryDashboard = () => {
     document.body.style.overflow = "auto";
   };
 
+  const actionButtons = [
+    <Button key="import" onClick={handleImportClick} variant="contained">
+      Import
+    </Button>
+  ];
+
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
         title={<Typography variant="h4">Inventory</Typography>}
-        actionButtons={[
-          {
-            label: "Import",
-            onClick: handleImportClick,
-          },
-        ]}
+        actionButtons={actionButtons}
       />
       {loading ? (
         <Container>

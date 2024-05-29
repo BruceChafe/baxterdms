@@ -8,6 +8,7 @@ import {
   Paper,
   Alert,
   Container,
+  Button
 } from "@mui/material";
 import BasicTable from "../tables/BasicTable";
 import TitleLayout from "../layouts/TitleLayout";
@@ -45,16 +46,17 @@ const LeadsDashboard = () => {
     navigate(`/leads/newlead`);
   };
 
+  const actionButtons = [
+    <Button key="newLead" onClick={handleNewLeadClick} variant="contained">
+      New Lead
+    </Button>
+  ];
+
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
         title={<Typography variant="h4">Leads</Typography>}
-        actionButtons={[
-          {
-            label: "New Lead",
-            onClick: handleNewLeadClick,
-          },
-        ]}
+        actionButtons={actionButtons}
       />
       {data.loading ? (
         <Container>
