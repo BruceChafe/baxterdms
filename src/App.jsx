@@ -28,6 +28,7 @@ import Inventory from "./components/inventory/Inventory";
 import { SnackbarProvider } from "./context/SnackbarContext";
 import NewLeadForm from "./components/leads/NewLeadForm";
 import DocumentDashboard from "./components/documentArchive/DocumentDashboard";
+import LicenseScannerDashboard from "./components/licenseScanner/LicenseScannerDashboard";
 
 const App = () => {
   return (
@@ -104,6 +105,7 @@ const AppRoutes = () => {
             <Route path="/inventory" element={<InventoryDashboard />} />
             <Route path="/inventory/:inventoryId" element={<Inventory />} />
             <Route path="/documentarchive" element={<DocumentDashboard />} />
+            <Route path="/licensescanner" element={<LicenseScannerDashboard />} />
             <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
         </Box>
