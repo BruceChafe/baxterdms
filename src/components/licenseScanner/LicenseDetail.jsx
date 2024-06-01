@@ -25,17 +25,23 @@ const renderFields = (fields) => {
   ));
 };
 
-const DocumentDetail = ({ document }) => {
+const LicenseDetail = ({ license, image }) => {
   const fieldElements = useMemo(() => {
-    return document ? renderFields(document.analysisResult[0]?.fields || {}) : null;
-  }, [document]);
+    return license ? renderFields(license.analysisResult[0].fields) : null;
+  }, [license]);
 
-  if (!document) {
+  if (!license) {
     return (
       <Box sx={{ padding: 2 }}>
         <Typography variant="h5" mb={2}>
-          Select a document to view details
+          Select a license to view details
         </Typography>
+        {image && (
+          <div>
+            <Typography variant="h6">Captured/Uploaded Image:</Typography>
+            <img src={image} alt="Captured/Uploaded" style={{ width: "100%" }} />
+          </div>
+        )}
       </Box>
     );
   }
@@ -43,23 +49,29 @@ const DocumentDetail = ({ document }) => {
   return (
     <Box sx={{ padding: 2 }}>
       <Typography variant="h6" gutterBottom>
-        Document Details
+        License Details
       </Typography>
+      {image && (
+        <div>
+          <Typography variant="h6">Captured/Uploaded Image:</Typography>
+          <img src={image} alt="Captured/Uploaded" style={{ width: "100%" }} />
+        </div>
+      )}
       <List>
         <ListItem>
-          <ListItemText primary="Document Type" secondary={document.documentType} />
+          <ListItemText primary="License Type" secondary={license.licenseType} />
         </ListItem>
         <Divider />
         <ListItem>
-          <ListItemText primary="Upload Date" secondary={new Date(document.uploadDate).toLocaleString()} />
+          <ListItemText primary="Upload Date" secondary={new Date(license.uploadDate).toLocaleString()} />
         </ListItem>
         <Divider />
         <ListItem>
           <ListItemText
             primary="Original URL"
             secondary={
-              <a href={document.originalUrl} target="_blank" rel="noopener noreferrer">
-                {document.originalUrl}
+              <a href={license.originalUrl} target="_blank" rel="noopener noreferrer">
+                {license.originalUrl}
               </a>
             }
           />
@@ -69,8 +81,8 @@ const DocumentDetail = ({ document }) => {
           <ListItemText
             primary="Archived URL"
             secondary={
-              <a href={document.archivedUrl} target="_blank" rel="noopener noreferrer">
-                {document.archivedUrl}
+              <a href={license.archivedUrl} target="_blank" rel="noopener noreferrer">
+                {license.archivedUrl}
               </a>
             }
           />
@@ -82,4 +94,4 @@ const DocumentDetail = ({ document }) => {
   );
 };
 
-export default DocumentDetail;
+export default LicenseDetail;

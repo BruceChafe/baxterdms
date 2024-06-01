@@ -126,7 +126,7 @@ async function deleteDocument(documentId) {
     console.log(`Query result: ${JSON.stringify(documents)}`);
 
     if (documents.length === 0) {
-      console.log(`Document with documentId: ${documentId} not found.`);
+      console.log(`Document with documentId: ${documentId}`)
       return null;
     }
 

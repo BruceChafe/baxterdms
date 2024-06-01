@@ -10,28 +10,30 @@ import {
   CircularProgress,
   Alert,
   Divider,
+  TextField
 } from "@mui/material";
 import { useSnackbar } from '../../context/SnackbarContext';
 
 const DocumentList = ({ onSelectDocument }) => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [deleting, setDeleting] = useState(null);
   const { showSnackbar } = useSnackbar();
 
   const fetchDocuments = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get("/documents");
-      console.log("Fetched documents:", response.data);
+      const response = await axiosInstance.get(`/documents`);
       setDocuments(response.data);
+      console.log(documents)
     } catch (error) {
       console.error("Error fetching documents:", error);
       showSnackbar(`Error fetching documents: ${error.message}`, "error");
     } finally {
       setLoading(false);
     }
-  }, [showSnackbar]);
+  }, [searchTerm, showSnackbar]);
 
   useEffect(() => {
     fetchDocuments();
@@ -60,27 +62,20 @@ const DocumentList = ({ onSelectDocument }) => {
     }
   }, [documents, showSnackbar]);
 
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
     <Box sx={{ padding: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Archived Documents
-      </Typography>
-      {documents.length === 0 ? (
+      <TextField
+        label="Search Documents"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+          <CircularProgress />
+        </Box>
+      ) : documents.length === 0 ? (
         <Alert severity="info">No documents available.</Alert>
       ) : (
         <List>
@@ -88,10 +83,10 @@ const DocumentList = ({ onSelectDocument }) => {
             <React.Fragment key={doc.documentId}>
               <ListItem button onClick={() => onSelectDocument(doc)}>
                 <ListItemText
-                  primary={doc.documentType}
+                  primary={doc.filename} // Display the filename here
                   secondary={new Date(doc.uploadDate).toLocaleString()}
                 />
-                <Button
+                                <Button
                   variant="outlined"
                   color="error"
                   onClick={(event) => handleDelete(doc, event)}
@@ -106,8 +101,8 @@ const DocumentList = ({ onSelectDocument }) => {
           ))}
         </List>
       )}
-    </Box>
+    </Box> 
   );
-}
+};
 
 export default DocumentList;

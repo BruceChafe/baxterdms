@@ -1,73 +1,66 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Box, Typography, Paper, Grid } from "@mui/material";
-import CameraCapture from "./utilites/CameraCapture";
-import axios from "axios";
+import LicenseUploader from "./LicenseUploader";
+import LicenseList from "./LicenseList";
+import LicenseDetail from "./LicenseDetail";
 import TitleLayout from "../layouts/TitleLayout";
+import axiosInstance from "../../axios";
 
 const LicenseScannerDashboard = () => {
-  const [capturedImage, setCapturedImage] = useState(null);
+  const [selectedLicense, setSelectedLicense] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [response, setResponse] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null); // Define capturedImage here
+  const [uploadedImage, setUploadedImage] = useState(null); // Define uploadedImage here
 
-  const handleCapture = (imageSrc) => {
-    setCapturedImage(imageSrc);
-    sendToAzure(imageSrc);
+  const refreshLicenses = () => {
+    setRefreshKey((prevKey) => prevKey + 1);
   };
 
-  const sendToAzure = async (imageSrc) => {
-    const formRecognizerEndpoint = process.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT;
-    const formRecognizerKey = process.env.VITE_AZURE_FORM_RECOGNIZER_KEY;
-    const endpoint = `${formRecognizerEndpoint}/formrecognizer/v2.1/prebuilt/idDocument/analyze`;
-
+  const fetchLicenses = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-
     try {
-      const response = await axios.post(endpoint, imageSrc, {
-        headers: {
-          "Content-Type": "application/octet-stream",
-          "Ocp-Apim-Subscription-Key": formRecognizerKey,
-        },
-      });
-      setResponse(response.data);
+      const response = await axiosInstance.get('/api/licenses');
+      console.log('Fetched licenses:', response.data);
     } catch (error) {
-      console.error("Error sending to Azure:", error);
-      setError("Failed to send image to Azure.");
+      console.error('Error fetching licenses:', error);
+      setError('Failed to fetch licenses.');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchLicenses();
+  }, [fetchLicenses, refreshKey]);
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout
-        title={<Typography variant="h4">License Scanner Dashboard</Typography>}
+        title={<Typography variant="h4">License Scanner</Typography>}
         actionButtons={[]}
       />
-      {isLoading && <Typography>Loading...</Typography>}
+      {isLoading && <Typography>Loading licenses...</Typography>}
       {error && <Typography color="error">{error}</Typography>}
       <Box sx={{ mt: 3, mb: 2 }}>
         <Grid container spacing={5}>
           <Grid item xs={12} md={4}>
             <Paper sx={{ border: "solid", borderColor: "divider", mb: 2 }}>
-              <CameraCapture onCapture={handleCapture} />
+              <LicenseUploader 
+                onUploadSuccess={refreshLicenses} 
+                setCapturedImage={setCapturedImage} 
+                setUploadedImage={setUploadedImage} 
+              />
+            </Paper>
+            <Paper sx={{ border: "solid", borderColor: "divider" }}>
+              <LicenseList key={refreshKey} onSelectLicense={setSelectedLicense} />
             </Paper>
           </Grid>
           <Grid item xs={12} md={8}>
-            <Paper sx={{ border: "solid", borderColor: "divider", height: "100%" }}>
-              {capturedImage && (
-                <div>
-                  <Typography variant="h6">Captured Image:</Typography>
-                  <img src={capturedImage} alt="Captured" style={{ width: "100%" }} />
-                </div>
-              )}
-              {response && (
-                <div>
-                  <Typography variant="h6">Azure Response:</Typography>
-                  <pre>{JSON.stringify(response, null, 2)}</pre>
-                </div>
-              )}
+            <Paper sx={{ border: "solid", borderColor: "divider", height: '100%' }}>
+              <LicenseDetail license={selectedLicense} image={capturedImage || uploadedImage} />
             </Paper>
           </Grid>
         </Grid>
