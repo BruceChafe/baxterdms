@@ -15,7 +15,7 @@ const app = express();
 
 app.use(express.json());
 
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'https://baxterdms.vercel.app', 'https://baxterdms.com'];
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'https://baxterdms.vercel.app'];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -49,7 +49,7 @@ const analyzeDocument = async (sasUrl, analyzerType) => {
     } else if (analyzerType === 'layout') {
       poller = await client.beginAnalyzeDocumentFromUrl("prebuilt-layout", sasUrl);
     } else {
-      poller = await client.beginAnalyzeDocumentFromUrl("prebuilt-layout", sasUrl);
+      poller = await client.beginAnalyzeDocumentFromUrl("prebuilt-document", sasUrl);
     }
 
     const result = await poller.pollUntilDone();

@@ -81,7 +81,7 @@ const DocumentUploader = ({ onUploadSuccess }) => {
           <MenuItem value="invoice">Invoice</MenuItem>
           <MenuItem value="contract">Contract</MenuItem>
           <MenuItem value="receipt">Receipt</MenuItem>
-          <MenuItem value="layout">Other</MenuItem>
+          <MenuItem value="other">Other</MenuItem>
         </TextField>
         <TextField
           label="Metadata"

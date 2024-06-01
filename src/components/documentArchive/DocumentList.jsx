@@ -26,7 +26,6 @@ const DocumentList = ({ onSelectDocument }) => {
     try {
       const response = await axiosInstance.get(`/documents`);
       setDocuments(response.data);
-      console.log(documents)
     } catch (error) {
       console.error("Error fetching documents:", error);
       showSnackbar(`Error fetching documents: ${error.message}`, "error");
