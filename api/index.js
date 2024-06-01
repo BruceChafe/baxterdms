@@ -15,7 +15,7 @@ const app = express();
 
 app.use(express.json());
 
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'https://baxterdms.vercel.app'];
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'https://baxterdms.vercel.app', 'https://baxterdms.com'];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
