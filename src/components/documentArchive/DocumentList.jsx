@@ -5,8 +5,7 @@ import {
   ListItem,
   ListItemText,
   Button,
-  Typography,
-  Box,
+ Box,
   CircularProgress,
   Alert,
   Divider,
@@ -32,7 +31,7 @@ const DocumentList = ({ onSelectDocument }) => {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, showSnackbar]);
+  }, [showSnackbar]);
 
   useEffect(() => {
     fetchDocuments();
@@ -40,18 +39,15 @@ const DocumentList = ({ onSelectDocument }) => {
 
   const handleDelete = useCallback(async (document, event) => {
     event.stopPropagation();
-    const { documentId, originalUrl, archivedUrl } = document;
+    const { documentId, archiveUrl } = document;
     console.log(`Attempting to delete document with documentId: ${documentId}`);
     setDeleting(documentId);
 
     try {
-      const deleteResponse = await axiosInstance.delete(`/documents/${documentId}`, {
-        data: { originalUrl, archivedUrl }
+      await axiosInstance.delete(`/documents/${documentId}`, {
+        data: { archiveUrl }
       });
-
-      console.log(`Delete response: ${JSON.stringify(deleteResponse.data)}`);
-
-      setDocuments(documents.filter((doc) => doc.documentId !== documentId));
+      setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.documentId !== documentId));
       showSnackbar(`Document deleted successfully.`, "success");
     } catch (error) {
       console.error('Error deleting document:', error);
@@ -59,7 +55,7 @@ const DocumentList = ({ onSelectDocument }) => {
     } finally {
       setDeleting(null);
     }
-  }, [documents, showSnackbar]);
+  }, [showSnackbar]);
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -82,10 +78,10 @@ const DocumentList = ({ onSelectDocument }) => {
             <React.Fragment key={doc.documentId}>
               <ListItem button onClick={() => onSelectDocument(doc)}>
                 <ListItemText
-                  primary={doc.filename} // Display the filename here
+                  primary={doc.filename}
                   secondary={new Date(doc.uploadDate).toLocaleString()}
                 />
-                                <Button
+                <Button
                   variant="outlined"
                   color="error"
                   onClick={(event) => handleDelete(doc, event)}
@@ -100,7 +96,7 @@ const DocumentList = ({ onSelectDocument }) => {
           ))}
         </List>
       )}
-    </Box> 
+    </Box>
   );
 };
 

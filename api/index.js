@@ -15,7 +15,7 @@ const app = express();
 
 app.use(express.json());
 
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'https://baxterdms.vercel.app'];
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'https://baxterdms.vercel.app', 'https://baxterdms.com'];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -70,7 +70,6 @@ const analyzeDocument = async (sasUrl, analyzerType) => {
   }
 };
 
-
 app.post('/api/upload', upload.single('file'), async (req, res) => {
   try {
     const { documentType, metadata } = req.body;
@@ -78,23 +77,10 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
     if (!documentType) throw new Error('Document type is required');
 
     const containerName = 'data-archive-skeezer-motors';
-    const blobUrl = await uploadFileToBlobStorage(req.file, containerName);
-    const sasUrl = await generateSasToken(containerName, req.file.originalname);
+    const archiveBlobUrl = await uploadFileToBlobStorage(req.file, containerName);
+    const archiveSasUrl = await generateSasToken(containerName, req.file.originalname);
 
-    // Save metadata to Cosmos DB
-    const document = {
-      documentId: new Date().toISOString(),
-      uploadDate: new Date().toISOString(),
-      documentType,
-      metadata,
-      analysisResult: [],
-      originalUrl: sasUrl,
-      archivedUrl: sasUrl,
-    };
-
-    const { resource: createdItem } = await container.items.create(document);
-
-    res.status(200).send({ message: 'File uploaded successfully', url: sasUrl });
+    res.status(200).send({ message: 'File uploaded successfully', url: archiveSasUrl });
   } catch (error) {
     console.error('Upload error:', error.message);
     res.status(500).send({ error: error.message });
@@ -116,8 +102,7 @@ app.post('/api/analyze', async (req, res) => {
       uploadDate: new Date().toISOString(),
       documentType: analyzerType === 'document' ? 'document' : analyzerType,
       analysisResult,
-      originalUrl: url,
-      archivedUrl: url
+      archiveUrl: url,  // Store the archive URL
     };
 
     const { resource: createdItem } = await container.items.create(document);
@@ -140,11 +125,13 @@ app.get('/api/documents', async (req, res) => {
 
     const { resources: documents } = await container.items.query(querySpec).fetchAll();
 
-    // Extract the filename from the original URL
-    const documentsWithFilenames = documents.map(doc => ({
-      ...doc,
-      filename: decodeURIComponent(doc.originalUrl.split('/').pop().split('?')[0]) // Extract and decode the filename
-    }));
+    const documentsWithFilenames = documents.map(doc => {
+      const filename = doc.archiveUrl ? decodeURIComponent(doc.archiveUrl.split('/').pop().split('?')[0]) : 'Unknown';
+      return {
+        ...doc,
+        filename
+      };
+    });
 
     res.status(200).send(documentsWithFilenames);
   } catch (error) {
@@ -177,15 +164,14 @@ app.delete('/api/documents/:id', async (req, res) => {
     }
 
     const document = documents[0];
-    const blobUrl = document.originalUrl;
+    const blobUrl = document.archiveUrl;
     console.log(`Retrieved Blob URL: ${blobUrl}`);
     console.log(`Document to delete: ${JSON.stringify(document)}`);
 
     const deleteDocResponse = await deleteDocument(document.documentId);
-    console.log(`Document delete response: ${JSON.stringify(deleteDocResponse)}`);
+    console.log('Document deleted successfully');
 
-    const deleteBlobResponse = await deleteBlob(blobUrl);
-    console.log(`Blob delete response: ${JSON.stringify(deleteBlobResponse)}`);
+    await deleteBlob(blobUrl);
 
     res.status(200).send('Document and blob deleted successfully');
   } catch (error) {
@@ -193,6 +179,7 @@ app.delete('/api/documents/:id', async (req, res) => {
     res.status(500).send('Error deleting document and blob');
   }
 });
+
 
 if (process.env.NODE_ENV !== 'serverless') {
   const port = process.env.PORT || 3001;

@@ -86,10 +86,6 @@ async function deleteBlob(blobUrl) {
   try {
     console.log(`Deleting blob at URL: ${blobUrl}`);
     const blobClient = new BlobClient(blobUrl);
-    const containerName = blobClient.containerName;
-    const blobName = blobClient.name;
-
-    await deleteAllSnapshots(containerName, blobName);
 
     // Check if the blob exists before attempting to delete
     if (await blobClient.exists()) {
@@ -99,7 +95,7 @@ async function deleteBlob(blobUrl) {
       console.log('Blob already deleted or not found.');
     }
   } catch (error) {
-    console.error("Error deleting blob:", error);
+    console.error("Error deleting blob:", error.message);
     throw error;
   }
 }
@@ -135,7 +131,6 @@ async function deleteDocument(documentId) {
 
     // Delete the document from Cosmos DB using documentId as the partition key
     const deleteResponse = await container.item(document.id, document.documentId).delete();
-    console.log(`Delete response: ${JSON.stringify(deleteResponse)}`);
     console.log('Document deleted successfully');
 
     return document;
@@ -143,7 +138,7 @@ async function deleteDocument(documentId) {
     if (error.code === 404) {
       console.log('Document not found or already deleted.');
     } else {
-      console.error("Error deleting document:", error);
+      console.error("Error deleting document:", error.message);
       throw error;
     }
   }
