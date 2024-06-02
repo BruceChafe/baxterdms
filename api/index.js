@@ -89,7 +89,9 @@ const analyzeDocument = async (sasUrl, analyzerType) => {
       );
     }
 
-    const result = await poller.pollUntilDone();
+    const result = await poller.pollUntilDone({
+      updateIntervalInMs: 5000, // Poll every 5 seconds
+    });
     console.log(`Analysis complete for URL: ${sasUrl}`);
     console.log("Analysis result:", result);
 
@@ -218,7 +220,7 @@ app.delete("/api/documents/:id", async (req, res) => {
     console.log(`Retrieved Blob URL: ${blobUrl}`);
     console.log(`Document to delete: ${JSON.stringify(document)}`);
 
-    const deleteDocResponse = await deleteDocument(document.documentId);
+    await deleteDocument(document.documentId);
     console.log("Document deleted successfully");
 
     await deleteBlob(blobUrl);
