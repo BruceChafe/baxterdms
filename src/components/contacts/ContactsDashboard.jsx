@@ -45,7 +45,7 @@ const ContactsDashboard = () => {
   };
 
   const transformedData =
-    contacts.map((contact) => {
+    contacts?.map((contact) => {
       const fullName = `${contact.firstName || ""} ${
         contact.lastName || ""
       }`.trim();
@@ -77,12 +77,14 @@ const ContactsDashboard = () => {
   };
 
   const actionButtons = [
-    <Button key="import" onClick={handleImportClick} variant="outlined">
-      Import
-    </Button>,
-    <Button key="newContact" onClick={handleNewContactClick} variant="contained">
-      New Contact
-    </Button>
+    {
+      label: "Import",
+      onClick: handleImportClick,
+    },
+    {
+      label: "New Contact",
+      onClick: handleNewContactClick,
+    },
   ];
 
   return (

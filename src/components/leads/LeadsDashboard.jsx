@@ -47,9 +47,10 @@ const LeadsDashboard = () => {
   };
 
   const actionButtons = [
-    <Button key="newLead" onClick={handleNewLeadClick} variant="contained">
-      New Lead
-    </Button>
+    {
+      label: "New Lead",
+      onClick: handleNewLeadClick,
+    }
   ];
 
   return (

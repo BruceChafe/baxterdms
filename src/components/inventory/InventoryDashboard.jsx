@@ -41,9 +41,10 @@ const InventoryDashboard = () => {
   };
 
   const actionButtons = [
-    <Button key="import" onClick={handleImportClick} variant="contained">
-      Import
-    </Button>
+    {
+      label: "Import",
+      onClick: handleImportClick,
+    }
   ];
 
   return (

@@ -13,16 +13,21 @@ const TitleLayout = ({ title, actionButtons = [], isEditable, onToggleEdit }) =>
         }}
       >
         <Box sx={{ m: 1 }}>{title}</Box>
-        <Box>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           {onToggleEdit && (
             <Button onClick={onToggleEdit} variant="outlined" sx={{ mr: 2 }}>
               {isEditable ? "Save" : "Edit"}
             </Button>
           )}
           {actionButtons.map((button, index) => (
-            <Box key={index} sx={{ mr: 2 }}>
-              {button}
-            </Box>
+            <Button
+              key={index}
+              onClick={button.onClick}
+              variant="outlined"
+              sx={{ mr: 2 }}
+            >
+              {button.label}
+            </Button>
           ))}
         </Box>
       </Box>

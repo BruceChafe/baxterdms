@@ -26,7 +26,6 @@ const TabbedLayout = ({ tabs }) => {
           </Box>
         </Paper>
         {tabs.map((tab, index) => (
-          <Box>
           <TabPanel
             value={String(index + 1)}
             key={index}
@@ -37,7 +36,6 @@ const TabbedLayout = ({ tabs }) => {
           >
             {tab.component()}
           </TabPanel>
-          </Box>
         ))}
       </TabContext>
     </Box>

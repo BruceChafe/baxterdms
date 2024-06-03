@@ -6,7 +6,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
+  TableSortLabel,
   Typography,
   Box,
 } from "@mui/material";
@@ -21,8 +21,6 @@ const SortingTable = ({
     key: defaultSortKey || null,
     direction: defaultSortDirection || "ascending",
   });
-
-  const [error, setError] = useState("");
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -66,11 +64,10 @@ const SortingTable = ({
     });
   }, [defaultSortKey, defaultSortDirection]);
 
-  const cellWidth = `${100 / (columns.length + 1)}%`;
+  const cellWidth = `${100 / columns.length}%`;
 
   return (
     <Box>
-      {error && <Typography color="error">{error}</Typography>}
       <Typography variant="h5" mb={2}>
         Lead History
       </Typography>
@@ -89,9 +86,13 @@ const SortingTable = ({
                     width: cellWidth,
                   }}
                 >
-                  <Button onClick={() => handleSort(column.field)}>
+                  <TableSortLabel
+                    active={sortConfig.key === column.field}
+                    direction={sortConfig.key === column.field ? sortConfig.direction : "asc"}
+                    onClick={() => handleSort(column.field)}
+                  >
                     {column.header}
-                  </Button>
+                  </TableSortLabel>
                 </TableCell>
               ))}
             </TableRow>
