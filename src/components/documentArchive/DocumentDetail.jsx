@@ -14,20 +14,26 @@ const formatField = (field) => {
   }
 };
 
+const FieldItem = ({ fieldKey, field }) => (
+  <React.Fragment key={fieldKey}>
+    <ListItem>
+      <ListItemText primary={fieldKey} secondary={formatField(field)} />
+    </ListItem>
+    <Divider />
+  </React.Fragment>
+);
+
 const renderFields = (fields) => {
   return Object.entries(fields).map(([key, field]) => (
-    <React.Fragment key={key}>
-      <ListItem>
-        <ListItemText primary={key} secondary={formatField(field)} />
-      </ListItem>
-      <Divider />
-    </React.Fragment>
+    <FieldItem key={key} fieldKey={key} field={field} />
   ));
 };
 
 const DocumentDetail = ({ document }) => {
   const fieldElements = useMemo(() => {
-    return document ? renderFields(document.analysisResult[0]?.fields || {}) : null;
+    if (!document) return null;
+    const fields = document.analysisResult?.[0]?.fields || {};
+    return renderFields(fields);
   }, [document]);
 
   if (!document) {
@@ -41,7 +47,7 @@ const DocumentDetail = ({ document }) => {
   }
 
   return (
-    <Box sx={{ padding: 2 }}>
+    <Box sx={{ padding: 2, maxHeight: '80vh', overflow: 'auto' }}>
       <Typography variant="h6" gutterBottom>
         Document Details
       </Typography>
@@ -69,8 +75,8 @@ const DocumentDetail = ({ document }) => {
           <ListItemText
             primary="Archived URL"
             secondary={
-              <a href={document.archivedUrl} target="_blank" rel="noopener noreferrer">
-                {document.archivedUrl}
+              <a href={document.archiveUrl} target="_blank" rel="noopener noreferrer">
+                {document.archiveUrl}
               </a>
             }
           />

@@ -10,9 +10,14 @@ const DocumentDashboard = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [openSection, setOpenSection] = useState("upload");
 
   const refreshDocuments = () => {
     setRefreshKey((prevKey) => prevKey + 1);
+  };
+
+  const toggleSection = (section) => {
+    setOpenSection((prevSection) => (prevSection === section ? null : section));
   };
 
   return (
@@ -23,18 +28,27 @@ const DocumentDashboard = () => {
       />
       {isLoading && <Typography>Loading documents...</Typography>}
       {error && <Typography color="error">{error}</Typography>}
-      <Box sx={{ mt: 3, mb: 2 }}>
+      <Box sx={{ mt: 3, mb: 2, maxHeight: '80vh', overflow: 'auto' }}>
         <Grid container spacing={5}>
           <Grid item xs={12} md={4}>
             <Paper sx={{ border: "solid", borderColor: "divider", mb: 2 }}>
-              <DocumentUploader onUploadSuccess={refreshDocuments} />
+              <DocumentUploader
+                onUploadSuccess={refreshDocuments}
+                open={openSection === "upload"}
+                onToggle={() => toggleSection("upload")}
+              />
             </Paper>
             <Paper sx={{ border: "solid", borderColor: "divider" }}>
-              <DocumentList key={refreshKey} onSelectDocument={setSelectedDocument} />
+              <DocumentList
+                key={refreshKey}
+                onSelectDocument={setSelectedDocument}
+                open={openSection === "list"}
+                onToggle={() => toggleSection("list")}
+              />
             </Paper>
           </Grid>
           <Grid item xs={12} md={8}>
-            <Paper sx={{ border: "solid", borderColor: "divider", height: '100%' }}>
+            <Paper sx={{ border: "solid", borderColor: "divider", height: '80vh', overflow: 'auto' }}>
               <DocumentDetail document={selectedDocument} />
             </Paper>
           </Grid>

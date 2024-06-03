@@ -77,29 +77,30 @@ const EmailContact = ({ id, open, onClose, primaryEmail, lead, onSaveSuccess }) 
   };
 
   return (
-    <Dialog onClose={onClose} open={open}>
-      <DialogTitle>
-        Send Email
-        <IconButton onClick={onClose} sx={{ position: "absolute", right: 8, top: 8 }}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent dividers>
-        <TextField label="To:" value={emailData.to} fullWidth disabled sx={{ pb: 1 }} />
-        <TextField value={emailData.subject} onChange={e => handleFieldChange("subject", e.target.value)} label="Subject:" fullWidth sx={{ pb: 1 }} required />
-        <TextField value={emailData.body} onChange={e => handleFieldChange("body", e.target.value)} label="Body:" multiline rows={4} fullWidth required />
-      </DialogContent>
-      <DialogActions>
-        <Button variant="outlined" disabled>
-          Coming Soon.
-        </Button>
-      </DialogActions>
-      <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose} message={snackbarMessage} action={
-        <Button color="inherit" size="small" onClick={handleSnackbarClose}>
-          Close
-        </Button>
-      }/>
-    </Dialog>
+    <p>hello</p>
+    // <Dialog onClose={onClose} open={open}>
+    //   <DialogTitle>
+    //     Send Email
+    //     <IconButton onClick={onClose} sx={{ position: "absolute", right: 8, top: 8 }}>
+    //       <CloseIcon />
+    //     </IconButton>
+    //   </DialogTitle>
+    //   <DialogContent dividers>
+    //     <TextField label="To:" value={emailData.to} fullWidth disabled sx={{ pb: 1 }} />
+    //     <TextField value={emailData.subject} onChange={e => handleFieldChange("subject", e.target.value)} label="Subject:" fullWidth sx={{ pb: 1 }} required />
+    //     <TextField value={emailData.body} onChange={e => handleFieldChange("body", e.target.value)} label="Body:" multiline rows={4} fullWidth required />
+    //   </DialogContent>
+    //   <DialogActions>
+    //     <Button variant="outlined" disabled>
+    //       Coming Soon.
+    //     </Button>
+    //   </DialogActions>
+    //   <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose} message={snackbarMessage} action={
+    //     <Button color="inherit" size="small" onClick={handleSnackbarClose}>
+    //       Close
+    //     </Button>
+    //   }/>
+    // </Dialog>
   );
 };
 

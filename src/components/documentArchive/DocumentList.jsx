@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axiosInstance from "../../axios";
 import {
   List,
   ListItem,
   ListItemText,
   Button,
- Box,
+  Box,
   CircularProgress,
   Alert,
   Divider,
-  TextField
+  TextField,
+  Collapse,
+  Typography
 } from "@mui/material";
 import { useSnackbar } from '../../context/SnackbarContext';
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
-const DocumentList = ({ onSelectDocument }) => {
+const DocumentList = ({ onSelectDocument, open, onToggle }) => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,45 +60,65 @@ const DocumentList = ({ onSelectDocument }) => {
     }
   }, [showSnackbar]);
 
+  const filteredDocuments = useMemo(() => {
+    return documents.filter(doc =>
+      doc.filename.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [documents, searchTerm]);
+
+  const DocumentItem = ({ doc }) => (
+    <React.Fragment key={doc.documentId}>
+      <ListItem button onClick={() => onSelectDocument(doc)}>
+        <ListItemText
+          primary={doc.filename}
+          secondary={new Date(doc.uploadDate).toLocaleString()}
+        />
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={(event) => handleDelete(doc, event)}
+          disabled={deleting === doc.documentId}
+          sx={{ ml: 2 }}
+        >
+          {deleting === doc.documentId ? <CircularProgress size={24} /> : "Delete"}
+        </Button>
+      </ListItem>
+      <Divider />
+    </React.Fragment>
+  );
+
   return (
     <Box sx={{ padding: 2 }}>
-      <TextField
-        label="Search Documents"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        fullWidth
-        margin="normal"
-      />
-      {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-          <CircularProgress />
-        </Box>
-      ) : documents.length === 0 ? (
-        <Alert severity="info">No documents available.</Alert>
-      ) : (
-        <List>
-          {documents.map((doc) => (
-            <React.Fragment key={doc.documentId}>
-              <ListItem button onClick={() => onSelectDocument(doc)}>
-                <ListItemText
-                  primary={doc.filename}
-                  secondary={new Date(doc.uploadDate).toLocaleString()}
-                />
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={(event) => handleDelete(doc, event)}
-                  disabled={deleting === doc.documentId}
-                  sx={{ ml: 2 }}
-                >
-                  {deleting === doc.documentId ? <CircularProgress size={24} /> : "Delete"}
-                </Button>
-              </ListItem>
-              <Divider />
-            </React.Fragment>
-          ))}
-        </List>
-      )}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }} onClick={onToggle}>
+        <Typography variant="h5" mb={2}>
+          Search Documents
+        </Typography>
+        {open ? <ExpandLess /> : <ExpandMore />}
+      </Box>
+      <Collapse in={open}>
+        <TextField
+          label="Search Documents"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          fullWidth
+          margin="normal"
+        />
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+            <CircularProgress />
+          </Box>
+        ) : filteredDocuments.length === 0 ? (
+          <Alert severity="info">No documents available.</Alert>
+        ) : (
+          <Box sx={{ maxHeight: '60vh', overflow: 'auto' }}>
+            <List>
+              {filteredDocuments.map(doc => (
+                <DocumentItem doc={doc} key={doc.documentId} />
+              ))}
+            </List>
+          </Box>
+        )}
+      </Collapse>
     </Box>
   );
 };
