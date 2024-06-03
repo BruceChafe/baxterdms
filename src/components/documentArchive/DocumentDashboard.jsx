@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Paper, Grid } from "@mui/material";
+import { Box, Typography, Paper, Grid, CircularProgress, Alert } from "@mui/material";
 import DocumentUploader from "./DocumentUploader";
 import DocumentList from "./DocumentList";
 import DocumentDetail from "./DocumentDetail";
@@ -26,19 +26,27 @@ const DocumentDashboard = () => {
         title={<Typography variant="h4">Document Archive</Typography>}
         actionButtons={[]}
       />
-      {isLoading && <Typography>Loading documents...</Typography>}
-      {error && <Typography color="error">{error}</Typography>}
-      <Box sx={{ mt: 3, mb: 2, maxHeight: '80vh', overflow: 'auto' }}>
+      {isLoading && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+          <CircularProgress />
+        </Box>
+      )}
+      {error && (
+        <Box sx={{ mt: 3 }}>
+          <Alert severity="error">{error}</Alert>
+        </Box>
+      )}
+      <Box sx={{ mt: 3, mb: 2,  }}>
         <Grid container spacing={5}>
           <Grid item xs={12} md={4}>
-            <Paper sx={{ border: "solid", borderColor: "divider", mb: 2 }}>
+            <Paper sx={{ mb: 2, p: 3,border: "solid", borderColor: "divider" }}>
               <DocumentUploader
                 onUploadSuccess={refreshDocuments}
                 open={openSection === "upload"}
                 onToggle={() => toggleSection("upload")}
               />
             </Paper>
-            <Paper sx={{ border: "solid", borderColor: "divider" }}>
+            <Paper sx={{ p: 3, border: "solid", borderColor: "divider" }}>
               <DocumentList
                 key={refreshKey}
                 onSelectDocument={setSelectedDocument}
@@ -48,7 +56,7 @@ const DocumentDashboard = () => {
             </Paper>
           </Grid>
           <Grid item xs={12} md={8}>
-            <Paper sx={{ border: "solid", borderColor: "divider", height: '80vh', overflow: 'auto' }}>
+            <Paper sx={{ p: 2, height: '80vh', overflow: 'auto', border: "solid", borderColor: "divider" }}>
               <DocumentDetail document={selectedDocument} />
             </Paper>
           </Grid>

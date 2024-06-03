@@ -4,13 +4,15 @@ import {
   Button,
   Typography,
   Box,
-  Stack,
+  Grid,
   LinearProgress,
   TextField,
   MenuItem,
   Tooltip,
   IconButton,
-  Collapse
+  Collapse,
+  useTheme,
+  useMediaQuery
 } from "@mui/material";
 import {
   CloudUpload as CloudUploadIcon,
@@ -28,6 +30,9 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle }) => {
   const [metadata, setMetadata] = useState('');
   const [uploading, setUploading] = useState(false);
   const { showSnackbar } = useSnackbar();
+
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length > 0) {
@@ -57,7 +62,7 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle }) => {
 
       showSnackbar(`File uploaded successfully. URL: ${uploadResponse.data.url}`, "success");
 
-      const analyzerType = documentType
+      const analyzerType = documentType;
       await analyzeDocument(uploadResponse.data.url, analyzerType);
 
       onUploadSuccess(); // Refresh document list on successful upload and analysis
@@ -81,73 +86,98 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle }) => {
   }, []);
 
   return (
-    <Box sx={{ padding: 2 }}>
+    <>
       <Box
         sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
         onClick={onToggle}
       >
-        <Typography variant="h5" mb={2}>
+        <Typography variant="h5">
           Upload your document
         </Typography>
         {open ? <ExpandLess /> : <ExpandMore />}
       </Box>
       <Collapse in={open}>
-        <Stack direction="column" spacing={2} alignItems="center">
-          <TextField
-            select
-            label="Document Type"
-            value={documentType}
-            onChange={(e) => setDocumentType(e.target.value)}
-            fullWidth
-          >
-            <MenuItem value="invoice">Invoice</MenuItem>
-            <MenuItem value="contract">Contract</MenuItem>
-            <MenuItem value="receipt">Receipt</MenuItem>
-            <MenuItem value="layout">Other</MenuItem>
-          </TextField>
-          <TextField
-            label="Metadata"
-            value={metadata}
-            onChange={(e) => setMetadata(e.target.value)}
-            fullWidth
-            InputProps={{
-              endAdornment: (
-                <Tooltip title="Metadata includes additional information about the document, such as keywords, tags, or descriptions.">
-                  <IconButton>
-                    <InfoIcon />
-                  </IconButton>
-                </Tooltip>
-              )
-            }}
-          />
-          <Box
-            {...getRootProps()}
-            sx={{ border: '1px dashed', p: 5, textAlign: 'center', cursor: 'pointer', width: '100%' }}
-          >
-            <input {...getInputProps()} />
-            {isDragActive ? (
-              <Typography>Drop the files here ...</Typography>
-            ) : (
-              <Typography>Drag 'n' drop some files here, or click to select files</Typography>
-            )}
-          </Box>
-          <TextField
-            label="Filename"
-            value={filename}
-            onChange={(e) => setFilename(e.target.value)}
-            fullWidth
-          />
-          <Button
-            variant="outlined"
-            onClick={handleUpload}
-            disabled={!file || !documentType || !filename || uploading}
-          >
-            Upload Document
-          </Button>
-          {uploading && <LinearProgress sx={{ width: "100%", mt: 2 }} />}
-        </Stack>
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              select
+              label="Document Type"
+              value={documentType}
+              onChange={(e) => setDocumentType(e.target.value)}
+              fullWidth
+            >
+              <MenuItem value="invoice">Invoice</MenuItem>
+              <MenuItem value="contract">Contract</MenuItem>
+              <MenuItem value="receipt">Receipt</MenuItem>
+              <MenuItem value="layout">Other</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Metadata"
+              value={metadata}
+              onChange={(e) => setMetadata(e.target.value)}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <Tooltip title="Metadata includes additional information about the document, such as keywords, tags, or descriptions.">
+                    <IconButton>
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
+                )
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Box
+              {...getRootProps()}
+              sx={{
+                border: '2px dashed',
+                borderColor: isDragActive ? 'primary.main' : 'grey.500',
+                p: 4,
+                textAlign: 'center',
+                cursor: 'pointer',
+                backgroundColor: isDragActive ? 'grey.100' : 'inherit'
+              }}
+            >
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <Typography>Drop the files here ...</Typography>
+              ) : file ? (
+                <Typography>File "{filename}" is ready to be uploaded.</Typography>
+              ) : (
+                <Typography>Drag 'n' drop some files here, or click to select files</Typography>
+              )}
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Filename"
+              value={filename}
+              onChange={(e) => setFilename(e.target.value)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              onClick={handleUpload}
+              disabled={!file || !documentType || !filename || uploading}
+              startIcon={<CloudUploadIcon />}
+              fullWidth={isSmallScreen}
+            >
+              Upload Document
+            </Button>
+          </Grid>
+          {uploading && (
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          )}
+        </Grid>
       </Collapse>
-    </Box>
+    </>
   );
 };
 

@@ -11,7 +11,8 @@ import {
   Divider,
   TextField,
   Collapse,
-  Typography
+  Typography,
+  Grid,
 } from "@mui/material";
 import { useSnackbar } from '../../context/SnackbarContext';
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
@@ -68,7 +69,7 @@ const DocumentList = ({ onSelectDocument, open, onToggle }) => {
 
   const DocumentItem = ({ doc }) => (
     <React.Fragment key={doc.documentId}>
-      <ListItem button onClick={() => onSelectDocument(doc)}>
+      <ListItem button onClick={() => onSelectDocument(doc)} sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <ListItemText
           primary={doc.filename}
           secondary={new Date(doc.uploadDate).toLocaleString()}
@@ -88,38 +89,44 @@ const DocumentList = ({ onSelectDocument, open, onToggle }) => {
   );
 
   return (
-    <Box sx={{ padding: 2 }}>
+    <>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }} onClick={onToggle}>
-        <Typography variant="h5" mb={2}>
+        <Typography variant="h5">
           Search Documents
         </Typography>
         {open ? <ExpandLess /> : <ExpandMore />}
       </Box>
       <Collapse in={open}>
-        <TextField
-          label="Search Documents"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-            <CircularProgress />
-          </Box>
-        ) : filteredDocuments.length === 0 ? (
-          <Alert severity="info">No documents available.</Alert>
-        ) : (
-          <Box sx={{ maxHeight: '60vh', overflow: 'auto' }}>
-            <List>
-              {filteredDocuments.map(doc => (
-                <DocumentItem doc={doc} key={doc.documentId} />
-              ))}
-            </List>
-          </Box>
-        )}
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          <Grid item xs={12}>
+            <TextField
+              label="Search Documents"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            {loading ? (
+              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <CircularProgress />
+              </Box>
+            ) : filteredDocuments.length === 0 ? (
+              <Alert severity="info">No documents available.</Alert>
+            ) : (
+              <Box sx={{ overflow: 'auto' }}>
+                <List>
+                  {filteredDocuments.map(doc => (
+                    <DocumentItem doc={doc} key={doc.documentId} />
+                  ))}
+                </List>
+              </Box>
+            )}
+          </Grid>
+        </Grid>
       </Collapse>
-    </Box>
+    </>
   );
 };
 
