@@ -1,5 +1,9 @@
 import dotenv from "dotenv";
 import path from "path";
+import express from "express";
+import serverless from "serverless-http";
+import multer from "multer";
+import cors from "cors";
 import {
   BlobServiceClient,
   StorageSharedKeyCredential,
@@ -12,10 +16,6 @@ import {
   DocumentAnalysisClient,
   AzureKeyCredential,
 } from "@azure/ai-form-recognizer";
-import express from "express";
-import serverless from "serverless-http";
-import multer from "multer";
-import cors from "cors";
 import {
   uploadFileToBlobStorage,
   generateSasToken,
@@ -230,6 +230,14 @@ app.delete("/api/documents/:id", async (req, res) => {
     console.error("Error deleting document and blob:", error.message);
     res.status(500).send("Error deleting document and blob");
   }
+});
+
+// Serve static files from the React app
+app.use(express.static(path.join(process.cwd(), 'dist')));
+
+// The "catchall" handler: for any request that doesn't match one above, send back index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
 });
 
 if (process.env.NODE_ENV !== "serverless") {
