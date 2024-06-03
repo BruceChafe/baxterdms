@@ -11,6 +11,7 @@ import {
   Tooltip,
   IconButton,
   Collapse,
+  Paper,
   useTheme,
   useMediaQuery
 } from "@mui/material";
@@ -60,7 +61,7 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle }) => {
         },
       });
 
-      showSnackbar(`File uploaded successfully. URL: ${uploadResponse.data.url}`, "success");
+      showSnackbar(`File successfully uploaded to storage.`, "success");
 
       const analyzerType = documentType;
       await analyzeDocument(uploadResponse.data.url, analyzerType);
@@ -78,6 +79,7 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle }) => {
     console.log(`Starting analysis for URL: ${sasUrl} as ${analyzerType}`);
     try {
       const response = await axiosInstance.post("/analyze", { url: sasUrl, analyzerType });
+      showSnackbar(`File successfully analyzed.`, "success");
       console.log(`Analysis complete: ${JSON.stringify(response.data)}`);
     } catch (error) {
       console.error('Error during document analysis:', error.message);

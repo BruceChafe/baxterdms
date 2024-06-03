@@ -47,7 +47,7 @@ const LicenseUploader = ({ onUploadSuccess, setCapturedImage, setUploadedImage }
           }
         );
 
-        showSnackbar(`File uploaded successfully. URL: ${uploadResponse.data.url}`, "success");
+        showSnackbar(`File successfully archived to storage.`);
         await analyzeLicense(uploadResponse.data.url);
         onUploadSuccess(); // Refresh license list on successful upload and analysis
       } catch (error) {
