@@ -10,7 +10,6 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
-  Divider,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CameraCapture from './CameraCapture';
@@ -22,12 +21,11 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
   return (
     <Dialog open={cameraOpen} onClose={onClose} maxWidth="md" fullWidth>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
-        <DialogTitle sx={{ flex: 1, p: 0 }}>Capture Image</DialogTitle>
+        <DialogTitle sx={{ flex: 1 }}>Capture Image</DialogTitle>
         <IconButton onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </Box>
-      <Divider />
       <DialogContent dividers>
         <Box
           sx={{
@@ -44,7 +42,7 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
           <CameraCapture onCapture={onCapture} />
         </Box>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
+      <DialogActions sx={{ justifyContent: 'space-between', p: 2 }}>
         <Button onClick={onClose} variant="outlined" color="secondary">
           Cancel
         </Button>

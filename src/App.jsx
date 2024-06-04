@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { CssBaseline, Grid, CircularProgress, Box } from "@mui/material";
+import { CssBaseline, Grid, CircularProgress, Box, useMediaQuery, useTheme } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
@@ -48,6 +48,8 @@ const App = () => {
 const AppRoutes = () => {
   const { user, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (loading) {
     return (
@@ -70,7 +72,7 @@ const AppRoutes = () => {
     <Grid container>
       <Grid
         item
-        xs={collapsed ? 1 : 2}
+        xs={collapsed || isSmallScreen ? 1 : 2}
         md={collapsed ? 1 : 2}
         lg={collapsed ? 1 : 2}
       >
@@ -78,7 +80,7 @@ const AppRoutes = () => {
       </Grid>
       <Grid
         item
-        xs={collapsed ? 11 : 10}
+        xs={collapsed || isSmallScreen ? 11 : 10}
         md={collapsed ? 11 : 10}
         lg={collapsed ? 11 : 10}
       >
@@ -90,7 +92,6 @@ const AppRoutes = () => {
             <Route path="/contacts/newcontact" element={<NewContact />} />
             <Route path="/account/overview" element={<AccountOverview />} />
             <Route path="/account/theme" element={<UserThemeSelection />} />
-            {/* <Route path="/account/userprofile" element={<UserProfile />} /> */}
             <Route
               path="/account/updatepassword"
               element={<UpdatePassword />}

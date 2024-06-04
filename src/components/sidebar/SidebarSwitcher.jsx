@@ -6,22 +6,18 @@ const SidebarItems = {
   home: {
     navigationLinks: [
       { text: "Contacts", to: "/contacts" },
-      { text: 'Leads', to: "/leads" },
+      { text: "Leads", to: "/leads" },
       { text: "Account Overview", to: "/account/overview" },
       { text: "Configuration", to: "/configuration" },
       { text: "Inventory", to: "/inventory" },
       { text: "Document Archive", to: "/documentarchive" },
       { text: "License Scanner", to: "/licensescanner" },
-
     ],
   },
   account: {
     pageName: "Account",
     navigationLinks: [
       { text: "Overview", to: "/account/overview", color: "white" },
-      // { text: "Personal Info", to: "/account/userprofile" },
-      // { text: "Theme", to: "/account/theme" },
-      // { text: "Update Password", to: "/account/updatepassword" },
     ],
   },
   contacts: {

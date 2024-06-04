@@ -12,6 +12,7 @@ import {
   Typography,
   Divider,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -54,12 +55,23 @@ const SidebarComponent = ({ navigationLinks, collapsed, setCollapsed }) => {
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "flex-start",
+            justifyContent: collapsed ? "center" : "flex-start",
             padding: 2,
             flexGrow: 0,
           }}
         >
-          {collapsed ? null : (
+          {collapsed ? (
+            <Tooltip title="baxter.">
+              <Typography
+                variant="h6"
+                component={Link}
+                to="/home"
+                sx={{ textDecoration: "none", color: "inherit" }}
+              >
+                B
+              </Typography>
+            </Tooltip>
+          ) : (
             <Typography
               variant="h6"
               component={Link}
@@ -75,23 +87,27 @@ const SidebarComponent = ({ navigationLinks, collapsed, setCollapsed }) => {
           {navigationLinks.map((link) => (
             <ListItem key={link.to} disablePadding>
               <ListItemButton component={Link} to={link.to}>
-                {/* <ListItemIcon>
-                  {/* Optional: Display an icon here if each link has associated icons */}
-                {/* </ListItemIcon> */}
                 <ListItemText primary={collapsed ? "" : link.text} />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
         <Divider />
-        <IconButton onClick={toggleDrawer}>
-          <MenuIcon />
-        </IconButton>
         <Box
-          sx={{ mt: "auto", mb: 2, display: "flex", justifyContent: "center" }}
+          sx={{
+            mt: "auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <IconButton onClick={handleLogout}>
-            <LogoutIcon />
+          <IconButton onClick={toggleDrawer}>
+            <MenuIcon />
+          </IconButton>
+          <IconButton onClick={handleLogout} sx={{ ml: 1 }}>
+            <Tooltip title="Logout">
+              <LogoutIcon />
+            </Tooltip>
           </IconButton>
         </Box>
       </Drawer>
