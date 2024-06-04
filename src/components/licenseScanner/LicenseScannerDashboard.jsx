@@ -1,40 +1,24 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Box, Typography, Paper, Grid } from "@mui/material";
-import LicenseUploader from "./LicenseUploader";
-import LicenseList from "./LicenseList";
-import LicenseDetail from "./LicenseDetail";
+import React, { useState } from "react";
+import { Box, Typography, Paper, Grid, CircularProgress, Alert } from "@mui/material";
+import DocumentUploader from "./DocumentUploader";
+import DocumentList from "./DocumentList";
+import DocumentDetail from "./DocumentDetail";
 import TitleLayout from "../layouts/TitleLayout";
-import axiosInstance from "../../axios";
 
-const LicenseScannerDashboard = () => {
-  const [selectedLicense, setSelectedLicense] = useState(null);
+const DocumentDashboard = () => {
+  const [selectedDocument, setSelectedDocument] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [capturedImage, setCapturedImage] = useState(null); // Define capturedImage here
-  const [uploadedImage, setUploadedImage] = useState(null); // Define uploadedImage here
+  const [openSection, setOpenSection] = useState("upload");
 
-  const refreshLicenses = () => {
+  const refreshDocuments = () => {
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
-  const fetchLicenses = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await axiosInstance.get('/api/licenses');
-      console.log('Fetched licenses:', response.data);
-    } catch (error) {
-      console.error('Error fetching licenses:', error);
-      setError('Failed to fetch licenses.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchLicenses();
-  }, [fetchLicenses, refreshKey]);
+  const toggleSection = (section) => {
+    setOpenSection((prevSection) => (prevSection === section ? null : section));
+  };
 
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
@@ -42,25 +26,38 @@ const LicenseScannerDashboard = () => {
         title={<Typography variant="h4">License Scanner</Typography>}
         actionButtons={[]}
       />
-      {isLoading && <Typography>Loading licenses...</Typography>}
-      {error && <Typography color="error">{error}</Typography>}
-      <Box sx={{ mt: 3, mb: 2 }}>
+      {isLoading && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+          <CircularProgress />
+        </Box>
+      )}
+      {error && (
+        <Box sx={{ mt: 3 }}>
+          <Alert severity="error">{error}</Alert>
+        </Box>
+      )}
+      <Box sx={{ mt: 3, mb: 2,  }}>
         <Grid container spacing={5}>
           <Grid item xs={12} md={4}>
-            <Paper sx={{ border: "solid", borderColor: "divider", mb: 2 }}>
-              <LicenseUploader 
-                onUploadSuccess={refreshLicenses} 
-                setCapturedImage={setCapturedImage} 
-                setUploadedImage={setUploadedImage} 
+            <Paper sx={{ mb: 2, p: 3,border: "solid", borderColor: "divider" }}>
+              <DocumentUploader
+                onUploadSuccess={refreshDocuments}
+                open={openSection === "upload"}
+                onToggle={() => toggleSection("upload")}
               />
             </Paper>
-            <Paper sx={{ border: "solid", borderColor: "divider" }}>
-              <LicenseList key={refreshKey} onSelectLicense={setSelectedLicense} />
+            <Paper sx={{ p: 3, border: "solid", borderColor: "divider" }}>
+              <DocumentList
+                key={refreshKey}
+                onSelectDocument={setSelectedDocument}
+                open={openSection === "list"}
+                onToggle={() => toggleSection("list")}
+              />
             </Paper>
           </Grid>
           <Grid item xs={12} md={8}>
-            <Paper sx={{ border: "solid", borderColor: "divider", height: '100%' }}>
-              <LicenseDetail license={selectedLicense} image={capturedImage || uploadedImage} />
+            <Paper sx={{ p: 2, height: '80vh', overflow: 'auto', border: "solid", borderColor: "divider" }}>
+              <DocumentDetail document={selectedDocument} />
             </Paper>
           </Grid>
         </Grid>
@@ -69,4 +66,4 @@ const LicenseScannerDashboard = () => {
   );
 };
 
-export default LicenseScannerDashboard;
+export default DocumentDashboard;

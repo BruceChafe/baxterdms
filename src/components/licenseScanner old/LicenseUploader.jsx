@@ -1,11 +1,29 @@
 import React, { useState, useCallback } from "react";
-import { Button, Typography, Box, Stack, LinearProgress, Input, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { CloudUpload as CloudUploadIcon, PhotoCamera as PhotoCameraIcon } from "@mui/icons-material";
+import {
+  Button,
+  Typography,
+  Box,
+  Stack,
+  LinearProgress,
+  Input,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import {
+  CloudUpload as CloudUploadIcon,
+  PhotoCamera as PhotoCameraIcon,
+} from "@mui/icons-material";
 import axiosInstance from "../../axios";
-import CameraCapture from "./utilities/CameraCapture";
-import { useSnackbar } from '../../context/SnackbarContext';
+import CameraCapture from "../licenseScanner/utilities/CameraCapture";
+import { useSnackbar } from "../../context/SnackbarContext";
 
-const LicenseUploader = ({ onUploadSuccess, setCapturedImage, setUploadedImage }) => {
+const LicenseUploader = ({
+  onUploadSuccess,
+  setCapturedImage,
+  setUploadedImage,
+}) => {
   const [file, setFile] = useState(null);
   const [capturedImage, setCapturedImageState] = useState(null); // Local state for captured image
   const [uploading, setUploading] = useState(false);
@@ -54,7 +72,12 @@ const LicenseUploader = ({ onUploadSuccess, setCapturedImage, setUploadedImage }
         console.error("Error uploading file:", error);
         if (error.response) {
           console.error("Response data:", error.response.data);
-          showSnackbar(`Error uploading file: ${error.response.data.error || error.response.data.message}`, "error");
+          showSnackbar(
+            `Error uploading file: ${
+              error.response.data.error || error.response.data.message
+            }`,
+            "error"
+          );
         } else {
           showSnackbar(`Error uploading file: ${error.message}`, "error");
         }
@@ -67,17 +90,20 @@ const LicenseUploader = ({ onUploadSuccess, setCapturedImage, setUploadedImage }
   const analyzeLicense = useCallback(async (sasUrl) => {
     console.log(`Starting analysis for URL: ${sasUrl}`);
     try {
-      const response = await axiosInstance.post("/api/analyze", { url: sasUrl, documentType: 'idDocument' });
+      const response = await axiosInstance.post("/api/analyze", {
+        url: sasUrl,
+        documentType: "idDocument",
+      });
       console.log(`Analysis complete: ${JSON.stringify(response.data)}`);
     } catch (error) {
-      console.error('Error during license analysis:', error.message);
+      console.error("Error during license analysis:", error.message);
       throw error;
     }
   }, []);
 
   const dataURItoBlob = (dataURI) => {
-    const byteString = atob(dataURI.split(',')[1]);
-    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const byteString = atob(dataURI.split(",")[1]);
+    const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
     const ab = new ArrayBuffer(byteString.length);
     const ia = new Uint8Array(ab);
     for (let i = 0; i < byteString.length; i++) {
@@ -127,7 +153,12 @@ const LicenseUploader = ({ onUploadSuccess, setCapturedImage, setUploadedImage }
         {uploading && <LinearProgress sx={{ width: "100%", mt: 2 }} />}
       </Stack>
 
-      <Dialog open={cameraOpen} onClose={() => setCameraOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={cameraOpen}
+        onClose={() => setCameraOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Capture Image</DialogTitle>
         <DialogContent>
           <CameraCapture onCapture={handleCapture} />

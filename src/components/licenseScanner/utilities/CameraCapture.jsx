@@ -1,5 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import Webcam from 'react-webcam';
+import { Box, Button } from '@mui/material';
 
 const CameraCapture = ({ onCapture }) => {
   const webcamRef = useRef(null);
@@ -10,16 +11,17 @@ const CameraCapture = ({ onCapture }) => {
   }, [webcamRef, onCapture]);
 
   return (
-    <div>
+    <Box sx={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Webcam
         audio={false}
         ref={webcamRef}
         screenshotFormat="image/jpeg"
-        width={320}
-        height={240}
+        style={{ width: '100%', maxWidth: 640, height: 'auto' }}
       />
-      <button onClick={capture}>Capture Photo</button>
-    </div>
+      <Button variant="contained" color="primary" onClick={capture} sx={{ mt: 2 }}>
+        Capture Photo
+      </Button>
+    </Box>
   );
 };
 
