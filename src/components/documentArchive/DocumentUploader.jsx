@@ -85,7 +85,7 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle }) => {
       console.error('Error during document analysis:', error.message);
       throw error;
     }
-  }, []);
+  }, [showSnackbar]);
 
   return (
     <>

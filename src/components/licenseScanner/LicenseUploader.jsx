@@ -4,17 +4,11 @@ import {
   Button,
   Typography,
   Box,
-  Grid,
   LinearProgress,
-  Tooltip,
-  IconButton,
   Collapse,
   useTheme,
   useMediaQuery,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
+  TextField,
   Stack,
 } from "@mui/material";
 import {
@@ -29,8 +23,9 @@ import { useDropzone } from "react-dropzone";
 import { useSnackbar } from '../../context/SnackbarContext';
 import CameraCaptureDialog from "./utilities/CameraCaptureDialog";
 
-const DocumentUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, setUploadedImage }) => {
+const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, setUploadedImage }) => {
   const [file, setFile] = useState(null);
+  const [documentType, setDocumentType] = useState('');
   const [capturedImage, setCapturedImageState] = useState(null); // Local state for captured image
   const [uploading, setUploading] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -44,7 +39,7 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, s
       const selectedFile = acceptedFiles[0];
       setFile(selectedFile);
       setCapturedImageState(null);
-      setUploadedImage(URL.createObjectURL(selectedFile)); // Set the uploaded image preview
+      setUploadedImage(URL.createObjectURL(selectedFile));
     }
   }, [setUploadedImage]);
 
@@ -52,26 +47,33 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, s
 
   const handleCapture = (imageSrc) => {
     setCapturedImageState(imageSrc);
+    setCapturedImage(imageSrc);
     setFile(null);
     setUploadedImage(null);
     setCameraOpen(false);
   };
 
   const handleUpload = useCallback(async () => {
-    const fileToUpload = file || capturedImage;
-    if (!fileToUpload) return;
+    if (!file && !capturedImage) return;
+    if (!documentType) {
+      showSnackbar(`Document type is required.`, "error");
+      return;
+    }
 
     const formData = new FormData();
     if (file) {
       formData.append("file", file);
-    } else {
-      formData.append("file", dataURItoBlob(capturedImage));
+    } else if (capturedImage) {
+      const blob = await fetch(capturedImage).then(res => res.blob());
+      formData.append("file", new File([blob], "captured_image.jpg"));
     }
-    formData.append("documentType", "driverLicense");
+    formData.append("documentType", documentType);
+    formData.append("metadata", JSON.stringify({})); // Add any additional metadata here
+
     setUploading(true);
 
     try {
-      const uploadResponse = await axiosInstance.post("/api/upload", formData, {
+      const uploadResponse = await axiosInstance.post("/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -79,22 +81,22 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, s
 
       showSnackbar(`Driver's license successfully uploaded.`, "success");
 
-      const analyzerType = "driverLicense";
+      const analyzerType = "document"; // Adjust if you need different types
       await analyzeDocument(uploadResponse.data.url, analyzerType);
 
-      onUploadSuccess(); // Refresh document list on successful upload and analysis
+      onUploadSuccess();
     } catch (error) {
       console.error("Error uploading file:", error);
       showSnackbar(`Error uploading file: ${error.message}`, "error");
     } finally {
       setUploading(false);
     }
-  }, [file, capturedImage, onUploadSuccess, showSnackbar]);
+  }, [file, capturedImage, documentType, showSnackbar, onUploadSuccess]);
 
   const analyzeDocument = useCallback(async (sasUrl, analyzerType) => {
     console.log(`Starting analysis for URL: ${sasUrl} as ${analyzerType}`);
     try {
-      const response = await axiosInstance.post("/api/analyze", { url: sasUrl, analyzerType });
+      const response = await axiosInstance.post("/analyze", { url: sasUrl, analyzerType });
       showSnackbar(`Driver's license successfully analyzed.`, "success");
       console.log(`Analysis complete: ${JSON.stringify(response.data)}`);
     } catch (error) {
@@ -102,17 +104,6 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, s
       throw error;
     }
   }, [showSnackbar]);
-
-  const dataURItoBlob = (dataURI) => {
-    const byteString = atob(dataURI.split(',')[1]);
-    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: mimeString });
-  };
 
   return (
     <>
@@ -127,6 +118,13 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, s
       </Box>
       <Collapse in={open}>
         <Stack direction="column" spacing={2} sx={{ mt: 2 }}>
+          <TextField
+            label="Document Type"
+            variant="outlined"
+            value={documentType}
+            onChange={(e) => setDocumentType(e.target.value)}
+            fullWidth
+          />
           <Box
             {...getRootProps()}
             sx={{
@@ -158,7 +156,7 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, s
           <Button
             variant="contained"
             onClick={handleUpload}
-            disabled={!file && !capturedImage || uploading}
+            disabled={(!file && !capturedImage) || uploading}
             startIcon={<CloudUploadIcon />}
             fullWidth={isSmallScreen}
           >
@@ -168,13 +166,13 @@ const DocumentUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, s
         </Stack>
 
         <CameraCaptureDialog
-  cameraOpen={cameraOpen}
-  onClose={() => setCameraOpen(false)}
-  onCapture={handleCapture}
-/>
+          cameraOpen={cameraOpen}
+          onClose={() => setCameraOpen(false)}
+          onCapture={handleCapture}
+        />
       </Collapse>
     </>
   );
 };
 
-export default DocumentUploader;
+export default LicenseUploader;

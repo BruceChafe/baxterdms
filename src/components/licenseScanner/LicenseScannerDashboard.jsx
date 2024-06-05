@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography, Paper, Grid, CircularProgress, Alert, useMediaQuery, useTheme } from "@mui/material";
-import DocumentUploader from "./DocumentUploader";
+import DocumentUploader from "./LicenseUploader";
 import DocumentList from "./DocumentList";
 import DocumentDetail from "./DocumentDetail";
 import TitleLayout from "../layouts/TitleLayout";
