@@ -2,6 +2,10 @@ import React, { useMemo } from 'react';
 import { Typography, Box, List, ListItem, ListItemText, Divider } from '@mui/material';
 
 const formatField = (field) => {
+  if (typeof field !== 'object' || !field) {
+    return field;
+  }
+
   switch (field.kind) {
     case "currency":
       return `${field.value.currencySymbol}${field.value.amount} (${field.value.currencyCode})`;
@@ -14,20 +18,21 @@ const formatField = (field) => {
   }
 };
 
-const renderFields = (fields) => {
-  return Object.entries(fields).map(([key, field]) => (
-    <React.Fragment key={key}>
+const renderFields = (words) => {
+  return words.map((word, index) => (
+    <React.Fragment key={index}>
       <ListItem>
-        <ListItemText primary={key} secondary={formatField(field)} />
+        <ListItemText primary={word.content} secondary={`Confidence: ${word.confidence}`} />
       </ListItem>
       <Divider />
     </React.Fragment>
   ));
 };
 
-const LicenseDetail = ({ license, image }) => {
+const LicenseDetail = ({ license }) => {
   const fieldElements = useMemo(() => {
-    return license ? renderFields(license.analysisResult[0].fields) : null;
+    return license ? renderFields(license.analysisResult[0].words) : null;
+    console.log(license)
   }, [license]);
 
   if (!license) {
@@ -36,12 +41,6 @@ const LicenseDetail = ({ license, image }) => {
         <Typography variant="h5" mb={2}>
           Select a license to view details
         </Typography>
-        {image && (
-          <div>
-            <Typography variant="h6">Captured/Uploaded Image:</Typography>
-            <img src={image} alt="Captured/Uploaded" style={{ width: "100%" }} />
-          </div>
-        )}
       </Box>
     );
   }
@@ -51,15 +50,9 @@ const LicenseDetail = ({ license, image }) => {
       <Typography variant="h6" gutterBottom>
         License Details
       </Typography>
-      {image && (
-        <div>
-          <Typography variant="h6">Captured/Uploaded Image:</Typography>
-          <img src={image} alt="Captured/Uploaded" style={{ width: "100%" }} />
-        </div>
-      )}
       <List>
         <ListItem>
-          <ListItemText primary="License Type" secondary={license.licenseType} />
+          <ListItemText primary="Document ID" secondary={license.documentId} />
         </ListItem>
         <Divider />
         <ListItem>
@@ -67,22 +60,15 @@ const LicenseDetail = ({ license, image }) => {
         </ListItem>
         <Divider />
         <ListItem>
-          <ListItemText
-            primary="Original URL"
-            secondary={
-              <a href={license.originalUrl} target="_blank" rel="noopener noreferrer">
-                {license.originalUrl}
-              </a>
-            }
-          />
+          <ListItemText primary="Document Type" secondary={license.documentType} />
         </ListItem>
         <Divider />
         <ListItem>
           <ListItemText
             primary="Archived URL"
             secondary={
-              <a href={license.archivedUrl} target="_blank" rel="noopener noreferrer">
-                {license.archivedUrl}
+              <a href={license.archiveUrl} target="_blank" rel="noopener noreferrer">
+                {license.archiveUrl}
               </a>
             }
           />

@@ -8,25 +8,26 @@ import {
   Collapse,
   useTheme,
   useMediaQuery,
-  TextField,
   Stack,
 } from "@mui/material";
 import {
   CloudUpload as CloudUploadIcon,
-  Info as InfoIcon,
+  PhotoCamera as PhotoCameraIcon,
   ExpandLess,
   ExpandMore,
-  PhotoCamera as PhotoCameraIcon,
-  Close as CloseIcon,
 } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
-import { useSnackbar } from '../../context/SnackbarContext';
+import { useSnackbar } from "../../context/SnackbarContext";
 import CameraCaptureDialog from "./utilities/CameraCaptureDialog";
+
+const { AzureKeyCredential, DocumentAnalysisClient } = require("@azure/ai-form-recognizer");
+
+const key = process.env.REACT_APP_FORM_RECOGNIZER_KEY;
+const endpoint = process.env.REACT_APP_FORM_RECOGNIZER_ENDPOINT;
 
 const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, setUploadedImage }) => {
   const [file, setFile] = useState(null);
-  const [documentType, setDocumentType] = useState('');
-  const [capturedImage, setCapturedImageState] = useState(null); // Local state for captured image
+  const [capturedImage, setCapturedImageState] = useState(null); 
   const [uploading, setUploading] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
   const { showSnackbar } = useSnackbar();
@@ -55,10 +56,6 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
 
   const handleUpload = useCallback(async () => {
     if (!file && !capturedImage) return;
-    if (!documentType) {
-      showSnackbar(`Document type is required.`, "error");
-      return;
-    }
 
     const formData = new FormData();
     if (file) {
@@ -67,8 +64,6 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
       const blob = await fetch(capturedImage).then(res => res.blob());
       formData.append("file", new File([blob], "captured_image.jpg"));
     }
-    formData.append("documentType", documentType);
-    formData.append("metadata", JSON.stringify({})); // Add any additional metadata here
 
     setUploading(true);
 
@@ -81,26 +76,49 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
 
       showSnackbar(`Driver's license successfully uploaded.`, "success");
 
-      const analyzerType = "document"; // Adjust if you need different types
-      await analyzeDocument(uploadResponse.data.url, analyzerType);
+      const analyzerType = "document"; 
+      const documentData = await analyzeDocument(uploadResponse.data.url, analyzerType);
 
-      onUploadSuccess();
+      onUploadSuccess(documentData);
     } catch (error) {
       console.error("Error uploading file:", error);
       showSnackbar(`Error uploading file: ${error.message}`, "error");
     } finally {
       setUploading(false);
     }
-  }, [file, capturedImage, documentType, showSnackbar, onUploadSuccess]);
+  }, [file, capturedImage, showSnackbar, onUploadSuccess]);
 
   const analyzeDocument = useCallback(async (sasUrl, analyzerType) => {
     console.log(`Starting analysis for URL: ${sasUrl} as ${analyzerType}`);
     try {
-      const response = await axiosInstance.post("/analyze", { url: sasUrl, analyzerType });
-      showSnackbar(`Driver's license successfully analyzed.`, "success");
-      console.log(`Analysis complete: ${JSON.stringify(response.data)}`);
+      const client = new DocumentAnalysisClient(endpoint, new AzureKeyCredential(key));
+      const poller = await client.beginAnalyzeDocument("prebuilt-idDocument", sasUrl);
+
+      const {
+        documents: [result]
+      } = await poller.pollUntilDone();
+
+      if (result) {
+        if (result.docType === "idDocument.driverLicense") {
+          const documentData = {
+            firstName: result.fields.FirstName?.content,
+            lastName: result.fields.LastName?.content,
+            documentNumber: result.fields.DocumentNumber?.content,
+            dateOfBirth: result.fields.DateOfBirth?.content,
+            dateOfExpiration: result.fields.DateOfExpiration?.content,
+          };
+          showSnackbar(`Driver's license successfully analyzed.`, "success");
+          return documentData;
+        } else {
+          console.error("Unknown document type in result:", result);
+          throw new Error("Unknown document type.");
+        }
+      } else {
+        throw new Error("No documents found in the result.");
+      }
     } catch (error) {
       console.error('Error during document analysis:', error.message);
+      showSnackbar(`Error analyzing document: ${error.message}`, "error");
       throw error;
     }
   }, [showSnackbar]);
@@ -118,13 +136,6 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
       </Box>
       <Collapse in={open}>
         <Stack direction="column" spacing={2} sx={{ mt: 2 }}>
-          <TextField
-            label="Document Type"
-            variant="outlined"
-            value={documentType}
-            onChange={(e) => setDocumentType(e.target.value)}
-            fullWidth
-          />
           <Box
             {...getRootProps()}
             sx={{

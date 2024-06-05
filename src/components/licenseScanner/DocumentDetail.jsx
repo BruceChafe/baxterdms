@@ -19,6 +19,10 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
 const formatField = (field) => {
+  if (typeof field !== 'object' || !field) {
+    return field;
+  }
+
   switch (field.kind) {
     case "currency":
       return `${field.value.currencySymbol}${field.value.amount} (${field.value.currencyCode})`;
@@ -40,9 +44,9 @@ const FieldItem = ({ fieldKey, field }) => (
   </React.Fragment>
 );
 
-const renderFields = (fields) => {
-  return Object.entries(fields).map(([key, field]) => (
-    <FieldItem key={key} fieldKey={key} field={field} />
+const renderFields = (words) => {
+  return words.map((word, index) => (
+    <FieldItem key={index} fieldKey={word.content} field={{ value: `Confidence: ${word.confidence}` }} />
   ));
 };
 
@@ -54,8 +58,8 @@ const DocumentDetail = ({ document }) => {
 
   const fieldElements = useMemo(() => {
     if (!document) return null;
-    const fields = document.analysisResult?.[0]?.fields || {};
-    return renderFields(fields);
+    const words = document.analysisResult?.[0]?.words || [];
+    return renderFields(words);
   }, [document]);
 
   const handleClickOpen = (url) => {
@@ -95,21 +99,6 @@ const DocumentDetail = ({ document }) => {
           <ListItemText
             primary="Upload Date"
             secondary={new Date(document.uploadDate).toLocaleString()}
-          />
-        </ListItem>
-        <Divider />
-        <ListItem>
-          <ListItemText
-            primary="Original URL"
-            secondary={
-              <Link
-                href="#"
-                onClick={() => handleClickOpen(document.originalUrl)}
-                underline="hover"
-              >
-                {document.originalUrl}
-              </Link>
-            }
           />
         </ListItem>
         <Divider />
