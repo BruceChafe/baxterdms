@@ -66,48 +66,59 @@ const client = new DocumentAnalysisClient(
   new AzureKeyCredential(process.env.VITE_AZURE_FORM_RECOGNIZER_KEY)
 );
 
-const analyzeDocument = async (sasUrl, analyzerType) => {
-  console.log(
-    `Starting analysis for URL: ${sasUrl} with analyzer type: ${analyzerType}`
-  );
+const analyzeDocument = async (sasUrl, modelId) => {
+  console.log(`Starting analysis for URL: ${sasUrl} with model: ${modelId}`);
   try {
-    let poller;
-    if (analyzerType === "invoice") {
-      poller = await client.beginAnalyzeDocumentFromUrl(
-        "prebuilt-invoice",
-        sasUrl
-      );
-    } else if (analyzerType === "layout") {
-      poller = await client.beginAnalyzeDocumentFromUrl(
-        "prebuilt-layout",
-        sasUrl
-      );
-    } else {
-      poller = await client.beginAnalyzeDocumentFromUrl(
-        "prebuilt-document",
-        sasUrl
-      );
-    }
-
-    const result = await poller.pollUntilDone({
-      updateIntervalInMs: 5000, // Poll every 5 seconds
-    });
+    const poller = await client.beginAnalyzeDocument(modelId, sasUrl);
+    const result = await poller.pollUntilDone();
     console.log(`Analysis complete for URL: ${sasUrl}`);
-    console.log("Analysis result:", result);
-
-    if (result.documents && result.documents.length > 0) {
-      return result.documents;
-    } else if (result.pages && result.pages.length > 0) {
-      return result.pages;
-    } else {
-      console.warn("No analysis result documents or pages found.");
-      return [];
-    }
+    return result.documents.length > 0 ? result.documents[0] : null;
   } catch (error) {
     console.error("Error during document analysis:", error.message);
     throw error;
   }
 };
+
+app.post("/api/uploadLicense", upload.single("file"), async (req, res) => {
+  try {
+    const { documentType, metadata } = req.body;
+    if (!req.file) throw new Error("No file uploaded");
+    if (!documentType) throw new Error("Document type is required");
+
+    const containerName = "data-archive-skeezer-motors";
+    const archiveBlobUrl = await uploadFileToBlobStorage(req.file, containerName);
+    const archiveSasUrl = await generateSasToken(containerName, req.file.originalname);
+
+    const analyzedDocument = await analyzeDocument(archiveSasUrl, "prebuilt-idDocument");
+
+    if (!analyzedDocument) {
+      throw new Error("Document analysis failed");
+    }
+
+    const extractedData = {
+      firstName: analyzedDocument.fields.FirstName?.content,
+      lastName: analyzedDocument.fields.LastName?.content,
+      documentNumber: analyzedDocument.fields.DocumentNumber?.content,
+      dateOfBirth: analyzedDocument.fields.DateOfBirth?.content,
+      dateOfExpiration: analyzedDocument.fields.DateOfExpiration?.content,
+    };
+
+    const document = {
+      documentId: new Date().toISOString(),
+      uploadDate: new Date().toISOString(),
+      documentType,
+      analysisResult: analyzedDocument,
+      extractedData,
+      archiveUrl: archiveSasUrl,
+    };
+
+    const { resource: createdItem } = await container.items.create(document);
+    res.status(200).send(createdItem);
+  } catch (error) {
+    console.error("Upload error:", error.message);
+    res.status(500).send({ error: error.message });
+  }
+});
 
 app.post("/api/upload", upload.single("file"), async (req, res) => {
   try {
@@ -133,6 +144,8 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+
+
 
 app.post("/api/analyze", async (req, res) => {
   try {
@@ -232,10 +245,8 @@ app.delete("/api/documents/:id", async (req, res) => {
   }
 });
 
-// Serve static files from the React app
 app.use(express.static(path.join(process.cwd(), 'dist')));
 
-// The "catchall" handler: for any request that doesn't match one above, send back index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
 });

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   Typography,
   Box,
@@ -7,16 +7,7 @@ import {
   ListItemText,
   Divider,
   Link,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
 const formatField = (field) => {
   if (typeof field !== 'object' || !field) {
@@ -44,33 +35,18 @@ const FieldItem = ({ fieldKey, field }) => (
   </React.Fragment>
 );
 
-const renderFields = (words) => {
-  return words.map((word, index) => (
-    <FieldItem key={index} fieldKey={word.content} field={{ value: `Confidence: ${word.confidence}` }} />
+const renderFields = (fields) => {
+  return Object.keys(fields).map((key) => (
+    <FieldItem key={key} fieldKey={key} field={fields[key]} />
   ));
 };
 
 const LicenseScannerDetail = ({ document }) => {
-  const [open, setOpen] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState(null);
-
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
-
   const fieldElements = useMemo(() => {
     if (!document) return null;
-    const words = document.analysisResult?.[0]?.words || [];
-    return renderFields(words);
+    const fields = document.extractedData || {};
+    return renderFields(fields);
   }, [document]);
-
-  const handleClickOpen = (url) => {
-    setPdfUrl(url);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setPdfUrl(null);
-  };
 
   if (!document) {
     return (
@@ -107,8 +83,9 @@ const LicenseScannerDetail = ({ document }) => {
             primary="Archived URL"
             secondary={
               <Link
-                href="#"
-                onClick={() => handleClickOpen(document.archiveUrl)}
+                href={document.archiveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 underline="hover"
               >
                 {document.archiveUrl}
@@ -119,36 +96,19 @@ const LicenseScannerDetail = ({ document }) => {
         <Divider />
         {fieldElements}
       </List>
-
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-        <DialogTitle>
-          PDF Viewer
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
-          {pdfUrl && (
-            <Worker
-              workerUrl={`https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js`}
-            >
-              <Viewer
-                fileUrl={pdfUrl}
-                plugins={[defaultLayoutPluginInstance]}
-              />
-            </Worker>
-          )}
-        </DialogContent>
-      </Dialog>
+      {document.archiveUrl && (
+        <Box
+          component="img"
+          sx={{
+            width: '100%',
+            maxHeight: '500px',
+            objectFit: 'contain',
+            mt: 2,
+          }}
+          src={document.archiveUrl}
+          alt="Archived Document"
+        />
+      )}
     </Box>
   );
 };

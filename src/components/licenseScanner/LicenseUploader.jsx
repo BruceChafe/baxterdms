@@ -20,10 +20,10 @@ import { useDropzone } from "react-dropzone";
 import { useSnackbar } from "../../context/SnackbarContext";
 import CameraCaptureDialog from "./utilities/CameraCaptureDialog";
 
-const { AzureKeyCredential, DocumentAnalysisClient } = require("@azure/ai-form-recognizer");
+import { AzureKeyCredential, DocumentAnalysisClient } from "@azure/ai-form-recognizer";
 
-const key = process.env.REACT_APP_FORM_RECOGNIZER_KEY;
-const endpoint = process.env.REACT_APP_FORM_RECOGNIZER_ENDPOINT;
+const key = import.meta.env.VITE_AZURE_FORM_RECOGNIZER_KEY;
+const endpoint = import.meta.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT;
 
 const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, setUploadedImage }) => {
   const [file, setFile] = useState(null);
@@ -65,10 +65,13 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
       formData.append("file", new File([blob], "captured_image.jpg"));
     }
 
+    // Add the document type to the form data
+    formData.append("documentType", "driverLicense");  // Example document type, update as necessary
+
     setUploading(true);
 
     try {
-      const uploadResponse = await axiosInstance.post("/upload", formData, {
+      const uploadResponse = await axiosInstance.post("/uploadLicense", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -76,8 +79,7 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
 
       showSnackbar(`Driver's license successfully uploaded.`, "success");
 
-      const analyzerType = "document"; 
-      const documentData = await analyzeDocument(uploadResponse.data.url, analyzerType);
+      const documentData = uploadResponse.data.extractedData; // Get the extracted data from the server response
 
       onUploadSuccess(documentData);
     } catch (error) {
@@ -87,41 +89,6 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
       setUploading(false);
     }
   }, [file, capturedImage, showSnackbar, onUploadSuccess]);
-
-  const analyzeDocument = useCallback(async (sasUrl, analyzerType) => {
-    console.log(`Starting analysis for URL: ${sasUrl} as ${analyzerType}`);
-    try {
-      const client = new DocumentAnalysisClient(endpoint, new AzureKeyCredential(key));
-      const poller = await client.beginAnalyzeDocument("prebuilt-idDocument", sasUrl);
-
-      const {
-        documents: [result]
-      } = await poller.pollUntilDone();
-
-      if (result) {
-        if (result.docType === "idDocument.driverLicense") {
-          const documentData = {
-            firstName: result.fields.FirstName?.content,
-            lastName: result.fields.LastName?.content,
-            documentNumber: result.fields.DocumentNumber?.content,
-            dateOfBirth: result.fields.DateOfBirth?.content,
-            dateOfExpiration: result.fields.DateOfExpiration?.content,
-          };
-          showSnackbar(`Driver's license successfully analyzed.`, "success");
-          return documentData;
-        } else {
-          console.error("Unknown document type in result:", result);
-          throw new Error("Unknown document type.");
-        }
-      } else {
-        throw new Error("No documents found in the result.");
-      }
-    } catch (error) {
-      console.error('Error during document analysis:', error.message);
-      showSnackbar(`Error analyzing document: ${error.message}`, "error");
-      throw error;
-    }
-  }, [showSnackbar]);
 
   return (
     <>
