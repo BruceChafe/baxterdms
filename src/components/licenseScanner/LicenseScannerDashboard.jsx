@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography, Paper, Grid, CircularProgress, Alert, useMediaQuery, useTheme } from "@mui/material";
 import DocumentUploader from "./LicenseUploader";
 import DocumentList from "./DocumentList";
-import DocumentDetail from "./DocumentDetail";
+import LicenseScannerDetail from "./LicenseScannerDetail";
 import TitleLayout from "../layouts/TitleLayout";
 
 const LicenseScannerDashboard = () => {
@@ -60,7 +60,7 @@ const LicenseScannerDashboard = () => {
           </Grid>
           <Grid item xs={12} md={8}>
             <Paper sx={{ p: 2, height: '80vh', overflow: 'auto', border: "solid", borderColor: "divider" }}>
-              <DocumentDetail document={selectedDocument} />
+              <LicenseScannerDetail document={selectedDocument} />
             </Paper>
           </Grid>
         </Grid>

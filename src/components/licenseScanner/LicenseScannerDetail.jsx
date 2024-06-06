@@ -50,7 +50,7 @@ const renderFields = (words) => {
   ));
 };
 
-const DocumentDetail = ({ document }) => {
+const LicenseScannerDetail = ({ document }) => {
   const [open, setOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
 
@@ -153,4 +153,4 @@ const DocumentDetail = ({ document }) => {
   );
 };
 
-export default DocumentDetail;
+export default LicenseScannerDetail;
