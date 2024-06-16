@@ -30,6 +30,7 @@ import NewLeadForm from "./components/leads/NewLeadForm";
 import DocumentDashboard from "./components/documentArchive/DocumentDashboard";
 import LicenseScannerDashboard from "./components/licenseScanner/LicenseScannerDashboard";
 import LicenseScannerHistory from "./components/licenseScanner/LicenseScannerHistory";
+import LicenseProfile from "./components/licenseScanner/vistiorProfile/LicenseProfile";
 
 const App = () => {
   return (
@@ -91,7 +92,6 @@ const AppRoutes = () => {
             <Route path="/contacts/newcontact" element={<NewContact />} />
             <Route path="/account/overview" element={<AccountOverview />} />
             <Route path="/account/theme" element={<UserThemeSelection />} />
-            {/* <Route path="/account/userprofile" element={<UserProfile />} /> */}
             <Route
               path="/account/updatepassword"
               element={<UpdatePassword />}
@@ -108,6 +108,7 @@ const AppRoutes = () => {
             <Route path="/documentarchive" element={<DocumentDashboard />} />
             <Route path="/licensescanner" element={<LicenseScannerDashboard />} />
             <Route path="/licensescanner/history" element={<LicenseScannerHistory />} />
+            <Route path="/licensescanner/profile/:documentId" element={<LicenseProfile />} />
             <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
         </Box>

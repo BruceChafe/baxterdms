@@ -8,12 +8,14 @@ import {
   Alert,
   Container,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import LicenseHistoryTable from "./utilities/tables/LicenseHistoryTable";
 import axiosInstance from "../../axios";
 import { useSnackbar } from '../../context/SnackbarContext';
 import TitleLayout from "../layouts/TitleLayout";
 
 const LicenseScannerHistory = () => {
+  const navigate = useNavigate();
   const { showSnackbar } = useSnackbar();
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,6 +72,10 @@ const LicenseScannerHistory = () => {
     }));
   }, [documents]);
 
+  const navigateToProfile = (documentId) => {
+    navigate(`/licensescanner/profile/${documentId}`);
+  };
+
   return (
     <Box sx={{ mt: 3, mr: 8 }}>
       <TitleLayout title={<Typography variant="h4">License Scanner History</Typography>} />
@@ -101,6 +107,7 @@ const LicenseScannerHistory = () => {
             ]}
             page={page}
             rowsPerPage={rowsPerPage}
+            onNavigate={navigateToProfile}
           />
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>

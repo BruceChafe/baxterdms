@@ -196,6 +196,28 @@ app.get("/api/documents", async (req, res) => {
   }
 });
 
+app.get("/api/documents/:documentId", async (req, res) => {
+  try {
+    const documentId = req.params.documentId;
+    const querySpec = {
+      query: "SELECT * FROM c WHERE c.documentId = @documentId",
+      parameters: [{ name: "@documentId", value: documentId }],
+    };
+
+    const { resources: documents } = await container.items.query(querySpec).fetchAll();
+
+    if (documents.length === 0) {
+      return res.status(404).send({ error: "Document not found" });
+    }
+
+    res.status(200).json(documents[0]);
+  } catch (error) {
+    console.error("Error fetching document:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 app.delete("/api/documents/:id", async (req, res) => {
   const documentId = req.params.id;
   try {

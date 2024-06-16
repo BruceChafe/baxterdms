@@ -17,10 +17,9 @@ import {
 } from "@mui/material";
 import LicenseScannerDetail from "../../LicenseScannerDetail";
 
-const LicenseHistoryTable = ({ data, columns, page, rowsPerPage }) => {
+const LicenseHistoryTable = ({ data, columns, page, rowsPerPage, onNavigate }) => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  console.log("selected:", selectedRow)
 
   const handleClickOpen = (row) => {
     setSelectedRow(row);
@@ -93,6 +92,14 @@ const LicenseHistoryTable = ({ data, columns, page, rowsPerPage }) => {
                         View More
                       </Button>
                     </Tooltip>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => onNavigate(row.id)}
+                      sx={{ ml: 1 }}
+                    >
+                      Full Profile
+                    </Button>
                   </TableCell>
                   {columns.map((column, index) => (
                     <TableCell
@@ -119,7 +126,20 @@ const LicenseHistoryTable = ({ data, columns, page, rowsPerPage }) => {
         </DialogTitle>
         <DialogContent dividers>
           {selectedRow && <LicenseScannerDetail document={selectedRow} />}
-          
+          {selectedRow && (
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  handleClose();
+                  onNavigate(selectedRow.id);
+                }}
+              >
+                Go to Full Profile
+              </Button>
+            </Box>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -132,4 +152,3 @@ const LicenseHistoryTable = ({ data, columns, page, rowsPerPage }) => {
 };
 
 export default LicenseHistoryTable;
- 

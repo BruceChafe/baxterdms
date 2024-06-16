@@ -5,7 +5,7 @@ import {
   Box,
   CircularProgress,
   Button,
-  Container
+  Container,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import ContactInfo from "./ContactInfo";
