@@ -1,122 +1,132 @@
-import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import { CssBaseline, Grid, CircularProgress, Box } from "@mui/material";
-import { AuthProvider, useAuth } from "./context/AuthContext";
-import Contact from "./components/contacts/Contact";
-import SignIn from "./components/signin/SignIn";
-import NewContact from "./components/contacts/NewContact";
-import ContactsDashboard from "./components/contacts/ContactsDashboard";
-import UserThemeSelection from "./components/account/UserThemeSelection";
-import AccountOverview from "./components/account/Overview";
-import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
-import UpdatePassword from "./components/account/UpdatePassword";
-import LeadsDashboard from "./components/leads/LeadsDashboard";
-import NewLeadComponent from "./components/leads/NewLead";
-import { ThemeProvider } from "./context/ThemeContext";
-import ConfigLanding from "./components/configuration/ConfigDashboard";
-import LeadsConfig from "./components/configuration/LeadsConfig";
-import Lead from "./components/leads/Lead";
-import LeadTaskConfig from "./components/configuration/LeadTaskConfig";
-import WeeklyCalendar from "./components/calendar/WeeklyCalendar";
-import InventoryDashboard from "./components/inventory/InventoryDashboard";
-import Inventory from "./components/inventory/Inventory";
-import { SnackbarProvider } from "./context/SnackbarContext";
-import NewLeadForm from "./components/leads/NewLeadForm";
-import DocumentDashboard from "./components/documentArchive/DocumentDashboard";
-import LicenseScannerDashboard from "./components/licenseScanner/LicenseScannerDashboard";
+// import React, { useState } from "react";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableHead,
+//   TableRow,
+//   Button,
+//   Box,
+//   Paper,
+//   Tooltip,
+//   Dialog,
+//   DialogTitle,
+//   DialogContent,
+//   DialogActions,
+// } from "@mui/material";
+// import LicenseScannerDetail from "../../LicenseScannerDetail"; // Ensure the correct relative path
 
-const App = () => {
-  return (
-    <AuthProvider>
-      <ThemeProvider>
-        <SnackbarProvider>
-          <CssBaseline />
-          <Router>
-            <AppRoutes />
-          </Router>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </AuthProvider>
-  );
-};
+// const LicenseHistoryTable = ({ data, columns, page, rowsPerPage }) => {
+//   const [open, setOpen] = useState(false);
+//   const [selectedRow, setSelectedRow] = useState(null);
 
-const AppRoutes = () => {
-  const { user, loading } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+//   const handleClickOpen = (row) => {
+//     setSelectedRow(row);
+//     setOpen(true);
+//   };
 
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
+//   const handleClose = () => {
+//     setOpen(false);
+//     setSelectedRow(null);
+//   };
 
-  if (user === undefined) {
-    return null;
-  }
+//   const startIndex = page * rowsPerPage;
+//   const endIndex = startIndex + rowsPerPage;
+//   const paginatedData = data.slice(startIndex, endIndex);
 
-  return user ? (
-    <Grid container>
-      <Grid
-        item
-        xs={collapsed ? 1 : 2}
-        md={collapsed ? 1 : 2}
-        lg={collapsed ? 1 : 2}
-      >
-        <SidebarSwitcher collapsed={collapsed} setCollapsed={setCollapsed} />
-      </Grid>
-      <Grid
-        item
-        xs={collapsed ? 11 : 10}
-        md={collapsed ? 11 : 10}
-        lg={collapsed ? 11 : 10}
-      >
-        <Box sx={{ width: "100%", overflow: "auto" }}>
-          <Routes>
-            <Route path="/home" element={<WeeklyCalendar />} />
-            <Route path="/contacts/:contactId" element={<Contact />} />
-            <Route path="/contacts/*" element={<ContactsDashboard />} />
-            <Route path="/contacts/newcontact" element={<NewContact />} />
-            <Route path="/account/overview" element={<AccountOverview />} />
-            <Route path="/account/theme" element={<UserThemeSelection />} />
-            {/* <Route path="/account/userprofile" element={<UserProfile />} /> */}
-            <Route
-              path="/account/updatepassword"
-              element={<UpdatePassword />}
-            />
-            <Route path="/leads" element={<LeadsDashboard />} />
-            <Route path="/leads/newlead" element={<NewLeadComponent />} />
-            <Route path="/leads/newlead/:contactId" element={<NewLeadForm />} />
-            <Route path="/configuration" element={<ConfigLanding />} />
-            <Route path="/configuration/leads" element={<LeadsConfig />} />
-            <Route path="/configuration/leadtasks" element={<LeadTaskConfig />} />
-            <Route path="/leads/:leadNumber" element={<Lead />} />
-            <Route path="/inventory" element={<InventoryDashboard />} />
-            <Route path="/inventory/:inventoryId" element={<Inventory />} />
-            <Route path="/documentarchive" element={<DocumentDashboard />} />
-            <Route path="/licensescanner" element={<LicenseScannerDashboard />} />
-            <Route path="*" element={<Navigate to="/home" />} />
-          </Routes>
-        </Box>
-      </Grid>
-    </Grid>
-  ) : (
-    <Routes>
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="*" element={<Navigate to="/signin" />} />
-    </Routes>
-  );
-};
+//   const cellWidth = `${100 / (columns.length + 1)}%`;
 
-export default App;
+//   return (
+//     <Box sx={{ mt: 3 }}>
+//       <Paper sx={{ mt: 2, mb: 2 }}>
+//         <TableContainer
+//           component={Paper}
+//           sx={{
+//             border: "solid",
+//             borderColor: "divider",
+//             height: "75vh",
+//             overflow: "auto",
+//           }}
+//         >
+//           <Table stickyHeader>
+//             <TableHead>
+//               <TableRow>
+//                 <TableCell
+//                   align="center"
+//                   sx={{
+//                     borderRight: 1,
+//                     borderColor: "divider",
+//                     width: cellWidth,
+//                   }}
+//                 >
+//                   Actions
+//                 </TableCell>
+//                 {columns.map((column, index) => (
+//                   <TableCell
+//                     key={column.field}
+//                     align="center"
+//                     sx={{
+//                       width: cellWidth,
+//                       borderRight: index !== columns.length - 1 ? 1 : 0,
+//                       borderColor: "divider",
+//                     }}
+//                   >
+//                     {column.header}
+//                   </TableCell>
+//                 ))}
+//               </TableRow>
+//             </TableHead>
+//             <TableBody>
+//               {paginatedData.map((row) => (
+//                 <TableRow key={row.id} hover>
+//                   <TableCell
+//                     align="center"
+//                     sx={{ borderRight: 1, borderColor: "divider" }}
+//                   >
+//                     <Tooltip title="Open">
+//                       <Button
+//                         variant="outlined"
+//                         onClick={() => handleClickOpen(row)}
+//                       >
+//                         View More
+//                       </Button>
+//                     </Tooltip>
+//                   </TableCell>
+//                   {columns.map((column, index) => (
+//                     <TableCell
+//                       key={index}
+//                       align="center"
+//                       sx={{
+//                         borderRight: index !== columns.length - 1 ? 1 : 0,
+//                         borderColor: "divider",
+//                       }}
+//                     >
+//                       {row[column.field]}
+//                     </TableCell>
+//                   ))}
+//                 </TableRow>
+//               ))}
+//             </TableBody>
+//           </Table>
+//         </TableContainer>
+//       </Paper>
+
+//       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+//         <DialogTitle>
+//           {selectedRow?.analysisResult.fields.DocumentNumber?.content}
+//         </DialogTitle>
+//         <DialogContent dividers>
+//           {selectedRow && <LicenseScannerDetail document={selectedRow} />}
+//         </DialogContent>
+//         <DialogActions>
+//           <Button onClick={handleClose} color="primary">
+//             Close
+//           </Button>
+//         </DialogActions>
+//       </Dialog>
+//     </Box>
+//   );
+// };
+
+// export default LicenseHistoryTable;

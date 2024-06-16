@@ -9,15 +9,18 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  ListItemIcon,
   Typography,
   Divider,
   IconButton,
   Tooltip,
+  Stack,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const drawerWidth = 240;
+const listItemHeight = 56; // Set a consistent height
 
 const SidebarComponent = ({ navigationLinks, collapsed, setCollapsed }) => {
   const navigate = useNavigate();
@@ -60,35 +63,64 @@ const SidebarComponent = ({ navigationLinks, collapsed, setCollapsed }) => {
             flexGrow: 0,
           }}
         >
-          {collapsed ? (
-            <Tooltip title="baxter.">
-              <Typography
-                variant="h6"
-                component={Link}
-                to="/home"
-                sx={{ textDecoration: "none", color: "inherit" }}
-              >
-                B
-              </Typography>
-            </Tooltip>
-          ) : (
+          <Tooltip title="baxter.">
             <Typography
               variant="h6"
               component={Link}
               to="/home"
               sx={{ textDecoration: "none", color: "inherit" }}
             >
-              baxter.
+              {collapsed ? "b." : "baxter."}
             </Typography>
-          )}
+          </Tooltip>
         </Box>
         <Divider />
         <List>
           {navigationLinks.map((link) => (
-            <ListItem key={link.to} disablePadding>
-              <ListItemButton component={Link} to={link.to}>
-                <ListItemText primary={collapsed ? "" : link.text} />
-              </ListItemButton>
+            <ListItem
+              key={link.to}
+              disablePadding
+              sx={{
+                height: listItemHeight,
+                '&.Mui-focusVisible': {
+                  backgroundColor: 'transparent',
+                },
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                },
+                '&:active': {
+                  backgroundColor: 'transparent',
+                },
+              }}
+              component={Link}
+              to={link.to}
+            >
+              <Tooltip title={link.text} placement="right">
+                <ListItemButton
+                  sx={{
+                    justifyContent: collapsed ? "center" : "flex-start",
+                    paddingLeft: collapsed ? 2 : 3,
+                    height: listItemHeight,
+                    alignItems: 'center', // Ensures horizontal alignment
+                  }}
+                  disableRipple
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: collapsed ? "auto" : 0,
+                      marginRight: collapsed ? 0 : 2,
+                    }}
+                  >
+                    {link.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={link.text}
+                    sx={{
+                      display: collapsed ? "none" : "block",
+                    }}
+                  />
+                </ListItemButton>
+              </Tooltip>
             </ListItem>
           ))}
         </List>
@@ -101,10 +133,10 @@ const SidebarComponent = ({ navigationLinks, collapsed, setCollapsed }) => {
             alignItems: "center",
           }}
         >
-          <IconButton onClick={toggleDrawer}>
+          <IconButton onClick={toggleDrawer} aria-label="Toggle drawer">
             <MenuIcon />
           </IconButton>
-          <IconButton onClick={handleLogout} sx={{ ml: 1 }}>
+          <IconButton onClick={handleLogout} sx={{ ml: 1 }} aria-label="Logout">
             <Tooltip title="Logout">
               <LogoutIcon />
             </Tooltip>

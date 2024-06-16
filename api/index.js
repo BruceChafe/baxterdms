@@ -95,20 +95,11 @@ app.post("/api/uploadLicense", upload.single("file"), async (req, res) => {
       throw new Error("Document analysis failed");
     }
 
-    const extractedData = {
-      firstName: analyzedDocument.fields.FirstName?.content,
-      lastName: analyzedDocument.fields.LastName?.content,
-      documentNumber: analyzedDocument.fields.DocumentNumber?.content,
-      dateOfBirth: analyzedDocument.fields.DateOfBirth?.content,
-      dateOfExpiration: analyzedDocument.fields.DateOfExpiration?.content,
-    };
-
     const document = {
       documentId: new Date().toISOString(),
       uploadDate: new Date().toISOString(),
       documentType,
       analysisResult: analyzedDocument,
-      extractedData,
       archiveUrl: archiveSasUrl,
     };
 
