@@ -4,6 +4,7 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const LeadProfileBasicInfo = ({ document }) => {
+  console.log(document)
   const {
     analysisResult: {
       fields: {
