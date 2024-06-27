@@ -17,12 +17,12 @@ import {
   Backdrop,
   Fade,
 } from '@mui/material';
-import { Camera } from 'react-camera-pro'; // Import Camera as a named export
+import { Camera } from 'react-camera-pro';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 
 const CameraCapture = ({ onCapture }) => {
   const cameraRef = useRef(null);
-  const [facingMode, setFacingMode] = useState('environment'); // Default to back camera
+  const [facingMode, setFacingMode] = useState('environment');
   const [cameraError, setCameraError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [photo, setPhoto] = useState(null);
@@ -42,7 +42,7 @@ const CameraCapture = ({ onCapture }) => {
         setSuccess(true);
         setProcessing(false);
         setFlash(false);
-      }, 1000); // Simulate processing time
+      }, 1000);
     }
   };
 
@@ -131,9 +131,9 @@ const CameraCapture = ({ onCapture }) => {
             borderRadius: 1,
           }}
         >
-          <Typography variant="body2">
+          {/* <Typography variant="body2">
             Position the driver's license within the frame and ensure it's clear and readable.
-          </Typography>
+          </Typography> */}
         </Box>
       </Box>
       <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

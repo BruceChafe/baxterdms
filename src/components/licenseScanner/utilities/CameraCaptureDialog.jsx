@@ -20,7 +20,7 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
 
   return (
     <Dialog open={cameraOpen} onClose={onClose} maxWidth="md" fullWidth>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1 }}>
         <DialogTitle sx={{ flex: 1 }}>Capture Image</DialogTitle>
         <IconButton onClick={onClose}>
           <CloseIcon />
@@ -36,7 +36,7 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
             p: isSmallScreen ? 1 : 3,
           }}
         >
-          <Typography variant="body1" mb={2}>
+          <Typography variant="body1" mb={1}>
             Position your driver's license within the frame and capture the image.
           </Typography>
           <CameraCapture onCapture={onCapture} />
