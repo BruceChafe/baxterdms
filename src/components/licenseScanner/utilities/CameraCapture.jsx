@@ -95,46 +95,14 @@ const CameraCapture = ({ onCapture }) => {
   }
 
   return (
-    <Box sx={{ textAlign: 'center', p: 2 }}>
-      <Typography variant="h6" sx={{ mb: 2 }}>Capture Driver's License</Typography>
+    <Box sx={{ textAlign: 'center', p: 1 }}>
       <Box sx={{ position: 'relative' }}>
         <Camera
           ref={cameraRef}
           aspectRatio={16 / 9}
           facingMode={facingMode}
           width="100%"
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: flash ? 'rgba(255, 255, 255, 0.8)' : 'transparent',
-            transition: 'background-color 0.3s ease',
-          }}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 16,
-            left: 0,
-            right: 0,
-            textAlign: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            color: 'white',
-            p: 1,
-            borderRadius: 1,
-          }}
-        >
-          {/* <Typography variant="body2">
-            Position the driver's license within the frame and ensure it's clear and readable.
-          </Typography> */}
-        </Box>
+        />    
       </Box>
       <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Button variant="contained" onClick={capture} sx={{ mr: 2 }} disabled={processing}>

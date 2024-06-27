@@ -21,7 +21,7 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
   return (
     <Dialog open={cameraOpen} onClose={onClose} maxWidth="md" fullWidth>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1 }}>
-        <DialogTitle sx={{ flex: 1 }}>Capture Image</DialogTitle>
+        <DialogTitle sx={{ flex: 1 }}>Capture Driver's License</DialogTitle>
         <IconButton onClick={onClose}>
           <CloseIcon />
         </IconButton>
