@@ -36,9 +36,6 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
             p: isSmallScreen ? 1 : 3,
           }}
         >
-          <Typography variant="body1">
-            Position your driver's license within the frame and capture the image.
-          </Typography>
           <CameraCapture onCapture={onCapture} />
         </Box>
       </DialogContent>
