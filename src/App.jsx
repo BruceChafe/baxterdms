@@ -1,10 +1,7 @@
+// App.jsx
+
 import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline, Grid, CircularProgress, Box } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Contact from "./components/contacts/Contact";
@@ -53,12 +50,7 @@ const AppRoutes = () => {
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
         <CircularProgress />
       </Box>
     );
@@ -70,20 +62,10 @@ const AppRoutes = () => {
 
   return user ? (
     <Grid container>
-      <Grid
-        item
-        xs={collapsed ? 1 : 2}
-        md={collapsed ? 1 : 2}
-        lg={collapsed ? 1 : 2}
-      >
+      <Grid item xs={collapsed ? 1 : 2} md={collapsed ? 1 : 2} lg={collapsed ? 1 : 2}>
         <SidebarSwitcher collapsed={collapsed} setCollapsed={setCollapsed} />
       </Grid>
-      <Grid
-        item
-        xs={collapsed ? 11 : 10}
-        md={collapsed ? 11 : 10}
-        lg={collapsed ? 11 : 10}
-      >
+      <Grid item xs={collapsed ? 11 : 10} md={collapsed ? 11 : 10} lg={collapsed ? 11 : 10}>
         <Box sx={{ width: "100%", overflow: "auto" }}>
           <Routes>
             <Route path="/home" element={<WeeklyCalendar />} />
@@ -92,10 +74,7 @@ const AppRoutes = () => {
             <Route path="/contacts/newcontact" element={<NewContact />} />
             <Route path="/account/overview" element={<AccountOverview />} />
             <Route path="/account/theme" element={<UserThemeSelection />} />
-            <Route
-              path="/account/updatepassword"
-              element={<UpdatePassword />}
-            />
+            <Route path="/account/updatepassword" element={<UpdatePassword />} />
             <Route path="/leads" element={<LeadsDashboard />} />
             <Route path="/leads/newlead" element={<NewLeadComponent />} />
             <Route path="/leads/newlead/:contactId" element={<NewLeadForm />} />
