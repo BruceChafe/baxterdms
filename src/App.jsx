@@ -1,8 +1,6 @@
-// App.jsx
-
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { CssBaseline, Grid, CircularProgress, Box } from "@mui/material";
+import { CssBaseline, Grid, CircularProgress, Box, useMediaQuery } from "@mui/material";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Contact from "./components/contacts/Contact";
 import SignIn from "./components/signin/SignIn";
@@ -47,6 +45,7 @@ const App = () => {
 const AppRoutes = () => {
   const { user, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+  const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
   if (loading) {
     return (
@@ -62,11 +61,8 @@ const AppRoutes = () => {
 
   return user ? (
     <Grid container>
-      <Grid item xs={collapsed ? 1 : 2} md={collapsed ? 1 : 2} lg={collapsed ? 1 : 2}>
-        <SidebarSwitcher collapsed={collapsed} setCollapsed={setCollapsed} />
-      </Grid>
-      <Grid item xs={collapsed ? 11 : 10} md={collapsed ? 11 : 10} lg={collapsed ? 11 : 10}>
-        <Box sx={{ width: "100%", overflow: "auto" }}>
+      <Grid item xs={12} md={collapsed ? 11 : 10} lg={collapsed ? 11 : 10}>
+        <Box sx={{ width: "100%", overflow: "auto", pr: isMobile ? 2 : 0, pl: isMobile ? 2 : 0 }}>
           <Routes>
             <Route path="/home" element={<WeeklyCalendar />} />
             <Route path="/contacts/:contactId" element={<Contact />} />
@@ -92,6 +88,7 @@ const AppRoutes = () => {
           </Routes>
         </Box>
       </Grid>
+      <SidebarSwitcher collapsed={collapsed} setCollapsed={setCollapsed} />
     </Grid>
   ) : (
     <Routes>

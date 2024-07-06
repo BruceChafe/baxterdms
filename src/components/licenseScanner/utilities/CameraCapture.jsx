@@ -1,5 +1,3 @@
-// File: CameraCapture.js
-
 import React, { useRef, useState, useEffect } from 'react';
 import {
   Box,
@@ -14,8 +12,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Backdrop,
-  Fade,
 } from '@mui/material';
 import { Camera } from 'react-camera-pro';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
