@@ -152,20 +152,6 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
           )}
         </Box>
 
-        {/* Overlay for centering driver's license */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '80%',
-            height: '40%',
-            border: '2px solid rgba(255, 255, 255, 0.8)',
-            borderRadius: '4px',
-            pointerEvents: 'none',
-          }}
-        />
 
         <IconButton
           onClick={onClose}
