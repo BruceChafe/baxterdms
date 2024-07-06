@@ -1,49 +1,80 @@
 import React from 'react';
 import {
   Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
   IconButton,
   Box,
-  Typography,
   useTheme,
   useMediaQuery,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CameraCapture from './CameraCapture';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 
 const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <Dialog open={cameraOpen} onClose={onClose} maxWidth="md" fullWidth>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1 }}>
-        <DialogTitle sx={{ flex: 1 }}>Capture Driver's License</DialogTitle>
-        <IconButton onClick={onClose}>
+    <Dialog
+      open={cameraOpen}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        style: {
+          backgroundColor: 'transparent',
+          boxShadow: 'none',
+          borderRadius: 10,
+          overflow: 'hidden',
+        },
+      }}
+    >
+      <Box sx={{ position: 'relative', width: '100%', height: isSmallScreen ? '80vh' : '100vh', bgcolor: 'black' }}>
+        <CameraCapture onCapture={onCapture} />
+        <IconButton
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: 16,
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}
+        >
           <CloseIcon />
         </IconButton>
-      </Box>
-      <DialogContent dividers>
         <Box
           sx={{
+            position: 'absolute',
+            bottom: 16,
+            left: '50%',
+            transform: 'translateX(-50%)',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            flexDirection: 'column',
-            p: isSmallScreen ? 1 : 3,
+            bgcolor: 'rgba(0, 0, 0, 0.5)',
+            borderRadius: '50%',
+            p: 1,
           }}
         >
-          <CameraCapture onCapture={onCapture} />
+          <IconButton onClick={() => cameraRef.current.takePhoto()} sx={{ color: 'white' }}>
+            <CameraAltIcon sx={{ fontSize: 48 }} />
+          </IconButton>
         </Box>
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: 'space-between', p: 2 }}>
-        <Button onClick={onClose} variant="outlined" color="secondary">
-          Cancel
-        </Button>
-      </DialogActions>
+        <IconButton
+          onClick={() => setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'))}
+          sx={{
+            position: 'absolute',
+            bottom: 16,
+            right: 16,
+            color: 'white',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          <FlipCameraAndroidIcon />
+        </IconButton>
+      </Box>
     </Dialog>
   );
 };

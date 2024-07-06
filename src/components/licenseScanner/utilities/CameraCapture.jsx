@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { Camera } from 'react-camera-pro';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CameraCapture = ({ onCapture }) => {
   const cameraRef = useRef(null);
@@ -77,7 +78,12 @@ const CameraCapture = ({ onCapture }) => {
   if (cameraError) {
     return (
       <Dialog open={cameraError} onClose={() => setCameraError(false)}>
-        <DialogTitle>Camera Error</DialogTitle>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1 }}>
+          <DialogTitle sx={{ flex: 1 }}>Capture Driver's License</DialogTitle>
+          <IconButton onClick={() => setCameraError(false)}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
         <DialogContent>
           <DialogContentText>{error}</DialogContentText>
         </DialogContent>
@@ -98,7 +104,7 @@ const CameraCapture = ({ onCapture }) => {
           aspectRatio={16 / 9}
           facingMode={facingMode}
           width="100%"
-        />    
+        />
       </Box>
       <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Button variant="contained" onClick={capture} sx={{ mr: 2 }} disabled={processing}>
