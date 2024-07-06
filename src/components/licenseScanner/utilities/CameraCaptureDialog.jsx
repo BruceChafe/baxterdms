@@ -1,21 +1,98 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Dialog,
   IconButton,
   Box,
   useTheme,
   useMediaQuery,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import CameraCapture from './CameraCapture';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
+import { Camera } from 'react-camera-pro';
 
 const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const cameraRef = useRef(null);
   const [facingMode, setFacingMode] = useState('environment');
+  const [cameraError, setCameraError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [photo, setPhoto] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [flash, setFlash] = useState(false);
+
+  const capture = () => {
+    if (cameraRef.current) {
+      setFlash(true);
+      const imageSrc = cameraRef.current.takePhoto();
+      setPhoto(imageSrc);
+      onCapture(imageSrc);
+      setProcessing(true);
+      setTimeout(() => {
+        setSuccess(true);
+        setProcessing(false);
+        setFlash(false);
+      }, 1000);
+    }
+  };
+
+  const toggleFacingMode = () => {
+    setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'));
+  };
+
+  useEffect(() => {
+    const getUserMedia = async () => {
+      try {
+        const constraints = { video: { facingMode } };
+        await navigator.mediaDevices.getUserMedia(constraints);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        setError('Camera not found. Please ensure your camera is connected and try again.');
+        setCameraError(true);
+        setLoading(false);
+      }
+    };
+
+    getUserMedia();
+  }, [facingMode]);
+
+  if (loading) {
+    return (
+      <Box sx={{ textAlign: 'center', p: 2 }}>
+        <CircularProgress />
+        <Typography variant="body1" sx={{ mt: 2 }}>
+          Checking camera access...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (cameraError) {
+    return (
+      <Dialog open={cameraError} onClose={() => setCameraError(false)}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1 }}>
+          <Typography variant="h6" sx={{ flex: 1 }}>Capture Driver's License</Typography>
+          <IconButton onClick={() => setCameraError(false)}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <Box sx={{ p: 2 }}>
+          <Typography>{error}</Typography>
+          <IconButton onClick={() => window.location.reload()} color="primary">
+            Reload
+          </IconButton>
+        </Box>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog
@@ -40,7 +117,29 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
           bgcolor: 'black',
         }}
       >
-        <CameraCapture ref={cameraRef} onCapture={onCapture} facingMode={facingMode} />
+        <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+          <Camera
+            ref={cameraRef}
+            aspectRatio={16 / 9}
+            facingMode={facingMode}
+            width="100%"
+            height="100%"
+          />
+          {flash && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                bgcolor: 'white',
+                opacity: 0.6,
+                transition: 'opacity 0.2s',
+              }}
+            />
+          )}
+        </Box>
 
         {/* Overlay for centering driver's license */}
         <Box
@@ -84,13 +183,13 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
             p: 1,
           }}
         >
-          <IconButton onClick={() => cameraRef.current.takePhoto()} sx={{ color: 'white' }}>
+          <IconButton onClick={capture} sx={{ color: 'white' }}>
             <CameraAltIcon sx={{ fontSize: 48 }} />
           </IconButton>
         </Box>
 
         <IconButton
-          onClick={() => setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'))}
+          onClick={toggleFacingMode}
           sx={{
             position: 'absolute',
             bottom: 16,
@@ -102,6 +201,12 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
           <FlipCameraAndroidIcon />
         </IconButton>
       </Box>
+
+      <Snackbar open={success} autoHideDuration={6000} onClose={() => setSuccess(false)}>
+        <Alert onClose={() => setSuccess(false)} severity="success" sx={{ width: '100%' }}>
+          Photo captured successfully!
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 };
