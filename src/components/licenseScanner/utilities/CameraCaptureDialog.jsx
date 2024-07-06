@@ -1,6 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {
   Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContentText,
+  DialogContent,
+  Button,
   IconButton,
   Box,
   useTheme,
@@ -11,8 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { Camera } from 'react-camera-pro';
 
 const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
@@ -41,10 +45,6 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
         setFlash(false);
       }, 1000);
     }
-  };
-
-  const toggleFacingMode = () => {
-    setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'));
   };
 
   useEffect(() => {
@@ -78,18 +78,20 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
   if (cameraError) {
     return (
       <Dialog open={cameraError} onClose={() => setCameraError(false)}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 1 }}>
-          <Typography variant="h6" sx={{ flex: 1 }}>Capture Driver's License</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <DialogTitle sx={{ flex: 1 }}>Capture Driver's License</DialogTitle>
           <IconButton onClick={() => setCameraError(false)}>
             <CloseIcon />
           </IconButton>
         </Box>
-        <Box sx={{ p: 2 }}>
-          <Typography>{error}</Typography>
-          <IconButton onClick={() => window.location.reload()} color="primary">
+        <DialogContent dividers>
+          <DialogContentText>{error}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => window.location.reload()} color="primary" variant="outlined">
             Reload
-          </IconButton>
-        </Box>
+          </Button>
+        </DialogActions>
       </Dialog>
     );
   }
@@ -113,20 +115,30 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
         sx={{
           position: 'relative',
           width: '100%',
-          height: isSmallScreen ? '80vh' : '100vh',
-          bgcolor: 'black',
+          height: isSmallScreen ? '90vh' : '100vh',
+          bgcolor: '#333',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          flexDirection: 'column',
         }}
       >
         <Box
           sx={{
+            height: '10%',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            pr: 2,
+          }}
+        >
+          <IconButton onClick={onClose} sx={{ color: 'white' }}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        <Box
+          sx={{
+            height: '70%',
             position: 'relative',
-            width: isSmallScreen ? '100%' : 'auto',
-            height: isSmallScreen ? 'auto' : '100%',
-            transform: isSmallScreen ? 'none' : 'rotate(90deg)',
-            transformOrigin: 'center',
           }}
         >
           <Camera
@@ -152,51 +164,20 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
           )}
         </Box>
 
-
-        <IconButton
-          onClick={onClose}
-          sx={{
-            position: 'absolute',
-            top: 16,
-            right: 16,
-            color: 'white',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-
         <Box
           sx={{
-            position: 'absolute',
-            bottom: 16,
-            left: '50%',
-            transform: 'translateX(-50%)',
+            height: '20%',
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            bgcolor: 'rgba(0, 0, 0, 0.5)',
-            borderRadius: '50%',
-            p: 1,
+            position: 'relative',
           }}
         >
-          <IconButton onClick={capture} sx={{ color: 'white' }}>
-            <CameraAltIcon sx={{ fontSize: 48 }} />
+          <IconButton onClick={capture} sx={{ color: 'white', mb: 2 }}>
+            <RadioButtonCheckedIcon sx={{ fontSize: 64 }} />
           </IconButton>
         </Box>
-
-        <IconButton
-          onClick={toggleFacingMode}
-          sx={{
-            position: 'absolute',
-            bottom: 16,
-            right: 16,
-            color: 'white',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          }}
-        >
-          <FlipCameraAndroidIcon />
-        </IconButton>
       </Box>
 
       <Snackbar open={success} autoHideDuration={6000} onClose={() => setSuccess(false)}>

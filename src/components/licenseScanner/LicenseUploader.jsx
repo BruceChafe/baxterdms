@@ -33,18 +33,7 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const onDrop = useCallback((acceptedFiles) => {
-    if (acceptedFiles.length > 0) {
-      const selectedFile = acceptedFiles[0];
-      setFile(selectedFile);
-      setCapturedImageState(null);
-      setUploadedImage(URL.createObjectURL(selectedFile));
-    }
-  }, [setUploadedImage]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: 'image/*,.pdf' });
-
-  const handleCapture = (imageSrc) => {
+   const handleCapture = (imageSrc) => {
     setCapturedImageState(imageSrc);
     setCapturedImage(imageSrc);
     setFile(null);
@@ -63,7 +52,6 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
       formData.append("file", new File([blob], "captured_image.jpg"));
     }
 
-    // Add the document type to the form data
     formData.append("documentType", "driverLicense");  // Example document type, update as necessary
 
     setUploading(true);
@@ -100,26 +88,6 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
       </Box>
       <Collapse in={open}>
         <Stack direction="column" spacing={2} sx={{ mt: 2 }}>
-          <Box
-            {...getRootProps()}
-            sx={{
-              border: '2px dashed',
-              borderColor: isDragActive ? 'primary.main' : 'grey.500',
-              p: 4,
-              textAlign: 'center',
-              cursor: 'pointer',
-              backgroundColor: isDragActive ? 'grey.100' : 'inherit'
-            }}
-          >
-            <input {...getInputProps()} />
-            {isDragActive ? (
-              <Typography>Drop the files here ...</Typography>
-            ) : file ? (
-              <Typography>File is ready to be uploaded.</Typography>
-            ) : (
-              <Typography>Drag 'n' drop a driver's license here, or click to select a file</Typography>
-            )}
-          </Box>
           <Button
             variant="contained"
             startIcon={<PhotoCameraIcon />}
