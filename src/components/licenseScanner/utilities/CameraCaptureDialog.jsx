@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Dialog,
   IconButton,
@@ -14,6 +14,8 @@ import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const cameraRef = useRef(null);
+  const [facingMode, setFacingMode] = useState('environment');
 
   return (
     <Dialog
@@ -30,8 +32,31 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
         },
       }}
     >
-      <Box sx={{ position: 'relative', width: '100%', height: isSmallScreen ? '80vh' : '100vh', bgcolor: 'black' }}>
-        <CameraCapture onCapture={onCapture} />
+      <Box
+        sx={{
+          position: 'relative',
+          width: '100%',
+          height: isSmallScreen ? '80vh' : '100vh',
+          bgcolor: 'black',
+        }}
+      >
+        <CameraCapture ref={cameraRef} onCapture={onCapture} facingMode={facingMode} />
+
+        {/* Overlay for centering driver's license */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '80%',
+            height: '40%',
+            border: '2px solid rgba(255, 255, 255, 0.8)',
+            borderRadius: '4px',
+            pointerEvents: 'none',
+          }}
+        />
+
         <IconButton
           onClick={onClose}
           sx={{
@@ -44,6 +69,7 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
         >
           <CloseIcon />
         </IconButton>
+
         <Box
           sx={{
             position: 'absolute',
@@ -62,6 +88,7 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
             <CameraAltIcon sx={{ fontSize: 48 }} />
           </IconButton>
         </Box>
+
         <IconButton
           onClick={() => setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'))}
           sx={{
