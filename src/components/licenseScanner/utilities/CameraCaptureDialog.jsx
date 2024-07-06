@@ -117,29 +117,28 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
           bgcolor: 'black',
         }}
       >
-        <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-          <Camera
-            ref={cameraRef}
-            aspectRatio={16 / 9}
-            facingMode={facingMode}
-            width="100%"
-            height="100%"
+        <Camera
+          ref={cameraRef}
+          aspectRatio={16 / 9}
+          facingMode={facingMode}
+          width="100%"
+          height="100%"
+        />
+        
+        {flash && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              bgcolor: 'white',
+              opacity: 0.6,
+              transition: 'opacity 0.2s',
+            }}
           />
-          {flash && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                bgcolor: 'white',
-                opacity: 0.6,
-                transition: 'opacity 0.2s',
-              }}
-            />
-          )}
-        </Box>
+        )}
 
         {/* Overlay for centering driver's license */}
         <Box
