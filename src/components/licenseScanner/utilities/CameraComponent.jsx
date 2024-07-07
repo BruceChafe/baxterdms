@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -14,10 +14,16 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { Camera } from 'react-camera-pro';
 
-const CameraComponent = ({ facingMode, onLoading, onError }) => {
+const CameraComponent = forwardRef(({ facingMode, onLoading, onError }, ref) => {
   const cameraRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useImperativeHandle(ref, () => ({
+    takePhoto: () => {
+      return cameraRef.current.takePhoto();
+    }
+  }));
 
   useEffect(() => {
     const getUserMedia = async () => {
@@ -79,6 +85,6 @@ const CameraComponent = ({ facingMode, onLoading, onError }) => {
       height="100%"
     />
   );
-};
+});
 
 export default CameraComponent;

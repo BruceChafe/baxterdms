@@ -19,11 +19,14 @@ import CameraComponent from './CameraComponent';
 import { useMediaQuery } from '@mui/material';
 
 const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
-  const [facingMode, setFacingMode] = useState('environment');
+  const [facingMode, setFacingMode] = useState("environment");
   const [flash, setFlash] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const cameraRef = useRef(null);
-  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+
 
   const capture = () => {
     if (cameraRef.current) {
