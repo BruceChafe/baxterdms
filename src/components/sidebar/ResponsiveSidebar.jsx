@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import {
   Box,
@@ -16,8 +16,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
+import CloseIcon from '@mui/icons-material/Close';
 import {
   FaBoxArchive,
   FaRegIdCard,
@@ -100,11 +100,10 @@ const SidebarItems = {
   },
 };
 
-const ResponsiveSidebar = ({ collapsed, setCollapsed }) => {
+const ResponsiveSidebar = ({ collapsed, setCollapsed, mobileOpen, handleMobileToggle }) => {
   const location = useLocation();
   const path = location.pathname.split("/")[1] || "home";
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
-  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -118,10 +117,6 @@ const ResponsiveSidebar = ({ collapsed, setCollapsed }) => {
 
   const toggleDrawer = () => {
     setCollapsed(!collapsed);
-  };
-
-  const handleMobileToggle = () => {
-    setMobileOpen(!mobileOpen);
   };
 
   const drawerContent = (
@@ -232,25 +227,6 @@ const ResponsiveSidebar = ({ collapsed, setCollapsed }) => {
         )}
         {drawerContent}
       </Drawer>
-      {isMobile && (
-  <IconButton
-    onClick={handleMobileToggle}
-    sx={{
-      position: "fixed",
-      top: 16,  // Change this from bottom: 16 to top: 16
-      right: 16,  // Change this from left: 16 to right: 16
-      zIndex: 1201,
-      backgroundColor: "white",
-      border: "1px solid",
-      borderRadius: "50%",
-      width: 56,
-      height: 56,
-      boxShadow: 3,
-    }}
-  >
-    <MenuIcon />
-  </IconButton>
-)}
     </>
   );
 };

@@ -1,9 +1,24 @@
-import React from "react";
-import { Box, Divider, Button } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Divider, Button, IconButton, useMediaQuery } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import ResponsiveSidebar from "../sidebar/ResponsiveSidebar";
 
-const TitleLayout = ({ title, actionButtons = [], isEditable, onToggleEdit }) => {
+const TitleLayout = ({ title, actionButtons = [], isEditable, onToggleEdit, collapsed, setCollapsed }) => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+
+  const handleMobileToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
   return (
     <Box>
+      <ResponsiveSidebar 
+        collapsed={collapsed} 
+        setCollapsed={setCollapsed} 
+        mobileOpen={mobileOpen} 
+        handleMobileToggle={handleMobileToggle} 
+      />
       <Box
         sx={{
           display: "flex",
@@ -29,6 +44,21 @@ const TitleLayout = ({ title, actionButtons = [], isEditable, onToggleEdit }) =>
               {button.label}
             </Button>
           ))}
+          {isMobile && (
+            <IconButton
+              onClick={handleMobileToggle}
+              sx={{
+                ml: 2,
+                backgroundColor: "white",
+                border: "1px solid",
+                borderRadius: "50%",
+                width: 40,
+                height: 40,
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
         </Box>
       </Box>
       <Divider />
