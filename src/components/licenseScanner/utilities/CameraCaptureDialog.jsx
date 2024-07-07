@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -8,93 +8,57 @@ import {
   Button,
   IconButton,
   Box,
-  useTheme,
-  useMediaQuery,
-  CircularProgress,
   Snackbar,
   Alert,
   Typography,
+  Divider,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import { Camera } from 'react-camera-pro';
+import CameraComponent from './CameraComponent';
 
 const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const cameraRef = useRef(null);
   const [facingMode, setFacingMode] = useState('environment');
-  const [cameraError, setCameraError] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [flash, setFlash] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [flash, setFlash] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const cameraRef = useRef(null);
+
 
   const capture = () => {
     if (cameraRef.current) {
       setFlash(true);
       const imageSrc = cameraRef.current.takePhoto();
-      setPhoto(imageSrc);
-      onCapture(imageSrc);
-      setProcessing(true);
+      const rotatedImage = rotateImage(imageSrc, 90);
+      onCapture(rotatedImage);
       setTimeout(() => {
         setSuccess(true);
-        setProcessing(false);
         setFlash(false);
+        onClose();
       }, 1000);
     }
   };
 
-  useEffect(() => {
-    const getUserMedia = async () => {
-      try {
-        const constraints = { video: { facingMode } };
-        await navigator.mediaDevices.getUserMedia(constraints);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error accessing camera:', error);
-        setError('Camera not found. Please ensure your camera is connected and try again.');
-        setCameraError(true);
-        setLoading(false);
-      }
-    };
+  const rotateImage = (src, degrees) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const image = new Image();
+    image.src = src;
 
-    getUserMedia();
-  }, [facingMode]);
-
-  if (loading) {
-    return (
-      <Box sx={{ textAlign: 'center', p: 2 }}>
-        <CircularProgress />
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          Checking camera access...
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (cameraError) {
-    return (
-      <Dialog open={cameraError} onClose={() => setCameraError(false)}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <DialogTitle sx={{ flex: 1 }}>Capture Driver's License</DialogTitle>
-          <IconButton onClick={() => setCameraError(false)}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <DialogContent dividers>
-          <DialogContentText>{error}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => window.location.reload()} color="primary" variant="outlined">
-            Reload
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+    return new Promise((resolve) => {
+      image.onload = () => {
+        canvas.width = image.height;
+        canvas.height = image.width;
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((degrees * Math.PI) / 180);
+        ctx.drawImage(image, -image.width / 2, -image.height / 2);
+        resolve(canvas.toDataURL());
+      };
+    });
+  };
 
   return (
     <Dialog
@@ -115,7 +79,7 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
         sx={{
           position: 'relative',
           width: '100%',
-          height: isSmallScreen ? '90vh' : '100vh',
+          height: '90vh',
           bgcolor: '#333',
           display: 'flex',
           flexDirection: 'column',
@@ -134,19 +98,17 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
             <CloseIcon />
           </IconButton>
         </Box>
-
+        <Divider />
         <Box
           sx={{
             height: '70%',
             position: 'relative',
           }}
         >
-          <Camera
-            ref={cameraRef}
-            aspectRatio={9 / 16}
+          <CameraComponent
             facingMode={facingMode}
-            width="100%"
-            height="100%"
+            onLoading={setLoading}
+            onError={setError}
           />
           {flash && (
             <Box
@@ -163,7 +125,7 @@ const CameraCaptureDialog = ({ cameraOpen, onClose, onCapture }) => {
             />
           )}
         </Box>
-
+        <Divider />
         <Box
           sx={{
             height: '20%',

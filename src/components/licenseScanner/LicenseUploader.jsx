@@ -14,14 +14,8 @@ import {
   CloudUpload as CloudUploadIcon,
   PhotoCamera as PhotoCameraIcon,
 } from "@mui/icons-material";
-import { useDropzone } from "react-dropzone";
-import { useSnackbar } from "../../context/SnackbarContext";
 import CameraCaptureDialog from "./utilities/CameraCaptureDialog";
-
-import { AzureKeyCredential, DocumentAnalysisClient } from "@azure/ai-form-recognizer";
-
-const key = import.meta.env.VITE_AZURE_FORM_RECOGNIZER_KEY;
-const endpoint = import.meta.env.VITE_AZURE_FORM_RECOGNIZER_ENDPOINT;
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, setUploadedImage }) => {
   const [file, setFile] = useState(null);
@@ -33,7 +27,7 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-   const handleCapture = (imageSrc) => {
+  const handleCapture = (imageSrc) => {
     setCapturedImageState(imageSrc);
     setCapturedImage(imageSrc);
     setFile(null);
@@ -94,8 +88,16 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
             onClick={() => setCameraOpen(true)}
             disabled={uploading}
           >
-            Capture with Camera
+            {capturedImage ? "Retake" : "Capture with Camera"}
           </Button>
+          {capturedImage && (
+            <Box
+              component="img"
+              src={capturedImage}
+              alt="Captured"
+              sx={{ width: '100%', maxHeight: 300, objectFit: 'cover', mt: 2 }}
+            />
+          )}
           <Button
             variant="contained"
             onClick={handleUpload}
@@ -108,11 +110,13 @@ const LicenseUploader = ({ onUploadSuccess, open, onToggle, setCapturedImage, se
           {uploading && <LinearProgress />}
         </Stack>
 
-        <CameraCaptureDialog
-          cameraOpen={cameraOpen}
-          onClose={() => setCameraOpen(false)}
-          onCapture={handleCapture}
-        />
+        {cameraOpen && (
+          <CameraCaptureDialog
+            cameraOpen={cameraOpen}
+            onClose={() => setCameraOpen(false)}
+            onCapture={handleCapture}
+          />
+        )}
       </Collapse>
     </>
   );
