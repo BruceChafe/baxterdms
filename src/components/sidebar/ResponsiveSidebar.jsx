@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link as RouterLink, useNavigate } from "react-router-dom";
 import {
   Box,
   CssBaseline,
@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import {
   FaBoxArchive,
   FaRegIdCard,
@@ -27,10 +27,10 @@ import {
   FaGear,
   FaWarehouse,
 } from "react-icons/fa6";
-import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 
 const drawerWidth = 240;
+const collapsedDrawerWidth = 80;
 const listItemHeight = 56;
 
 const SidebarItems = {
@@ -132,7 +132,7 @@ const ResponsiveSidebar = ({ collapsed, setCollapsed, mobileOpen, handleMobileTo
         <Tooltip title="baxter.">
           <Typography
             variant="h6"
-            component={Link}
+            component={RouterLink}
             to="/home"
             sx={{ textDecoration: "none", color: "inherit" }}
           >
@@ -142,40 +142,38 @@ const ResponsiveSidebar = ({ collapsed, setCollapsed, mobileOpen, handleMobileTo
       </Box>
       <Divider />
       <List>
-        {(SidebarItems[path] || SidebarItems.home).navigationLinks.map(
-          (link) => (
-            <ListItem
-              key={link.to}
-              disablePadding
-              component={Link}
-              to={link.to}
-              sx={{ height: listItemHeight }}
-            >
-              <Tooltip title={link.text} placement="right">
-                <ListItemButton
+        {(SidebarItems[path] || SidebarItems.home).navigationLinks.map((link) => (
+          <ListItem
+            key={link.to}
+            disablePadding
+            component={RouterLink}
+            to={link.to}
+            sx={{ height: listItemHeight }}
+          >
+            <Tooltip title={link.text} placement="right">
+              <ListItemButton
+                sx={{
+                  justifyContent: collapsed ? "center" : "flex-start",
+                  paddingLeft: collapsed ? 2 : 3,
+                  height: listItemHeight,
+                }}
+              >
+                <ListItemIcon
                   sx={{
-                    justifyContent: collapsed ? "center" : "flex-start",
-                    paddingLeft: collapsed ? 2 : 3,
-                    height: listItemHeight,
+                    minWidth: collapsed ? "auto" : 0,
+                    marginRight: collapsed ? 0 : 2,
                   }}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: collapsed ? "auto" : 0,
-                      marginRight: collapsed ? 0 : 2,
-                    }}
-                  >
-                    {link.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={link.text}
-                    sx={{ display: collapsed ? "none" : "block" }}
-                  />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          )
-        )}
+                  {link.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={link.text}
+                  sx={{ display: collapsed ? "none" : "block" }}
+                />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
+        ))}
       </List>
       <Divider />
       <Box
@@ -206,15 +204,11 @@ const ResponsiveSidebar = ({ collapsed, setCollapsed, mobileOpen, handleMobileTo
         open={isMobile ? mobileOpen : true}
         onClose={isMobile ? handleMobileToggle : null}
         sx={{
-          width: isMobile ? '100%' : collapsed ? 80 : drawerWidth,
+          width: collapsed ? collapsedDrawerWidth : drawerWidth,
           flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width: isMobile ? '100%' : collapsed ? 80 : drawerWidth,
+            width: collapsed ? collapsedDrawerWidth : drawerWidth,
             boxSizing: "border-box",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: 'center',
-            alignItems: 'center',
           },
         }}
       >

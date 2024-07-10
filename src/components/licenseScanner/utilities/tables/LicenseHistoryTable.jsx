@@ -14,7 +14,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Avatar,
+  Chip,
 } from "@mui/material";
+import { CheckCircle, Error } from "@mui/icons-material";
 import LicenseScannerDetail from "../../LicenseScannerDetail";
 
 const LicenseHistoryTable = ({ data, columns, page, rowsPerPage, onNavigate }) => {
@@ -110,7 +113,25 @@ const LicenseHistoryTable = ({ data, columns, page, rowsPerPage, onNavigate }) =
                         borderColor: "divider",
                       }}
                     >
-                      {row[column.field]}
+                      {column.field === "isValid" ? (
+                        row.isValid ? (
+                          <Chip
+                            avatar={<Avatar><CheckCircle /></Avatar>}
+                            label="PASSED"
+                            color="success"
+                            sx={{ width: '100%' }}
+                          />
+                        ) : (
+                          <Chip
+                            avatar={<Avatar><Error /></Avatar>}
+                            label="FAILED"
+                            color="error"
+                            sx={{ width: '100%' }}
+                          />
+                        )
+                      ) : (
+                        row[column.field]
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>

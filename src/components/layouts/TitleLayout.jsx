@@ -3,7 +3,11 @@ import { Box, Divider, Button, IconButton, useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ResponsiveSidebar from "../sidebar/ResponsiveSidebar";
 
-const TitleLayout = ({ title, actionButtons = [], isEditable, onToggleEdit, collapsed, setCollapsed }) => {
+const drawerWidth = 240;
+const collapsedDrawerWidth = 80;
+
+const TitleLayout = ({ title, actionButtons = [], isEditable, onToggleEdit }) => {
+  const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
@@ -13,12 +17,12 @@ const TitleLayout = ({ title, actionButtons = [], isEditable, onToggleEdit, coll
 
   return (
     <Box>
-      <ResponsiveSidebar 
-        collapsed={collapsed} 
-        setCollapsed={setCollapsed} 
-        mobileOpen={mobileOpen} 
-        handleMobileToggle={handleMobileToggle} 
-      />
+      {isMobile && (
+        <ResponsiveSidebar
+          mobileOpen={mobileOpen}
+          handleMobileToggle={handleMobileToggle}
+        />
+      )}
       <Box
         sx={{
           display: "flex",

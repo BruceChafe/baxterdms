@@ -58,18 +58,28 @@ const LicenseScannerHistory = () => {
     return Math.abs(ageDt.getUTCFullYear() - 1970);
   };
 
+  const checkExpirationStatus = (expirationDate) => {
+    if (!expirationDate) return false;
+    const expiration = new Date(expirationDate);
+    return expiration >= new Date();
+  };
+
   const transformedData = useMemo(() => {
-    return documents.map((doc) => ({
-      id: doc.documentId,
-      uploadDate: new Date(doc.uploadDate).toLocaleString(),
-      fullName: `${doc.analysisResult?.fields?.FirstName?.value || ""} ${doc.analysisResult?.fields?.LastName?.value || ""}`.trim(),
-      documentNumber: doc.analysisResult?.fields?.DocumentNumber?.content,
-      age: calculateAge(doc.analysisResult?.fields?.DateOfBirth?.value),
-      dateOfExpiration: doc.analysisResult?.fields?.DateOfExpiration ? new Date(doc.analysisResult.fields.DateOfExpiration.value).toLocaleDateString() : '-',
-      archiveUrl: doc.archiveUrl,
-      documentType: doc.documentType,
-      analysisResult: doc.analysisResult,
-    }));
+    return documents.map((doc) => {
+      const dateOfExpiration = doc.analysisResult?.fields?.DateOfExpiration?.value ? new Date(doc.analysisResult.fields.DateOfExpiration.value).toLocaleDateString() : '-';
+      return {
+        id: doc.documentId,
+        uploadDate: new Date(doc.uploadDate).toLocaleString(),
+        fullName: `${doc.analysisResult?.fields?.FirstName?.value || ""} ${doc.analysisResult?.fields?.LastName?.value || ""}`.trim(),
+        documentNumber: doc.analysisResult?.fields?.DocumentNumber?.content,
+        age: calculateAge(doc.analysisResult?.fields?.DateOfBirth?.value),
+        dateOfExpiration: dateOfExpiration,
+        archiveUrl: doc.archiveUrl,
+        documentType: doc.documentType,
+        analysisResult: doc.analysisResult,
+        isValid: checkExpirationStatus(doc.analysisResult?.fields?.DateOfExpiration?.value),
+      };
+    });
   }, [documents]);
 
   const navigateToProfile = (documentId) => {
@@ -104,6 +114,7 @@ const LicenseScannerHistory = () => {
               { field: "documentNumber", header: "Document Number" },
               { field: "age", header: "Age" },
               { field: "dateOfExpiration", header: "Date of Expiration" },
+              { field: "isValid", header: "Status" },
             ]}
             page={page}
             rowsPerPage={rowsPerPage}

@@ -26,6 +26,8 @@ const LicenseScannerDashboard = () => {
       <TitleLayout
         title={<Typography variant={isSmallScreen ? "h5" : "h4"}>License Scanner</Typography>}
         actionButtons={[]}
+        collapsed={false}
+        setCollapsed={() => {}}
       />
       {isLoading && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>

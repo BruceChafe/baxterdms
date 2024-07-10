@@ -8,7 +8,7 @@ import NewContact from "./components/contacts/NewContact";
 import ContactsDashboard from "./components/contacts/ContactsDashboard";
 import UserThemeSelection from "./components/account/UserThemeSelection";
 import AccountOverview from "./components/account/Overview";
-import SidebarSwitcher from "./components/sidebar/SidebarSwitcher";
+import ResponsiveSidebar from "./components/sidebar/ResponsiveSidebar";
 import UpdatePassword from "./components/account/UpdatePassword";
 import LeadsDashboard from "./components/leads/LeadsDashboard";
 import NewLeadComponent from "./components/leads/NewLead";
@@ -45,7 +45,12 @@ const App = () => {
 const AppRoutes = () => {
   const { user, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
+
+  const handleMobileToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   if (loading) {
     return (
@@ -61,6 +66,8 @@ const AppRoutes = () => {
 
   return user ? (
     <Grid container>
+            <Grid item xs={12} md={collapsed ? 11 : 10} lg={collapsed ? 1 : 2} />
+
       <Grid item xs={12} md={collapsed ? 11 : 10} lg={collapsed ? 11 : 10}>
         <Box sx={{ width: "100%", overflow: "auto", pr: isMobile ? 2 : 0, pl: isMobile ? 2 : 0 }}>
           <Routes>
@@ -88,7 +95,14 @@ const AppRoutes = () => {
           </Routes>
         </Box>
       </Grid>
-      <SidebarSwitcher collapsed={collapsed} setCollapsed={setCollapsed} />
+      <Grid item xs={12} md={collapsed ? 1 : 2} lg={collapsed ? 1 : 2}>
+        <ResponsiveSidebar
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+          mobileOpen={mobileOpen}
+          handleMobileToggle={handleMobileToggle}
+        />
+      </Grid>
     </Grid>
   ) : (
     <Routes>
